@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using OpenIddict;
+using Etherkeep.Server.ViewModels.Authorization;
 
 namespace Etherkeep.Server.Controllers.API
 {
@@ -35,7 +36,7 @@ namespace Etherkeep.Server.Controllers.API
             {
                 _logger.LogCritical(ex.Message);
 
-                return BadRequest(new ErrorModel
+                return BadRequest(new ErrorViewModel
                 {
                     Error = "internal_error",
                     ErrorDescription = ex.Message

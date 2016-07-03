@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Models
 {
-    public class PayTransferModel
+    public class SendTransferInvitationViewModel
     {
     }
 }

@@ -10,9 +10,8 @@ namespace Etherkeep.Server.ViewModels.Extensions
 
             destination.FirstName = source.FirstName;
             destination.LastName = source.LastName;
-            destination.EmailAddress = source.PrimaryEmailAddress?.PrimaryEmailAddress;
-            destination.MobileNumber = source.PrimaryMobileNumber?.MobileNumber.Canonical;
-            destination.PinCodeSet = !string.IsNullOrEmpty(source.PinCode);
+            destination.Email = source.Email;
+            destination.PhoneNumber = source.PhoneNumber;
 
             return destination;
         }

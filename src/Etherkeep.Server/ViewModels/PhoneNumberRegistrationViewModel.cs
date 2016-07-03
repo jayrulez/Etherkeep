@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherkeep.Server.Models
+namespace Etherkeep.Server.ViewModels
 {
-    public class MobileNumberLoginModel : BaseLoginModel
+    public class PhoneNumberRegistrationViewModel
     {
         [Required]
         public string CountryCallingCode { get; set; }
@@ -16,5 +16,11 @@ namespace Etherkeep.Server.Models
 
         [Required]
         public string SubscriberNumber { get; set; }
+
+        [Required]
+        public string FirstName { get; set; }
+
+        [Required]
+        public string LastName { get; set; }
     }
 }

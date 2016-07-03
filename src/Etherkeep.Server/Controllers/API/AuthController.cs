@@ -14,6 +14,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OpenIddict;
+using Etherkeep.Server.ViewModels;
 
 namespace Etherkeep.Server.Controllers.API
 {
@@ -56,6 +57,17 @@ namespace Etherkeep.Server.Controllers.API
             return password;
         }
 
+        private async Task RemoveOtp(User user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            await _userManager.RemovePasswordAsync(user);
+            await _userManager.UpdateAsync(user);
+        }
+
         private async Task<HttpResponseMessage> GetTokenResponse(string username, string password, string clientId, string clientSecret, string scope = null)
         {
             var httpClient = new HttpClient();
@@ -82,23 +94,18 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost("mobile_otp")]
-        public async Task<IActionResult> MobileOtpAction([FromBody] MobileNumberLoginModel model)
+        public async Task<IActionResult> MobileOtpAction([FromBody] PhoneNumberLoginViewModel model)
         {
             try
             {
-                var mobileNumber = _applicationDbContext.MobileNumbers
-                    .Include(e => e.User)
-                    .FirstOrDefault(e => e.CountryCallingCode.Equals(model.CountryCallingCode)
-                                && e.AreaCode.Equals(model.AreaCode)
-                                && e.SubscriberNumber.Equals(model.SubscriberNumber));
+                var user = _applicationDbContext.Users
+                    .FirstOrDefault(e => e.PhoneNumber.Equals(string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber)));
 
-                if (mobileNumber != null)
+                if (user != null)
                 {
-                    var user = mobileNumber.User;
-                    
                     var password = await GenerateOtp(user);
 
-                    await _smsSender.SendSmsAsync(mobileNumber.Canonical, $"Your auth code is: {password}");
+                    await _smsSender.SendSmsAsync(user.PhoneNumber, $"Your auth code is: {password}");
 
                     return Ok();
                 }
@@ -113,21 +120,17 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost("email_otp")]
-        public async Task<IActionResult> EmailOtpAction([FromBody] EmailAddressLoginModel model)
+        public async Task<IActionResult> EmailOtpAction([FromBody] EmailLoginViewModel model)
         {
             try
             {
-                var emailAddress = _applicationDbContext.EmailAddresses
-                    .Include(e => e.User)
-                    .FirstOrDefault(e => e.Address.Equals(model.EmailAddress));
+                var user = await _userManager.FindByEmailAsync(model.Email);
 
-                if (emailAddress != null)
+                if (user != null)
                 {
-                    var user = emailAddress.User;
-                    
                     var password = await GenerateOtp(user);
 
-                    await _emailSender.SendEmailAsync(emailAddress.Address, "Auth Code", $"Your auth code is: {password}");
+                    await _emailSender.SendEmailAsync(user.Email, "Auth Code", $"Your auth code is: {password}");
 
                     return Ok();
                 }
@@ -143,31 +146,27 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost("mobile_login")]
-        public async Task<IActionResult> MobileLoginAction([FromBody] MobileNumberLoginModel model)
+        public async Task<IActionResult> MobileLoginAction([FromBody] PhoneNumberLoginViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var mobileNumber = _applicationDbContext.MobileNumbers
-                        .Include(e => e.User)
-                        .FirstOrDefault(e => e.CountryCallingCode.Equals(model.CountryCallingCode)
-                            && e.AreaCode.Equals(model.AreaCode)
-                            && e.SubscriberNumber.Equals(model.SubscriberNumber));
+                    var user = _applicationDbContext.Users
+                        .FirstOrDefault(e => e.PhoneNumber.Equals(string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber)));
 
-                    if (mobileNumber == null)
+                    if (user == null)
                     {
                         throw new Exception("Mobile number is invalid.");
                     }
 
-                    var response = await GetTokenResponse(mobileNumber.User.UserName, model.Password, model.ClientId, model.ClientSecret, model.Scope);
+                    var response = await GetTokenResponse(user.UserName, model.Password, model.ClientId, model.ClientSecret, model.Scope);
 
                     var responseText = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
                     {
-                        await _userManager.RemovePasswordAsync(mobileNumber.User);
-                        await _userManager.UpdateAsync(mobileNumber.User);
+                        await RemoveOtp(user);
 
                         return Ok(responseText);
                     }
@@ -188,29 +187,26 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost("email_login")]
-        public async Task<IActionResult> EmailLoginAction([FromBody] EmailAddressLoginModel model)
+        public async Task<IActionResult> EmailLoginAction([FromBody] EmailLoginViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var emailAddress = _applicationDbContext.EmailAddresses
-                        .Include(e => e.User)
-                        .FirstOrDefault(e => e.Address.Equals(model.EmailAddress));
+                    var user = await _userManager.FindByEmailAsync(model.Email); ;
 
-                    if (emailAddress == null)
+                    if (user == null)
                     {
                         throw new Exception("Email address is invalid.");
                     }
 
-                    var response = await GetTokenResponse(emailAddress.User.UserName, model.Password, model.ClientId, model.ClientSecret, model.Scope);
+                    var response = await GetTokenResponse(user.UserName, model.Password, model.ClientId, model.ClientSecret, model.Scope);
 
                     var responseText = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
                     {
-                        await _userManager.RemovePasswordAsync(emailAddress.User);
-                        await _userManager.UpdateAsync(emailAddress.User);
+                        await RemoveOtp(user);
 
                         return Ok(responseText);
                     }
@@ -231,7 +227,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost("mobile_registration")]
-        public async Task<IActionResult> MobileRegistrationAction([FromBody] MobileNumberRegistrationModel model)
+        public async Task<IActionResult> MobileRegistrationAction([FromBody] PhoneNumberRegistrationViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -240,25 +236,10 @@ namespace Etherkeep.Server.Controllers.API
                     var user = new User
                     {
                         UserName = Guid.NewGuid().ToString(),
+                        PhoneNumber = string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber),
                         FirstName = model.FirstName,
                         LastName = model.LastName
                     };
-
-                    var mobileNumber = new MobileNumber
-                    {
-                        CountryCallingCode = model.CountryCallingCode,
-                        AreaCode = model.AreaCode,
-                        SubscriberNumber = model.SubscriberNumber
-                    };
-
-                    user.MobileNumbers.Add(mobileNumber);
-
-                    user.PrimaryMobileNumber = new UserPrimaryMobileNumber
-                    {
-                        MobileNumber = mobileNumber
-                    };
-
-                    user.PhoneNumber = mobileNumber.Canonical;
 
                     var result = await _userManager.CreateAsync(user, Guid.NewGuid().ToString());
 
@@ -287,7 +268,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost("email_registration")]
-        public async Task<IActionResult> EmailRegistrationAction([FromBody] EmailAddressRegistrationModel model)
+        public async Task<IActionResult> EmailRegistrationAction([FromBody] EmailRegistrationViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -296,25 +277,10 @@ namespace Etherkeep.Server.Controllers.API
                     var user = new User
                     {
                         UserName = Guid.NewGuid().ToString(),
+                        Email = model.EmailAddress,
                         FirstName = model.FirstName,
                         LastName = model.LastName
                     };
-
-                    var emailAddress = new EmailAddress
-                    {
-                        Address = model.EmailAddress,
-                        CreatedAt = DateTime.UtcNow,
-                        Verified = false
-                    };
-
-                    user.EmailAddresses.Add(emailAddress);
-
-                    user.PrimaryEmailAddress = new UserPrimaryEmailAddress
-                    {
-                        EmailAddress = emailAddress
-                    };
-
-                    user.Email = emailAddress.Address;
 
                     var result = await _userManager.CreateAsync(user, Guid.NewGuid().ToString());
 

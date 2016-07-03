@@ -25,10 +25,8 @@ namespace Etherkeep.Server.Data
         public virtual DbSet<CountryCurrency> CountryCurrencies { get; set; }
         public virtual DbSet<Currency> Currencies { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
-        public virtual DbSet<EmailAddress> EmailAddresses { get; set; }
         public virtual DbSet<Fee> Fees { get; set; }
         public virtual DbSet<LoginAttempt> LoginAttempts { get; set; }
-        public virtual DbSet<MobileNumber> MobileNumbers { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<NotificationParam> NotificationParams { get; set; }
         public virtual DbSet<NotificationType> NotificationTypes { get; set; }
@@ -41,8 +39,6 @@ namespace Etherkeep.Server.Data
         public virtual DbSet<TransferInvitation> TransferInvitations { get; set; }
         public virtual DbSet<TransferMessage> TransferMessages { get; set; }
         public virtual new DbSet<User> Users { get; set; }
-        public virtual DbSet<UserPrimaryEmailAddress> UserPrimaryEmailAddresses { get; set; }
-        public virtual DbSet<UserPrimaryMobileNumber> UserPrimaryMobileNumbers { get; set; }
         public virtual DbSet<UserSetting> UserSettings { get; set; }
         public virtual DbSet<UserWallet> Wallets { get; set; }
         public virtual DbSet<UserWalletAddress> WalletAddresses { get; set; }
@@ -128,14 +124,6 @@ namespace Etherkeep.Server.Data
                 entity.HasOne(e => e.User).WithMany(e => e.Devices).HasForeignKey(e => e.UserId);
             });
 
-            builder.Entity<EmailAddress>(entity =>
-            {
-                entity.HasKey(e => e.Address);
-                entity.HasAlternateKey(e => e.UserId);
-                entity.HasOne(e => e.User).WithMany(e => e.EmailAddresses).HasForeignKey(e => e.UserId);
-                entity.HasOne(e => e.PrimaryEmailAddress).WithOne(e => e.EmailAddress).HasPrincipalKey<UserPrimaryEmailAddress>(e => e.PrimaryEmailAddress);
-            });
-
             builder.Entity<Fee>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -149,14 +137,6 @@ namespace Etherkeep.Server.Data
                 entity.HasKey(e => e.Id);
                 entity.HasOne(e => e.User).WithMany(e => e.LoginAttempts).HasForeignKey(e => e.UserId);
                 entity.HasOne(e => e.Country).WithMany(e => e.LoginAttempts).HasForeignKey(e => e.CountryCode);
-            });
-
-            builder.Entity<MobileNumber>(entity =>
-            {
-                entity.HasKey(e => new { e.CountryCallingCode, e.AreaCode, e.SubscriberNumber });
-                entity.HasAlternateKey(e => e.UserId);
-                entity.HasOne(e => e.User).WithMany(e => e.MobileNumbers).HasForeignKey(e => e.UserId);
-                entity.HasOne(e => e.PrimaryMobileNumber).WithOne(e => e.MobileNumber).HasPrincipalKey<UserPrimaryMobileNumber>(e => new { e.CountryCallingCode, e.AreaCode, e.SubscriberNumber });
             });
 
             builder.Entity<Notification>(entity =>
@@ -261,9 +241,7 @@ namespace Etherkeep.Server.Data
                 entity.HasMany(e => e.OwnedContacts).WithOne(e => e.Owner).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.SubjectContacts).WithOne(e => e.Subject).HasForeignKey(e => e.ContactId);
                 entity.HasMany(e => e.Devices).WithOne(e => e.User).HasForeignKey(e => e.UserId);
-                entity.HasMany(e => e.EmailAddresses).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.LoginAttempts).WithOne(e => e.User).HasForeignKey(e => e.UserId);
-                entity.HasMany(e => e.MobileNumbers).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.SentNotifications).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.ReceivedNotifications).WithOne(e => e.SubjectUser).HasForeignKey(e => e.SubjectUserId);
                 entity.HasMany(e => e.InvokedTransfers).WithOne(e => e.Invoker).HasForeignKey(e => e.InvokerUserId);
@@ -273,26 +251,6 @@ namespace Etherkeep.Server.Data
                 entity.HasMany(e => e.TransferMessages).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.UserSettings).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasOne(e => e.UserWallet).WithOne(e => e.User).HasPrincipalKey<UserWallet>(e => e.UserId);
-                entity.HasOne(e => e.PrimaryEmailAddress).WithOne(e => e.User).HasForeignKey<UserPrimaryEmailAddress>(e => e.PrimaryEmailAddress);
-                entity.HasOne(e => e.PrimaryMobileNumber).WithOne(e => e.User).HasForeignKey<UserPrimaryMobileNumber>(e => new { e.CountryCallingCode, e.AreaCode, e.SubscriberNumber });
-            });
-
-            builder.Entity<UserPrimaryEmailAddress>(entity =>
-            {
-                entity.HasKey(e => e.UserId);
-                entity.HasAlternateKey(e => e.PrimaryEmailAddress);
-
-                entity.HasOne(e => e.User).WithOne(e => e.PrimaryEmailAddress).HasForeignKey<UserPrimaryEmailAddress>(e => e.UserId);
-                entity.HasOne(e => e.EmailAddress).WithOne(e => e.PrimaryEmailAddress).HasForeignKey<UserPrimaryEmailAddress>(e => e.PrimaryEmailAddress);
-            });
-
-            builder.Entity<UserPrimaryMobileNumber>(entity =>
-            {
-                entity.HasKey(e => e.UserId);
-                entity.HasAlternateKey(e => new { e.CountryCallingCode, e.AreaCode, e.SubscriberNumber });
-
-                entity.HasOne(e => e.User).WithOne(e => e.PrimaryMobileNumber).HasForeignKey<UserPrimaryMobileNumber>(e => e.UserId);
-                entity.HasOne(e => e.MobileNumber).WithOne(e => e.PrimaryMobileNumber).HasForeignKey<UserPrimaryMobileNumber>(e => new { e.CountryCallingCode, e.AreaCode, e.SubscriberNumber });
             });
 
             builder.Entity<UserSetting>(entity =>

@@ -31,8 +31,6 @@ namespace Etherkeep.Server.Controllers
             }
 
             return await _applicationDbContext.Users
-                .Include(e => e.PrimaryEmailAddress)
-                .Include(e => e.PrimaryMobileNumber)
                 .FirstOrDefaultAsync(e => e.Id.Equals(id));
         }
     }

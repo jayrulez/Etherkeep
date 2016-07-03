@@ -30,7 +30,7 @@ namespace Etherkeep.Web.Controllers
                     throw new InvalidOperationException("The access token cannot be found in the authentication ticket. " +
                                                         "Make sure that SaveTokens is set to true in the OIDC options.");
                 }
-
+                
                 var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5001/api/message");
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 

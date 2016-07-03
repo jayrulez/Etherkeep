@@ -9,8 +9,7 @@ namespace Etherkeep.Server.ViewModels
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string EmailAddress { get; set; }
-        public string MobileNumber { get; set; }
-        public bool PinCodeSet { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

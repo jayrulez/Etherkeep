@@ -25,7 +25,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [Route("request")]
-        public async Task<IActionResult> RequestAction([FromBody] RequestTransferModel model)
+        public async Task<IActionResult> RequestAction([FromBody] RequestTransferViewModel model)
         {
             if(ModelState.IsValid)
             {
@@ -51,7 +51,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [Route("request_invitation")]
-        public async Task<IActionResult> RequestInvitationAction([FromBody] RequestTransferInvitationModel model)
+        public async Task<IActionResult> RequestInvitationAction([FromBody] RequestTransferInvitationViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [Route("send")]
-        public IActionResult SendAction([FromBody] SendTransferModel model)
+        public IActionResult SendAction([FromBody] SendTransferViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -97,7 +97,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [Route("send_invitation")]
-        public IActionResult SendInvitationAction([FromBody] SendTransferInvitationModel model)
+        public IActionResult SendInvitationAction([FromBody] SendTransferInvitationViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -137,7 +137,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [Route("{id:int}/pay")]
-        public IActionResult PayAction(int id, [FromBody] PayTransferModel model)
+        public IActionResult PayAction(int id, [FromBody] PayTransferViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -257,7 +257,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost("{id:int}/send_message")]
-        public IActionResult SendMessageAction(int id, [FromBody] SendTransferMessageModel model)
+        public IActionResult SendMessageAction(int id, [FromBody] SendTransferMessageViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -277,7 +277,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost("{id:int}/send_invitation_message")]
-        public IActionResult SendInvitationMessageAction(int id, [FromBody] SendTransferInvitationMessageModel model)
+        public IActionResult SendInvitationMessageAction(int id, [FromBody] SendTransferInvitationMessageViewModel model)
         {
             if (ModelState.IsValid)
             {
