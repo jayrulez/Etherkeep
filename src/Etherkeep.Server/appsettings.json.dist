@@ -1,0 +1,17 @@
+﻿{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.\\SQLExpress;Database=Etherkeep;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+  "GoogleAuthentication": {
+    "ClientId": "560027070069-37ldt4kfuohhu3m495hk2j4pjp92d382.apps.googleusercontent.com",
+    "ClientSecret": "n2Q-GEw9RQjzcRbU3qhfTj8f"
+  },
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  }
+}
