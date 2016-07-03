@@ -13,6 +13,7 @@ using Etherkeep.Server.Data;
 using Etherkeep.Server.Data.Entities;
 using Etherkeep.Server.Data.Repository;
 using OpenIddict;
+using Etherkeep.Server.ViewModels.Authorization;
 
 namespace Etherkeep.Server.Controllers.API
 {
@@ -36,14 +37,11 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [Route("activities")]
-        public async Task<IActionResult> ActivitiesAction(int page)
+        public async Task<IActionResult> ActivitiesAction(int? page)
         {
             try
             {
-                if(page <= 0)
-                {
-                    page = 1;
-                }
+                int pageNumber = page ?? 1;
 
                 int pageSize = 10;
 
@@ -54,7 +52,7 @@ namespace Etherkeep.Server.Controllers.API
                 var result = new PagedResult<ActivityViewModel>
                 {
                     TotalCount = activities.Count(),
-                    Items = activities.Skip((page - 1) * pageSize).Take(pageSize).ToViewModel()
+                    Items = activities.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToViewModel()
                 };
 
                 return Ok();
@@ -90,8 +88,8 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("add_email_address")]
-        public IActionResult AddEmailAddressAction()
+        [Route("change_email")]
+        public IActionResult ChangeEmailAction()
         {
             try
             {
@@ -107,8 +105,45 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("confirm_email_address")]
-        public IActionResult ConfirmEmailAddressAction()
+        [Route("confirm_email")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmailAction(Guid userId, string code)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId.ToString());
+
+                if (user == null)
+                {
+                    return BadRequest(new ErrorViewModel {
+                        Error = "",
+                        ErrorDescription = ""
+                    });
+                }
+
+                var result = await _userManager.ConfirmEmailAsync(user, code);
+
+                if(result.Succeeded)
+                {
+                    return Ok();
+                }else
+                {
+                    ModelState.AddModelError("", "");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [Route("change_phone_number")]
+        public IActionResult ChangePhoneNumberAction()
         {
             try
             {
@@ -124,59 +159,8 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("remove_email_address")]
-        public IActionResult RemoveEmailAddressAction()
-        {
-            try
-            {
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex.Message);
-
-                ModelState.AddModelError(string.Empty, ex.Message);
-            }
-
-            return BadRequest(ModelState);
-        }
-
-        [Route("add_mobile_number")]
-        public IActionResult AddMobileNumberAction()
-        {
-            try
-            {
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex.Message);
-
-                ModelState.AddModelError(string.Empty, ex.Message);
-            }
-
-            return BadRequest(ModelState);
-        }
-
-        [Route("confirm_mobile_number")]
-        public IActionResult ConfirmMobileNumberAction()
-        {
-            try
-            {
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex.Message);
-
-                ModelState.AddModelError(string.Empty, ex.Message);
-            }
-
-            return BadRequest(ModelState);
-        }
-
-        [Route("remove_mobile_number")]
-        public IActionResult RemoveMobileNumberAction()
+        [Route("confirm_phone_number")]
+        public IActionResult ConfirmPhoneNumberAction()
         {
             try
             {

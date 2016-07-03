@@ -3,8 +3,6 @@ src/Etherkeep.Server/obj
 src/Etherkeep.Server/appsettings.json
 src/Etherkeep.Server/Etherkeep.Server.xproj.user
 src/Etherkeep.Server/project.lock.json
-src/Etherkeep.Web/bin
-src/Etherkeep.Web/obj
-src/Etherkeep.Web/appsettings.json
-src/Etherkeep.Web/Etherkeep.Web.xproj.user
-src/Etherkeep.Web/project.lock.json
+src/Etherkeep.Web/node_modules
+src/Etherkeep.Web/app/*.js
+src/Etherkeep.Web/app/*.map
