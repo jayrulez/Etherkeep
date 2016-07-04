@@ -21,9 +21,8 @@ var AppComponent = (function () {
             templateUrl: 'app/components/app.component.html',
             directives: [
                 page_header_component_1.PageHeaderComponent,
-                page_footer_component_1.PageFooterComponent,
-                router_1.ROUTER_DIRECTIVES
-            ]
+                page_footer_component_1.PageFooterComponent
+            ].concat(router_1.ROUTER_DIRECTIVES)
         }), 
         __metadata('design:paramtypes', [])
     ], AppComponent);

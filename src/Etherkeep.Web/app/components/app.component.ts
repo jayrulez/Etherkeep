@@ -10,7 +10,7 @@ import { PageFooterComponent } from './shared/layout/page-footer.component';
   directives: [
 	PageHeaderComponent,
 	PageFooterComponent,
-	ROUTER_DIRECTIVES
+	...ROUTER_DIRECTIVES
   ]
 })
 export class AppComponent { }

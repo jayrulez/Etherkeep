@@ -158,6 +158,13 @@ namespace Etherkeep.Server
 
             app.UseOpenIddict();
 
+            app.UseCors(options => {
+                options.AllowAnyHeader();
+                options.AllowAnyMethod();
+                options.AllowAnyOrigin();
+                options.AllowCredentials();
+            });
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
