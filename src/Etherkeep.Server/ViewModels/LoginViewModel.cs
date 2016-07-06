@@ -6,19 +6,22 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.ViewModels
 {
-    public class PhoneNumberLoginViewModel
+    public class LoginViewModel
     {
+        [Required]
+        public LoginMode LoginMode { get; set; }
+
         public string ClientId { get; set; }
 
         public string ClientSecret { get; set; }
-
-        [Required]
+        
+        [EmailAddress]
+        public string Email { get; set; }
+        
         public string CountryCallingCode { get; set; }
-
-        [Required]
+        
         public string AreaCode { get; set; }
-
-        [Required]
+        
         public string SubscriberNumber { get; set; }
 
         [Required]

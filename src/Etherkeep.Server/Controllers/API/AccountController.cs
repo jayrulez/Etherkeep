@@ -14,6 +14,10 @@ using Etherkeep.Server.Data.Entities;
 using Etherkeep.Server.Data.Repository;
 using OpenIddict;
 using Etherkeep.Server.ViewModels.Authorization;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Net.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Etherkeep.Server.Controllers.API
 {
@@ -36,7 +40,7 @@ namespace Etherkeep.Server.Controllers.API
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
-        [Route("activities")]
+        [HttpGet, Route("activities")]
         public async Task<IActionResult> ActivitiesAction(int? page)
         {
             try
@@ -67,7 +71,7 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("balance")]
+        [HttpGet, Route("balance")]
         public async Task<IActionResult> BalanceAction()
         {
             try
@@ -75,6 +79,11 @@ namespace Etherkeep.Server.Controllers.API
                 var user = await GetCurrentUserAsync();
 
                 var wallet = _applicationDbContext.Wallets.Where(e => e.UserId.Equals(user.Id)).FirstOrDefault();
+
+                if(wallet == null)
+                {
+                    return BadRequest();
+                }
 
                 return Ok(wallet.Balance);
             }
@@ -88,7 +97,125 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("change_email")]
+        [AllowAnonymous, HttpPost, Route("login")]
+        public async Task<IActionResult> LoginAction([FromBody] LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    User user = model.LoginMode == LoginMode.EmailAddress 
+                        ? await _userManager.FindByEmailAsync(model.Email) : model.LoginMode == LoginMode.MobileNumber 
+                        ? await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Equals(string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber))) : null;
+
+                    if (user == null)
+                    {
+                        throw new Exception(string.Format("{0} was not found.", model.LoginMode == LoginMode.EmailAddress ? "Email Address" : "Mobile Number"));
+                    }
+
+                    var parameters = new Collection<KeyValuePair<string, string>>();
+
+                    parameters.Add(new KeyValuePair<string, string>("grant_type", "password"));
+                    parameters.Add(new KeyValuePair<string, string>("username", user.UserName));
+                    parameters.Add(new KeyValuePair<string, string>("password", model.Password));
+
+                    if (!string.IsNullOrEmpty(model.ClientId))
+                    {
+                        parameters.Add(new KeyValuePair<string, string>("client_id", model.ClientId));
+                    }
+
+                    if (!string.IsNullOrEmpty(model.ClientSecret))
+                    {
+                        parameters.Add(new KeyValuePair<string, string>("client_secret", model.ClientSecret));
+                    }
+
+                    if (!string.IsNullOrEmpty(model.Scope))
+                    {
+                        parameters.Add(new KeyValuePair<string, string>("scope", model.Scope));
+                    }
+
+                    var httpClient = new HttpClient();
+
+                    var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5001/connect/token");
+
+                    request.Content = new FormUrlEncodedContent(parameters);
+
+                    var response = await httpClient.SendAsync(request);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return Ok(response.Content.ReadAsStringAsync());
+                    }
+                    else
+                    {
+                        return BadRequest(response.Content.ReadAsStringAsync());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex.Message);
+
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [AllowAnonymous, HttpPost, Route("registration")]
+        public async Task<IActionResult> RegistrationAction([FromBody] RegistrationViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var user = new User
+                    {
+                        UserName = Guid.NewGuid().ToString(),
+                        FirstName = model.FirstName,
+                        LastName = model.LastName
+                    };
+
+                    if (model.RegistrationMode == RegistrationMode.EmailAddress)
+                    {
+                        user.Email = model.EmailAddress;
+                    }
+                    else if (model.RegistrationMode == RegistrationMode.MobileNumber)
+                    {
+                        user.PhoneNumber = string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber);
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid RegistrationMode.");
+                    }
+
+                    var result = await _userManager.CreateAsync(user, Guid.NewGuid().ToString());
+
+                    if (result.Succeeded)
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex.Message);
+
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost, Route("change_email")]
         public IActionResult ChangeEmailAction()
         {
             try
@@ -105,9 +232,7 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("confirm_email")]
-        [HttpGet]
-        [AllowAnonymous]
+        [AllowAnonymous, HttpGet, Route("confirm_email")]
         public async Task<IActionResult> ConfirmEmailAction(Guid userId, string code)
         {
             try
@@ -142,7 +267,7 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("change_phone_number")]
+        [HttpPost, Route("change_phone_number")]
         public IActionResult ChangePhoneNumberAction()
         {
             try
@@ -159,7 +284,7 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("confirm_phone_number")]
+        [HttpPost, Route("confirm_phone_number")]
         public IActionResult ConfirmPhoneNumberAction()
         {
             try

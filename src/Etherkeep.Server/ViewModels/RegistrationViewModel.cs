@@ -6,11 +6,19 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.ViewModels
 {
-    public class EmailRegistrationViewModel
+    public class RegistrationViewModel
     {
         [Required]
+        public RegistrationMode RegistrationMode { get; set; }
+
         [EmailAddress]
         public string EmailAddress { get; set; }
+        
+        public string CountryCallingCode { get; set; }
+        
+        public string AreaCode { get; set; }
+        
+        public string SubscriberNumber { get; set; }
 
         [Required]
         public string FirstName { get; set; }
