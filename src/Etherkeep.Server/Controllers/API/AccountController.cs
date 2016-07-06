@@ -80,7 +80,7 @@ namespace Etherkeep.Server.Controllers.API
 
                 var wallet = _applicationDbContext.Wallets.Where(e => e.UserId.Equals(user.Id)).FirstOrDefault();
 
-                if(wallet == null)
+                if (wallet == null)
                 {
                     return BadRequest();
                 }
@@ -104,8 +104,8 @@ namespace Etherkeep.Server.Controllers.API
             {
                 try
                 {
-                    User user = model.LoginMode == LoginMode.EmailAddress 
-                        ? await _userManager.FindByEmailAsync(model.Email) : model.LoginMode == LoginMode.MobileNumber 
+                    User user = model.LoginMode == LoginMode.EmailAddress
+                        ? await _userManager.FindByEmailAsync(model.Email) : model.LoginMode == LoginMode.MobileNumber
                         ? await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Equals(string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber))) : null;
 
                     if (user == null)
@@ -134,21 +134,24 @@ namespace Etherkeep.Server.Controllers.API
                         parameters.Add(new KeyValuePair<string, string>("scope", model.Scope));
                     }
 
-                    var httpClient = new HttpClient();
-
-                    var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:5001/connect/token");
-
-                    request.Content = new FormUrlEncodedContent(parameters);
-
-                    var response = await httpClient.SendAsync(request);
-
-                    if (response.IsSuccessStatusCode)
+                    using (var httpClient = new HttpClient())
                     {
-                        return Ok(response.Content.ReadAsStringAsync());
-                    }
-                    else
-                    {
-                        return BadRequest(response.Content.ReadAsStringAsync());
+                        httpClient.BaseAddress = new Uri(Request.IsHttps ? "https" : "http" + "://" + Request.Host.ToString());
+
+                        var request = new HttpRequestMessage(HttpMethod.Post, "connect/token");
+
+                        request.Content = new FormUrlEncodedContent(parameters);
+
+                        var response = await httpClient.SendAsync(request);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            return Ok(await response.Content.ReadAsStringAsync());
+                        }
+                        else
+                        {
+                            return BadRequest(await response.Content.ReadAsStringAsync());
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -241,7 +244,8 @@ namespace Etherkeep.Server.Controllers.API
 
                 if (user == null)
                 {
-                    return BadRequest(new ErrorViewModel {
+                    return BadRequest(new ErrorViewModel
+                    {
                         Error = "",
                         ErrorDescription = ""
                     });
@@ -249,12 +253,16 @@ namespace Etherkeep.Server.Controllers.API
 
                 var result = await _userManager.ConfirmEmailAsync(user, code);
 
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
                     return Ok();
-                }else
+                }
+                else
                 {
-                    ModelState.AddModelError("", "");
+                    foreach(var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
                 }
             }
             catch (Exception ex)
