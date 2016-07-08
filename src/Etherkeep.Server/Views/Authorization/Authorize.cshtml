@@ -1,4 +1,4 @@
-@model AuthorizeViewModel
+﻿@model AuthorizeViewModel
 
 <div class="jumbotron">
     <h1>Authorization</h1>
@@ -8,7 +8,7 @@
     <form method="post">
         @Html.AntiForgeryToken()
 
-        @foreach (var parameter in Context.GetOpenIdConnectRequest().Parameters) {
+        @foreach (var parameter in Model.Parameters) {
             <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
         }
 

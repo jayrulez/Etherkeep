@@ -9,10 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Etherkeep.Server.Data;
 using Etherkeep.Server.Services;
-using NWebsec.AspNetCore.Middleware;
 using OpenIddict;
 using CryptoHelper;
 using Etherkeep.Server.Data.Entities;
+using NWebsec.AspNetCore.Middleware;
 
 namespace Etherkeep.Server
 {
@@ -42,8 +42,6 @@ namespace Etherkeep.Server
         {
             services.AddMvc();
 
-            services.AddSession();
-
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -62,19 +60,7 @@ namespace Etherkeep.Server
             services.AddOpenIddict<User, IdentityRole<Guid>, ApplicationDbContext, Guid>()
                 .SetAuthorizationEndpointPath("/connect/authorize")
                 .SetLogoutEndpointPath("/connect/logout")
-                .Configure(options => options.ApplicationCanDisplayErrors = true)
-
-                // Register the NWebsec module. Note: you can replace the default Content Security Policy (CSP)
-                // by calling UseNWebsec with a custom delegate instead of using the parameterless extension.
-                // This can be useful to allow your HTML views to reference remote scripts/images/styles.
-                .AddNWebsec(options => options.DefaultSources(directive => directive.Self())
-                    .ImageSources(directive => directive.Self()
-                        .CustomSources("*"))
-                    .ScriptSources(directive => directive.Self()
-                        .UnsafeInline()
-                        .CustomSources("https://my.custom.url/"))
-                    .StyleSources(directive => directive.Self()
-                        .UnsafeInline()))
+                .SetErrorHandlingPath("/connect/error")
 
                 // During development, you can disable the HTTPS requirement.
                 .DisableHttpsRequirement();
@@ -146,6 +132,20 @@ namespace Etherkeep.Server
             //     options.ClientSecret = "875sqd4s5d748z78z7ds1ff8zz8814ff88ed8ea4z4zzd";
             // });
 
+            app.UseCsp(options => options.DefaultSources(directive => directive.Self())
+                .ImageSources(directive => directive.Self()
+                    .CustomSources("*"))
+                .ScriptSources(directive => directive.Self()
+                    .UnsafeInline())
+                .StyleSources(directive => directive.Self()
+                    .UnsafeInline()));
+
+            app.UseXContentTypeOptions();
+
+            app.UseXfo(options => options.Deny());
+
+            app.UseXXssProtection(options => options.EnabledWithBlockMode());			
+			
             app.UseIdentity();
 
             app.UseGoogleAuthentication(new GoogleOptions
@@ -153,8 +153,6 @@ namespace Etherkeep.Server
                 ClientId = Configuration["GoogleAuthentication:ClientId"],
                 ClientSecret = Configuration["GoogleAuthentication:ClientSecret"]
             });
-
-            app.UseSession();
 
             app.UseOpenIddict();
 

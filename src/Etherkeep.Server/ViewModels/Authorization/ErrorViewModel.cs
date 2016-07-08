@@ -1,7 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Etherkeep.Server.ViewModels.Authorization
-{
+namespace Etherkeep.Server.ViewModels.Authorization {
     public class ErrorViewModel {
         [Display(Name = "Error")]
         public string Error { get; set; }

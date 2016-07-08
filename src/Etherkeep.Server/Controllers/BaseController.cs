@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OpenIddict;
+using System;
 using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Controllers
@@ -31,7 +32,7 @@ namespace Etherkeep.Server.Controllers
             }
 
             return await _applicationDbContext.Users
-                .FirstOrDefaultAsync(e => e.Id.Equals(id));
+                .FirstOrDefaultAsync(e => e.Id.Equals(Guid.Parse(id)));
         }
     }
 }
