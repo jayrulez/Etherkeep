@@ -1,0 +1,38 @@
+<form (ngSubmit)="login()" #loginForm="ngForm">
+	<div *ngIf="error != null" class="alert alert-danger">
+		{{ error }}
+	</div>
+	<div [ngSwitch]="loginModel.loginMode" class="form-group">
+		<div *ngSwitchCase="loginMode.MobileNumber">
+			<label>Mobile Number</label>
+			<br/>
+			<div class="col-lg-1">
+				<input [(ngModel)]="loginModel.countryCallingCode" name="countryCallingCode" type="text" class="form-control" id="countryCallingCode">
+			</div>
+			<div class="col-lg-3">
+				<input [(ngModel)]="loginModel.areaCode" name="areaCode" type="text" class="form-control" id="areaCode">
+			</div>
+			<div class="col-lg-8">
+				<input [(ngModel)]="loginModel.subscriberNumber" name="subscriberNumber" type="text" class="form-control" id="subscriberNumber">
+			</div>
+		</div>
+		<div *ngSwitchCase="loginMode.EmailAddress">
+			<label for="email-address">Email Address</label>
+			<input [(ngModel)]="loginModel.emailAddress" name="emailAddress" type="email" class="form-control" id="email-address">
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="password">Password</label>
+		<input [(ngModel)]="loginModel.password" name="password" type="password" class="form-control" id="password">
+	</div>
+	
+	<div class="checkbox">
+		<label>
+		  <input [(ngModel)]="loginModel.persistent" name="persistent" type="checkbox"> Keep me signed in
+		</label>
+	</div>
+	<button type="submit" class="btn btn-default">Sign in</button>
+	<a *ngIf="loginModel.loginMode==loginMode.MobileNumber" (click)="setLoginMode(loginMode.EmailAddress)" href="javascript:void(null);">Login with email address</a>
+	<a *ngIf="loginModel.loginMode==loginMode.EmailAddress" (click)="setLoginMode(loginMode.MobileNumber)" href="javascript:void(null);">Login with mobile number</a>
+</form>

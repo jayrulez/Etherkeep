@@ -9,17 +9,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var RegistrationComponent = (function () {
-    function RegistrationComponent() {
+var router_1 = require('@angular/router');
+var HttpErrorHandler = (function () {
+    function HttpErrorHandler(_router) {
+        this._router = _router;
     }
-    RegistrationComponent = __decorate([
-        core_1.Component({
-            selector: 'registration',
-            templateUrl: 'app/components/auth/registration.component.html'
-        }), 
-        __metadata('design:paramtypes', [])
-    ], RegistrationComponent);
-    return RegistrationComponent;
+    HttpErrorHandler.prototype.handle = function (error) {
+        if (error.status === 401) {
+            this._router.navigate(['login']);
+        }
+    };
+    HttpErrorHandler = __decorate([
+        core_1.Injectable(), 
+        __metadata('design:paramtypes', [router_1.Router])
+    ], HttpErrorHandler);
+    return HttpErrorHandler;
 }());
-exports.RegistrationComponent = RegistrationComponent;
-//# sourceMappingURL=registration.component.js.map
+exports.HttpErrorHandler = HttpErrorHandler;
+//# sourceMappingURL=http-error-handler.js.map

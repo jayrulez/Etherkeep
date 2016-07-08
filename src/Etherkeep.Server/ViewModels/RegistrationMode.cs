@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.ViewModels
 {
-    public enum RegistrationMode
+    public enum RegisterMode
     {
         EmailAddress,
         MobileNumber

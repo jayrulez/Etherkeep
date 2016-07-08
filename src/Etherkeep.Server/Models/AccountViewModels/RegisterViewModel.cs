@@ -10,7 +10,7 @@ namespace Etherkeep.Server.Models.AccountViewModels
     {
         [Required]
         [EmailAddress]
-        [Display(Name = "Email")]
+        [Display(Name = "EmailAddress")]
         public string Email { get; set; }
 
         [Required]

@@ -52,6 +52,7 @@ namespace Etherkeep.Server
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
+                options.User.RequireUniqueEmail = true;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext, Guid>()
                 .AddDefaultTokenProviders();
@@ -132,6 +133,13 @@ namespace Etherkeep.Server
             //     options.ClientSecret = "875sqd4s5d748z78z7ds1ff8zz8814ff88ed8ea4z4zzd";
             // });
 
+            app.UseCors(options => {
+                options.AllowAnyHeader();
+                options.AllowAnyMethod();
+                options.AllowAnyOrigin();
+                options.AllowCredentials();
+            });
+
             app.UseCsp(options => options.DefaultSources(directive => directive.Self())
                 .ImageSources(directive => directive.Self()
                     .CustomSources("*"))
@@ -155,13 +163,6 @@ namespace Etherkeep.Server
             });
 
             app.UseOpenIddict();
-
-            app.UseCors(options => {
-                options.AllowAnyHeader();
-                options.AllowAnyMethod();
-                options.AllowAnyOrigin();
-                options.AllowCredentials();
-            });
 
             app.UseMvc(routes =>
             {

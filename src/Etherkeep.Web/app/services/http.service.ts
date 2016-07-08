@@ -1,14 +1,11 @@
-import {Router} 	from 'angular2/router';
-import {Injectable} from 'angular2/core';
-import {Http, Response, Headers, RequestOptions} from 'angular2/http';
+import {Router} 	from '@angular/router';
+import {Injectable} from '@angular/core';
+import {Http, Response, Headers, RequestOptions} from '@angular/http';
 
 @Injectable()
 export class HttpService
 {	
-	public constructor(private http: Http, private router: Router) 
-	{
-		
-	}
+	public constructor(private http: Http, private router: Router) {}
 
 	public get(url: string, params: Map<string, any>)
 	{

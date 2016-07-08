@@ -18,6 +18,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
+using Etherkeep.Server.Models;
+using Etherkeep.Server.Models.Extensions;
 
 namespace Etherkeep.Server.Controllers.API
 {
@@ -105,7 +107,7 @@ namespace Etherkeep.Server.Controllers.API
                 try
                 {
                     User user = model.LoginMode == LoginMode.EmailAddress
-                        ? await _userManager.FindByEmailAsync(model.Email) : model.LoginMode == LoginMode.MobileNumber
+                        ? await _userManager.FindByEmailAsync(model.EmailAddress) : model.LoginMode == LoginMode.MobileNumber
                         ? await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Equals(string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber))) : null;
 
                     if (user == null)
@@ -146,11 +148,11 @@ namespace Etherkeep.Server.Controllers.API
 
                         if (response.IsSuccessStatusCode)
                         {
-                            return Ok(await response.Content.ReadAsStringAsync());
+                            return Ok(new ResponseModel<string>(await response.Content.ReadAsStringAsync()));
                         }
                         else
                         {
-                            return BadRequest(await response.Content.ReadAsStringAsync());
+                            return BadRequest(new ResponseModel<string>(await response.Content.ReadAsStringAsync()));
                         }
                     }
                 }
@@ -162,11 +164,11 @@ namespace Etherkeep.Server.Controllers.API
                 }
             }
 
-            return BadRequest(ModelState);
+            return BadRequest(ModelState.GetErrorResponse());
         }
 
-        [AllowAnonymous, HttpPost, Route("registration")]
-        public async Task<IActionResult> RegistrationAction([FromBody] RegistrationViewModel model)
+        [AllowAnonymous, HttpPost, Route("register")]
+        public async Task<IActionResult> RegisterAction([FromBody] RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -179,11 +181,11 @@ namespace Etherkeep.Server.Controllers.API
                         LastName = model.LastName
                     };
 
-                    if (model.RegistrationMode == RegistrationMode.EmailAddress)
+                    if (model.RegisterMode == RegisterMode.EmailAddress)
                     {
                         user.Email = model.EmailAddress;
                     }
-                    else if (model.RegistrationMode == RegistrationMode.MobileNumber)
+                    else if (model.RegisterMode == RegisterMode.MobileNumber)
                     {
                         user.PhoneNumber = string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber);
                     }
@@ -196,7 +198,7 @@ namespace Etherkeep.Server.Controllers.API
 
                     if (result.Succeeded)
                     {
-                        return Ok();
+                        return Ok(new ResponseModel<User>(user));
                     }
                     else
                     {
@@ -215,7 +217,7 @@ namespace Etherkeep.Server.Controllers.API
                 }
             }
 
-            return BadRequest(ModelState);
+            return BadRequest(ModelState.GetErrorResponse());
         }
 
         [HttpPost, Route("change_email")]
@@ -232,7 +234,7 @@ namespace Etherkeep.Server.Controllers.API
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return BadRequest(ModelState);
+            return BadRequest(ModelState.GetErrorResponse());
         }
 
         [AllowAnonymous, HttpGet, Route("confirm_email")]
@@ -272,7 +274,7 @@ namespace Etherkeep.Server.Controllers.API
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return BadRequest(ModelState);
+            return BadRequest(ModelState.GetErrorResponse());
         }
 
         [HttpPost, Route("change_phone_number")]
@@ -289,7 +291,7 @@ namespace Etherkeep.Server.Controllers.API
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return BadRequest(ModelState);
+            return BadRequest(ModelState.GetErrorResponse());
         }
 
         [HttpPost, Route("confirm_phone_number")]
@@ -306,7 +308,7 @@ namespace Etherkeep.Server.Controllers.API
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return BadRequest(ModelState);
+            return BadRequest(ModelState.GetErrorResponse());
         }
     }
 }

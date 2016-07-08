@@ -12,6 +12,11 @@ var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
 var page_header_component_1 = require('./shared/layout/page-header.component');
 var page_footer_component_1 = require('./shared/layout/page-footer.component');
+var home_component_1 = require('./home.component');
+var login_component_1 = require('./account/login.component');
+var register_component_1 = require('./account/register.component');
+var http_client_1 = require('../common/http-client');
+var http_error_handler_1 = require('../common/http-error-handler');
 var AppComponent = (function () {
     function AppComponent() {
     }
@@ -22,7 +27,13 @@ var AppComponent = (function () {
             directives: [
                 page_header_component_1.PageHeaderComponent,
                 page_footer_component_1.PageFooterComponent
-            ].concat(router_1.ROUTER_DIRECTIVES)
+            ].concat(router_1.ROUTER_DIRECTIVES),
+            providers: [http_client_1.HttpClient, http_error_handler_1.HttpErrorHandler],
+            precompile: [
+                home_component_1.HomeComponent,
+                login_component_1.LoginComponent,
+                register_component_1.RegisterComponent
+            ]
         }), 
         __metadata('design:paramtypes', [])
     ], AppComponent);
