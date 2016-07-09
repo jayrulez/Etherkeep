@@ -17,20 +17,8 @@ var AuthGuard = (function () {
         this.authService = authService;
     }
     AuthGuard.prototype.canActivate = function () {
-        var _this = this;
         if (this.authService.isLoggedIn()) {
-            var canActivate_1 = true;
-            this.authService.logout()
-                .subscribe(function (success) {
-                console.log('here');
-                canActivate_1 = false;
-                _this.router.navigate(['login']);
-            }, function (failure) {
-                console.log('here');
-                canActivate_1 = true;
-                _this.router.navigate(['login']);
-            });
-            return canActivate_1;
+            return true;
         }
         this.router.navigate(['login']);
         return false;

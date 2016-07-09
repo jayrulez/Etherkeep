@@ -41,4 +41,9 @@ export class AccountService
 			LastName: model.lastName
 		});
 	}
+	
+	public getProfile()
+	{
+		return this.httpService.get(this.baseUrl + '/account/profile');
+	}
 }

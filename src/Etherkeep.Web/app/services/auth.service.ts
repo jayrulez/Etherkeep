@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/Rx';
 
 import { HttpClient } from '../common/http-client';
 import { AccessTokenModel, RefreshTokenModel } from '../models/auth-model';
@@ -81,6 +82,6 @@ export class AuthService
 	{
 		localStorage.removeItem('authData');
 		
-		return new Observable(observer => {});
+		return Observable.of(true);
 	}
 }

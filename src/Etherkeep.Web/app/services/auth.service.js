@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var Observable_1 = require('rxjs/Observable');
+require('rxjs/Rx');
 var http_client_1 = require('../common/http-client');
 var AuthService = (function () {
     function AuthService(httpClient) {
@@ -62,7 +63,7 @@ var AuthService = (function () {
     };
     AuthService.prototype.logout = function () {
         localStorage.removeItem('authData');
-        return new Observable_1.Observable(function (observer) { });
+        return Observable_1.Observable.of(true);
     };
     AuthService = __decorate([
         core_1.Injectable(), 

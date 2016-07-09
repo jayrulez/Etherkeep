@@ -100,6 +100,8 @@ export class HttpClient
 			requestOptions.body = JSON.stringify(options.data);
 		}
 
-        return this.http.request(options.url, requestOptions);
+        return this.http.request(options.url, requestOptions)
+			.map(response => response.json())
+			.catch(error => Observable.throw(error.json()));
 	}
 }

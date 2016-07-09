@@ -42,6 +42,9 @@ var AccountService = (function () {
             LastName: model.lastName
         });
     };
+    AccountService.prototype.getProfile = function () {
+        return this.httpService.get(this.baseUrl + '/account/profile');
+    };
     AccountService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [router_1.Router, http_service_1.HttpService, auth_service_1.AuthService])

@@ -14,7 +14,6 @@ var account_service_1 = require('../../services/account.service');
 var auth_service_1 = require('../../services/auth.service');
 var login_mode_1 = require('../../common/login-mode');
 var router_1 = require('@angular/router');
-var Observable_1 = require('rxjs/Observable');
 var LoginComponent = (function () {
     function LoginComponent(accountService, authService, router) {
         this.accountService = accountService;
@@ -37,19 +36,11 @@ var LoginComponent = (function () {
     LoginComponent.prototype.login = function () {
         var _this = this;
         this.accountService.username(this.loginModel)
-            .map(function (response) { return response.json(); })
-            .catch(function (response) {
-            return Observable_1.Observable.throw(response.json());
-        })
             .subscribe(function (response) {
             _this.authService.token({
                 username: response.result,
                 password: _this.loginModel.password,
                 persistent: _this.loginModel.persistent
-            })
-                .map(function (response) { return response.json(); })
-                .catch(function (response) {
-                return Observable_1.Observable.throw(response.json());
             })
                 .subscribe(function (tokenResponse) {
                 console.log(tokenResponse);
@@ -61,7 +52,7 @@ var LoginComponent = (function () {
             });
         }, function (response) {
             console.log(response);
-            _this.error = response.result.errorDescription;
+            //this.error = response.result.errorDescription || 'An unexpected error has occured.';
         });
     };
     LoginComponent = __decorate([

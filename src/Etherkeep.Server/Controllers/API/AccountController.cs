@@ -73,6 +73,25 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
+        [HttpGet, Route("profile")]
+        public async Task<IActionResult> ProfileAction()
+        {
+            try
+            {
+                var user = await GetCurrentUserAsync();
+
+                return Ok(new ResponseModel<ProfileViewModel>(user.GetProfileViewModel()));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+
+                return BadRequest(new ErrorModel {
+                    ErrorDescription = ex.Message
+                });
+            }
+        }
+
         [HttpGet, Route("balance")]
         public async Task<IActionResult> BalanceAction()
         {
@@ -155,11 +174,11 @@ namespace Etherkeep.Server.Controllers.API
                         throw new Exception("Invalid RegistrationMode.");
                     }
 
-                    var result = await _userManager.CreateAsync(user, Guid.NewGuid().ToString());
+                    var result = await _userManager.CreateAsync(user, model.Password);
 
                     if (result.Succeeded)
                     {
-                        return Ok(new ResponseModel<User>(user));
+                        return Ok(new ResponseModel<ProfileViewModel>(user.GetProfileViewModel()));
                     }
                     else
                     {

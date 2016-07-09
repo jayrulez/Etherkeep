@@ -43,20 +43,12 @@ export class LoginComponent
 	login()
 	{
 		this.accountService.username(this.loginModel)
-			.map((response: any) => response.json())
-			.catch((response: any) => {
-				return Observable.throw(response.json());
-			})
 			.subscribe(
 				(response: any) => {
 					this.authService.token({
 						username: response.result,
 						password: this.loginModel.password,
 						persistent: this.loginModel.persistent
-					})
-					.map((response: any) => response.json())
-					.catch((response: any) => {
-						return Observable.throw(response.json());
 					})
 					.subscribe(
 						(tokenResponse) => {
@@ -70,7 +62,7 @@ export class LoginComponent
 					);
 				}, (response: any) => {
 					console.log(response);
-					this.error = response.result.errorDescription;
+					//this.error = response.result.errorDescription || 'An unexpected error has occured.';
 				}
 			);
 	}

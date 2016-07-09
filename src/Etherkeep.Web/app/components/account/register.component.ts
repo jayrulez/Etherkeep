@@ -3,7 +3,11 @@ import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { NgForm }    from '@angular/common';
 import { AccountService } from '../../services/account.service';
 import { RegisterMode } from '../../common/register-mode';
+import { AuthService } from '../../services/auth.service';
+import { LoginMode } from '../../common/login-mode';
+import { LoginModel } from '../../models/login.model';
 import { RegisterModel } from '../../models/register.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'register',
@@ -19,7 +23,7 @@ export class RegisterComponent
 	registerModel: RegisterModel;
 	registerMode = RegisterMode;
 	
-	constructor(private accountService: AccountService)
+	constructor(private accountService: AccountService, private authService: AuthService, private router: Router)
 	{
 		this.registerModel = {
 			registerMode: this.registerMode.EmailAddress,
@@ -41,11 +45,25 @@ export class RegisterComponent
 	register()
 	{
 		this.accountService.register(this.registerModel)
-			.map((response) => response.json())
 			.subscribe((response) => {
 				this.error = null;
+				
+				this.authService.token({
+					username: response.result.userName,
+					password: this.registerModel.password,
+					persistent: false
+				})
+				.subscribe(
+					(tokenResponse) => {
+						console.log(tokenResponse);
+						this.authService.setAuthData(tokenResponse);
+						this.router.navigate(['']);
+					}, (tokenResponse) => {
+						this.router.navigate(['login']);
+					}
+				);
 			}, (response) => {
-				this.error = response.result;
+				this.error = response.result.errorDescription || 'An unexpected error has occured.';
 			});
 	}
 }

@@ -25,5 +25,8 @@ namespace Etherkeep.Server.ViewModels
 
         [Required]
         public string LastName { get; set; }
+
+        [Required]
+        public string Password { get; set; }
     }
 }

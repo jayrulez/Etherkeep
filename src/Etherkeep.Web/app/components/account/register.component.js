@@ -12,9 +12,13 @@ var core_1 = require('@angular/core');
 var common_1 = require('@angular/common');
 var account_service_1 = require('../../services/account.service');
 var register_mode_1 = require('../../common/register-mode');
+var auth_service_1 = require('../../services/auth.service');
+var router_1 = require('@angular/router');
 var RegisterComponent = (function () {
-    function RegisterComponent(accountService) {
+    function RegisterComponent(accountService, authService, router) {
         this.accountService = accountService;
+        this.authService = authService;
+        this.router = router;
         this.registerMode = register_mode_1.RegisterMode;
         this.registerModel = {
             registerMode: this.registerMode.EmailAddress,
@@ -33,11 +37,22 @@ var RegisterComponent = (function () {
     RegisterComponent.prototype.register = function () {
         var _this = this;
         this.accountService.register(this.registerModel)
-            .map(function (response) { return response.json(); })
             .subscribe(function (response) {
             _this.error = null;
+            _this.authService.token({
+                username: response.result.userName,
+                password: _this.registerModel.password,
+                persistent: false
+            })
+                .subscribe(function (tokenResponse) {
+                console.log(tokenResponse);
+                _this.authService.setAuthData(tokenResponse);
+                _this.router.navigate(['']);
+            }, function (tokenResponse) {
+                _this.router.navigate(['login']);
+            });
         }, function (response) {
-            _this.error = response.result;
+            _this.error = response.result.errorDescription || 'An unexpected error has occured.';
         });
     };
     RegisterComponent = __decorate([
@@ -47,7 +62,7 @@ var RegisterComponent = (function () {
             providers: [account_service_1.AccountService],
             directives: [common_1.NgSwitch, common_1.NgSwitchCase]
         }), 
-        __metadata('design:paramtypes', [account_service_1.AccountService])
+        __metadata('design:paramtypes', [account_service_1.AccountService, auth_service_1.AuthService, router_1.Router])
     ], RegisterComponent);
     return RegisterComponent;
 }());
