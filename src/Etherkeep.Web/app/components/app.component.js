@@ -16,7 +16,10 @@ var home_component_1 = require('./home.component');
 var login_component_1 = require('./account/login.component');
 var register_component_1 = require('./account/register.component');
 var http_client_1 = require('../common/http-client');
-var http_error_handler_1 = require('../common/http-error-handler');
+var auth_service_1 = require('../services/auth.service');
+var http_service_1 = require('../services/http.service');
+var http_error_handler_1 = require('../services/http-error-handler');
+var auth_guard_1 = require('../common/auth-guard');
 var AppComponent = (function () {
     function AppComponent() {
     }
@@ -28,7 +31,13 @@ var AppComponent = (function () {
                 page_header_component_1.PageHeaderComponent,
                 page_footer_component_1.PageFooterComponent
             ].concat(router_1.ROUTER_DIRECTIVES),
-            providers: [http_client_1.HttpClient, http_error_handler_1.HttpErrorHandler],
+            providers: [
+                http_client_1.HttpClient,
+                auth_service_1.AuthService,
+                http_service_1.HttpService,
+                http_error_handler_1.HttpErrorHandler,
+                auth_guard_1.AuthGuard
+            ],
             precompile: [
                 home_component_1.HomeComponent,
                 login_component_1.LoginComponent,

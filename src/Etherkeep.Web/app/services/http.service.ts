@@ -1,70 +1,72 @@
-import {Router} 	from '@angular/router';
-import {Injectable} from '@angular/core';
-import {Http, Response, Headers, RequestOptions} from '@angular/http';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/finally';
+import 'rxjs/add/observable/throw';
+
+import { Injectable } from '@angular/core';
+
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+
+import { HttpClient } from '../common/http-client';
+import { AuthService } from './auth.service';
+import { HttpErrorHandler } from './http-error-handler';
 
 @Injectable()
 export class HttpService
-{	
-	public constructor(private http: Http, private router: Router) {}
-
-	public get(url: string, params: Map<string, any>)
+{
+	public constructor(private httpClient: HttpClient, private authService: AuthService, private httpErrorHandler: HttpErrorHandler) {}
+	
+	public get(url: string, params: any = {}): Observable<any>
 	{
-		let { body, options} = this.getRequestDetails(url, params);
-
-		return this.http.get(url + "?" + body, options)
-				    .toPromise();
-	}
-
-	public post(url: string, params: Map<string, any>)
-	{	
-		let {body, options} = this.getRequestDetails(url, params);
-
-		return this.http.post(url, body, options)
-				    .toPromise();
-	}
-
-	public put(url: string, params: Map<string, any>)
-	{	
-		let {body, options} = this.getRequestDetails(url, params);
-
-		return this.http.put(url, body, options)
-				    .toPromise();
-	}
-
-	public delete(url: string, params: Map<string, any>)
-	{	
-		let {body, options} = this.getRequestDetails(url, params);
-
-		return this.http.delete(url + "?" + body, options)
-				    .toPromise();
-		});
-	}
-
-	private getRequestDetails(url: string, params: Map<string, any>)
-	{	
-		let headers = new Headers({
-			'Content-Type': 'application/x-www-form-urlencoded'
-		});
-
-		let options = new RequestOptions({
-			headers: headers
+		let authData = this.authService.getAuthData();
+		
+		let headers = {};
+		
+		if(authData != null && authData.access_token)
+		{
+			headers['Authorization'] = 'Bearer ' + authData.access_token;
+		}
+		
+		headers['Content-Type'] = 'application/json';
+		
+		let vm = this;
+		
+		let stream = this.httpClient.get(url, params, headers)
+		.catch((error: any) => {
+			if(error.status == 401)
+			{
+				if(authData != null && authData.refresh_token)
+				{
+					return vm.authService
+						.refreshToken({ refreshToken: authData.refresh_token })
+						.flatMap((tokenResponse: any) => {
+							
+							console.log(tokenResponse);
+							/*
+							if(false)
+							{
+								// retry request
+								headers['Authorization'] = 'Bearer ' + 'new token';
+								
+								return this.httpClient.get(url, params, headers);
+							}*/
+							
+							return Observable.throw(error);
+						});
+				}
+			}
+			this.httpErrorHandler.handle(error);
+            return Observable.throw(error);
 		});
 		
-		let body = this.getRequestBody(params);
-
-		return {body, options};
+		return stream;
 	}
-
-	private getRequestBody(params: Map<string, any>)
-	{	
-		// TODO: Encode the values using encodeURIComponent().
-		let array: string[] = [];
-		let body: string;
-
-		params.forEach((value, key) => {
-			array.push(key + "=" + value);
+	
+	public post(url: string, data: any = {}, params: any = {}): Observable<any>
+	{
+		return this.httpClient.post(url, data, params, {
+			'Content-Type': 'application/json'
 		});
-
-		return array.join("&");
 	}
 }

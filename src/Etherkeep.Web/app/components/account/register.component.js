@@ -33,13 +33,11 @@ var RegisterComponent = (function () {
     RegisterComponent.prototype.register = function () {
         var _this = this;
         this.accountService.register(this.registerModel)
-            .then(function (data) {
-            console.log(data.json());
+            .map(function (response) { return response.json(); })
+            .subscribe(function (response) {
             _this.error = null;
-        })
-            .catch(function (error) {
-            console.log(error.json());
-            _this.error = error.json().error_description;
+        }, function (response) {
+            _this.error = response.result;
         });
     };
     RegisterComponent = __decorate([

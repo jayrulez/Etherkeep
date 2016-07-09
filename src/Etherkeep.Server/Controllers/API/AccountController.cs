@@ -99,8 +99,8 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [AllowAnonymous, HttpPost, Route("login")]
-        public async Task<IActionResult> LoginAction([FromBody] LoginViewModel model)
+        [AllowAnonymous, HttpPost, Route("username")]
+        public async Task<IActionResult> UsernameAction([FromBody] LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -115,46 +115,7 @@ namespace Etherkeep.Server.Controllers.API
                         throw new Exception(string.Format("{0} was not found.", model.LoginMode == LoginMode.EmailAddress ? "Email Address" : "Mobile Number"));
                     }
 
-                    var parameters = new Collection<KeyValuePair<string, string>>();
-
-                    parameters.Add(new KeyValuePair<string, string>("grant_type", "password"));
-                    parameters.Add(new KeyValuePair<string, string>("username", user.UserName));
-                    parameters.Add(new KeyValuePair<string, string>("password", model.Password));
-
-                    if (!string.IsNullOrEmpty(model.ClientId))
-                    {
-                        parameters.Add(new KeyValuePair<string, string>("client_id", model.ClientId));
-                    }
-
-                    if (!string.IsNullOrEmpty(model.ClientSecret))
-                    {
-                        parameters.Add(new KeyValuePair<string, string>("client_secret", model.ClientSecret));
-                    }
-
-                    if (!string.IsNullOrEmpty(model.Scope))
-                    {
-                        parameters.Add(new KeyValuePair<string, string>("scope", model.Scope));
-                    }
-
-                    using (var httpClient = new HttpClient())
-                    {
-                        httpClient.BaseAddress = new Uri(Request.IsHttps ? "https" : "http" + "://" + Request.Host.ToString());
-
-                        var request = new HttpRequestMessage(HttpMethod.Post, "connect/token");
-
-                        request.Content = new FormUrlEncodedContent(parameters);
-
-                        var response = await httpClient.SendAsync(request);
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            return Ok(new ResponseModel<string>(await response.Content.ReadAsStringAsync()));
-                        }
-                        else
-                        {
-                            return BadRequest(new ResponseModel<string>(await response.Content.ReadAsStringAsync()));
-                        }
-                    }
+                    return Ok(new ResponseModel<string>(user.UserName));
                 }
                 catch (Exception ex)
                 {

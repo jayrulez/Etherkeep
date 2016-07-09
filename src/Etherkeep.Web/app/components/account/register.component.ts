@@ -41,13 +41,11 @@ export class RegisterComponent
 	register()
 	{
 		this.accountService.register(this.registerModel)
-			.then((data) => {
-				console.log(data.json());
+			.map((response) => response.json())
+			.subscribe((response) => {
 				this.error = null;
-			})
-			.catch((error) => {
-				console.log(error.json());
-				this.error = error.json().error_description;
+			}, (response) => {
+				this.error = response.result;
 			});
 	}
 }

@@ -7,7 +7,10 @@ import { HomeComponent } from './home.component';
 import { LoginComponent } from './account/login.component';
 import { RegisterComponent } from './account/register.component';
 import { HttpClient } from '../common/http-client';
-import { HttpErrorHandler } from '../common/http-error-handler';
+import { AuthService } from '../services/auth.service';
+import { HttpService } from '../services/http.service';
+import { HttpErrorHandler } from '../services/http-error-handler';
+import { AuthGuard } from '../common/auth-guard';
 
 @Component({
   selector: 'app',
@@ -17,7 +20,13 @@ import { HttpErrorHandler } from '../common/http-error-handler';
 	PageFooterComponent,
 	...ROUTER_DIRECTIVES
   ],
-  providers: [HttpClient, HttpErrorHandler],
+  providers: [
+	HttpClient, 
+	AuthService, 
+	HttpService, 
+	HttpErrorHandler,
+	AuthGuard
+  ],
   precompile: [
 	HomeComponent,
 	LoginComponent,

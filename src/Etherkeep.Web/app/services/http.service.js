@@ -8,58 +8,68 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var router_1 = require('@angular/router');
+require('rxjs/add/operator/map');
+require('rxjs/add/operator/catch');
+require('rxjs/add/operator/finally');
+require('rxjs/add/observable/throw');
 var core_1 = require('@angular/core');
-var http_1 = require('@angular/http');
+var Observable_1 = require('rxjs/Observable');
+var http_client_1 = require('../common/http-client');
+var auth_service_1 = require('./auth.service');
+var http_error_handler_1 = require('./http-error-handler');
 var HttpService = (function () {
-    function HttpService(http, router) {
-        this.http = http;
-        this.router = router;
+    function HttpService(httpClient, authService, httpErrorHandler) {
+        this.httpClient = httpClient;
+        this.authService = authService;
+        this.httpErrorHandler = httpErrorHandler;
     }
     HttpService.prototype.get = function (url, params) {
-        var _a = this.getRequestDetails(url, params), body = _a.body, options = _a.options;
-        return this.http.get(url + "?" + body, options)
-            .toPromise();
+        var _this = this;
+        if (params === void 0) { params = {}; }
+        var authData = this.authService.getAuthData();
+        var headers = {};
+        if (authData != null && authData.access_token) {
+            headers['Authorization'] = 'Bearer ' + authData.access_token;
+        }
+        headers['Content-Type'] = 'application/json';
+        var vm = this;
+        var stream = this.httpClient.get(url, params, headers)
+            .catch(function (error) {
+            if (error.status == 401) {
+                if (authData != null && authData.refresh_token) {
+                    return vm.authService
+                        .refreshToken({ refreshToken: authData.refresh_token })
+                        .flatMap(function (tokenResponse) {
+                        console.log(tokenResponse);
+                        /*
+                        if(false)
+                        {
+                            // retry request
+                            headers['Authorization'] = 'Bearer ' + 'new token';
+                            
+                            return this.httpClient.get(url, params, headers);
+                        }*/
+                        return Observable_1.Observable.throw(error);
+                    });
+                }
+            }
+            _this.httpErrorHandler.handle(error);
+            return Observable_1.Observable.throw(error);
+        });
+        return stream;
     };
-    HttpService.prototype.post = function (url, params) {
-        var _a = this.getRequestDetails(url, params), body = _a.body, options = _a.options;
-        return this.http.post(url, body, options)
-            .toPromise();
+    HttpService.prototype.post = function (url, data, params) {
+        if (data === void 0) { data = {}; }
+        if (params === void 0) { params = {}; }
+        return this.httpClient.post(url, data, params, {
+            'Content-Type': 'application/json'
+        });
     };
-    HttpService.prototype.put = function (url, params) {
-        var _a = this.getRequestDetails(url, params), body = _a.body, options = _a.options;
-        return this.http.put(url, body, options)
-            .toPromise();
-    };
-    HttpService.prototype.delete = function (url, params) {
-        var _a = this.getRequestDetails(url, params), body = _a.body, options = _a.options;
-        return this.http.delete(url + "?" + body, options)
-            .toPromise();
-    };
-    ;
     HttpService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http, router_1.Router])
+        __metadata('design:paramtypes', [http_client_1.HttpClient, auth_service_1.AuthService, http_error_handler_1.HttpErrorHandler])
     ], HttpService);
     return HttpService;
 }());
 exports.HttpService = HttpService;
-getRequestDetails(url, string, params, Map(), {
-    let: headers = new http_1.Headers({
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }),
-    let: options = new http_1.RequestOptions({
-        headers: headers
-    }),
-    let: body = this.getRequestBody(params),
-    return: { body: body, options: options }
-}, private, getRequestBody(params, Map(), {
-    // TODO: Encode the values using encodeURIComponent().
-    let: array, string: [],
-    let: body, string: ,
-    params: .forEach(function (value, key) {
-        array.push(key + "=" + value);
-    }),
-    return: array.join("&")
-}));
 //# sourceMappingURL=http.service.js.map
