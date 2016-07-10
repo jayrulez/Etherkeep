@@ -61,7 +61,6 @@ namespace Etherkeep.Server
             services.AddOpenIddict<User, IdentityRole<Guid>, ApplicationDbContext, Guid>()
                 .SetAuthorizationEndpointPath("/connect/authorize")
                 .SetLogoutEndpointPath("/connect/logout")
-                .SetErrorHandlingPath("/connect/error")
 
                 // During development, you can disable the HTTPS requirement.
                 .DisableHttpsRequirement();
@@ -161,6 +160,8 @@ namespace Etherkeep.Server
                 ClientId = Configuration["GoogleAuthentication:ClientId"],
                 ClientSecret = Configuration["GoogleAuthentication:ClientSecret"]
             });
+
+            app.UseStatusCodePagesWithReExecute("/error");
 
             app.UseOpenIddict();
 

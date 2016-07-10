@@ -20,6 +20,7 @@ using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 using Etherkeep.Server.Models;
 using Etherkeep.Server.Models.Extensions;
+using Etherkeep.Server.ViewModels.Shared;
 
 namespace Etherkeep.Server.Controllers.API
 {

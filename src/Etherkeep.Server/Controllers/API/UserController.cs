@@ -10,6 +10,7 @@ using System;
 using System.Threading.Tasks;
 using OpenIddict;
 using Etherkeep.Server.ViewModels.Authorization;
+using Etherkeep.Server.ViewModels.Shared;
 
 namespace Etherkeep.Server.Controllers.API
 {

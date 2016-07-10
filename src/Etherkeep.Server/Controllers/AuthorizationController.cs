@@ -15,6 +15,7 @@ using Etherkeep.Server.Data.Entities;
 using Etherkeep.Server.Data;
 using Microsoft.Extensions.Logging;
 using Etherkeep.Server.ViewModels.Authorization;
+using Etherkeep.Server.ViewModels.Shared;
 
 namespace Etherkeep.Server.Controllers {
     public class AuthorizationController : BaseController {
