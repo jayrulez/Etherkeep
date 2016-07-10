@@ -115,19 +115,19 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [AllowAnonymous, HttpPost, Route("username")]
-        public async Task<IActionResult> UsernameAction([FromBody] LoginViewModel model)
+        public async Task<IActionResult> UsernameAction([FromBody] UsernameViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    User user = model.LoginMode == LoginMode.EmailAddress
-                        ? await _userManager.FindByEmailAsync(model.EmailAddress) : model.LoginMode == LoginMode.MobileNumber
+                    User user = model.IdentityType == IdentityType.EmailAddress
+                        ? await _userManager.FindByEmailAsync(model.EmailAddress) : model.IdentityType == IdentityType.MobileNumber
                         ? await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Equals(string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber))) : null;
 
                     if (user == null)
                     {
-                        throw new Exception(string.Format("{0} was not found.", model.LoginMode == LoginMode.EmailAddress ? "Email Address" : "Mobile Number"));
+                        throw new Exception(string.Format("{0} was not found.", model.IdentityType == IdentityType.EmailAddress ? "Email Address" : "Mobile Number"));
                     }
 
                     return Ok(new ResponseViewModel<string>(user.UserName));
@@ -157,11 +157,11 @@ namespace Etherkeep.Server.Controllers.API
                         LastName = model.LastName
                     };
 
-                    if (model.RegisterMode == RegisterMode.EmailAddress)
+                    if (model.IdentityType == IdentityType.EmailAddress)
                     {
                         user.Email = model.EmailAddress;
                     }
-                    else if (model.RegisterMode == RegisterMode.MobileNumber)
+                    else if (model.IdentityType == IdentityType.MobileNumber)
                     {
                         user.PhoneNumber = string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber);
                     }

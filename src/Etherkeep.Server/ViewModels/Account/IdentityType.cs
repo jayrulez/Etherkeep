@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.ViewModels.Account
 {
-    public enum LoginMode
+    public enum IdentityType
     {
         EmailAddress,
         MobileNumber

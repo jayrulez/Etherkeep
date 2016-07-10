@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Etherkeep.Server.ViewModels.Account;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Etherkeep.Server.ViewModels.Account
 {
-    public class RegisterViewModel
+    public class UsernameViewModel
     {
         [Required]
         public IdentityType IdentityType { get; set; }
-
+        
         [EmailAddress]
         public string EmailAddress { get; set; }
         
@@ -19,14 +16,5 @@ namespace Etherkeep.Server.ViewModels.Account
         public string AreaCode { get; set; }
         
         public string SubscriberNumber { get; set; }
-
-        [Required]
-        public string FirstName { get; set; }
-
-        [Required]
-        public string LastName { get; set; }
-
-        [Required]
-        public string Password { get; set; }
     }
 }
