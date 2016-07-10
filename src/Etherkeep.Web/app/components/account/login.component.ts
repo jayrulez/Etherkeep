@@ -49,7 +49,7 @@ export class LoginComponent
 			.subscribe(
 				(response: any) => {
 					this.authService.token({
-						username: response.result,
+						username: response.username,
 						password: this.loginModel.password,
 						persistent: this.loginModel.persistent
 					})
@@ -63,8 +63,8 @@ export class LoginComponent
 							this.error = tokenResponse.error_description;
 						}
 					);
-				}, (response: any) => {
-					this.error = response.result.error_description;
+				}, (errorResponse: any) => {
+					this.error = errorResponse.error_description;
 				}
 			);
 	}

@@ -45,7 +45,7 @@ namespace Etherkeep.Server.Controllers.API
                     return BadRequest();
                 }
 
-                return Ok(wallet.Balance);
+                return Ok(new { balance = wallet.Balance });
             }
             catch (Exception ex)
             {

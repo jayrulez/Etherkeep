@@ -74,7 +74,7 @@ export class AppComponent
 	{
 		this.accountService.getAccount()
 			.subscribe(response => {
-				let userData = response.result;
+				let userData = response;
 				
 				this.user = {
 					id: userData.id,

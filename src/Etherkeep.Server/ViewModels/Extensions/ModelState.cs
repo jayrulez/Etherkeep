@@ -5,7 +5,7 @@ namespace Etherkeep.Server.ViewModels.Extensions
 {
     public static partial class Extensions
     {
-        public static ResponseViewModel<ErrorViewModel> GetErrorResponse(this ModelStateDictionary source)
+        public static ErrorViewModel GetErrorResponse(this ModelStateDictionary source)
         {
             if(source != null)
             {
@@ -13,12 +13,12 @@ namespace Etherkeep.Server.ViewModels.Extensions
                 {
                     foreach(var error in modelState.Value.Errors)
                     {
-                        return new ResponseViewModel<ErrorViewModel>(new ErrorViewModel() { ErrorDescription = error.ErrorMessage });
+                        return new ErrorViewModel { ErrorDescription = error.ErrorMessage };
                     }
                 }
             }
 
-            return new ResponseViewModel<ErrorViewModel>(new ErrorViewModel() { ErrorDescription = string.Empty });
+            return new ErrorViewModel() { ErrorDescription = string.Empty };
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Etherkeep.Server.Controllers.API
             {
                 var user = await GetCurrentUserAsync();
 
-                return Ok(new ResponseViewModel<ProfileViewModel>(user.GetProfileViewModel()));
+                return Ok(user.GetProfileViewModel());
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace Etherkeep.Server.Controllers.API
                         throw new Exception(string.Format("{0} was not found.", model.IdentityType == IdentityType.EmailAddress ? "Email Address" : "Mobile Number"));
                     }
 
-                    return Ok(new ResponseViewModel<string>(user.UserName));
+                    return Ok(new { username = user.UserName });
                 }
                 catch (Exception ex)
                 {
@@ -148,7 +148,7 @@ namespace Etherkeep.Server.Controllers.API
 
                     if (result.Succeeded)
                     {
-                        return Ok(new ResponseViewModel<ProfileViewModel>(user.GetProfileViewModel()));
+                        return Ok(user.GetProfileViewModel());
                     }
                     else
                     {
@@ -190,7 +190,7 @@ namespace Etherkeep.Server.Controllers.API
                         //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         //await _emailSender.SendEmailAsync(model.Email, "Reset Password",
                         //   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
-                        return Ok(new ResponseViewModel<bool>(true));
+                        return Ok(new { result = true });
                     }
                 }
                 catch (Exception ex)
@@ -219,7 +219,7 @@ namespace Etherkeep.Server.Controllers.API
                     {
                         _logger.LogInformation(3, "User changed their password successfully.");
 
-                        return Ok(new ResponseViewModel<bool>(true));
+                        return Ok(new { result = true});
                     }
                     else
                     {

@@ -53,23 +53,28 @@ export class HttpService
 		.catch((error: any) => {
 			if(error.status == 401)
 			{
-				if(authData != null && authData.refresh_token)
+				if(authData != null)
 				{
-					return this.authService
-						.refreshToken({ refreshToken: authData.refresh_token })
-						.flatMap((tokenResponse: any) => {
-							if(tokenResponse.access_token)
-							{
-								this.authService.setAuthData(tokenResponse);
-								this.authService.loggedIn.emit(true);
+					if(authData.refresh_token)
+					{
+						return this.authService
+							.refreshToken({ refreshToken: authData.refresh_token })
+							.flatMap((tokenResponse: any) => {
+								if(tokenResponse.access_token)
+								{
+									this.authService.setAuthData(tokenResponse);
+									this.authService.loggedIn.emit(true);
+									
+									// retry request
+									headers['Authorization'] = 'Bearer ' + tokenResponse.access_token;
+									return this.httpClient.request(requestMethod, url, data, params, headers);
+								}
 								
-								// retry request
-								headers['Authorization'] = 'Bearer ' + tokenResponse.access_token;
-								return this.httpClient.request(requestMethod, url, data, params, headers);
-							}
-							
-							return Observable.throw(error);
-						});
+								return Observable.throw(error);
+							});
+					}else{
+						this.authService.logout();
+					}
 				}
 			}
 			this.httpErrorHandler.handle(error);

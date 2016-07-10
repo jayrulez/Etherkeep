@@ -48,7 +48,7 @@ export class RegisterComponent
 				this.error = null;
 				
 				this.authService.token({
-					username: response.result.userName,
+					username: response.userName,
 					password: this.registerModel.password,
 					persistent: false
 				})
@@ -56,12 +56,12 @@ export class RegisterComponent
 					(tokenResponse) => {
 						this.authService.setAuthData(tokenResponse);
 						this.router.navigate(['home']);
-					}, (tokenResponse) => {
+					}, (errorResponse) => {
 						this.router.navigate(['login']);
 					}
 				);
-			}, (response) => {
-				this.error = response.result.error_description;
+			}, (errorResponse) => {
+				this.error = errorResponse.error_description;
 			});
 	}
 }

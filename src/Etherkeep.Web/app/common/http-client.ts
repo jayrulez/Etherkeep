@@ -126,9 +126,8 @@ export class HttpClient
 	{
         try
 		{
-			// handle error vs error.result
-			let e = error.json();
-            return (e.result? e.result : e);
+			console.log(error);
+            return (error.json());
         } catch (jsonError) {
             return ({
 				status: error.status,

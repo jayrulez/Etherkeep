@@ -32,6 +32,7 @@ export class ResetPasswordComponent
             //this.router.navigate(['confirm-reset-password']);
         }, (errorResponse) => {
             console.log('finished with error');
+            console.log(errorResponse);
         });
 	}
 }
