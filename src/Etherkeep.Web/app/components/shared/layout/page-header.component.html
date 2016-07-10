@@ -11,9 +11,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li *ngIf="!authService.isLoggedIn()"><a [routerLink]="['/register']">Register</a></li>
-            <li *ngIf="!authService.isLoggedIn()"><a [routerLink]="['/login']">Login</a></li>
-			<li *ngIf="authService.isLoggedIn()" class="dropdown">
+            <li *ngIf="!user"><a [routerLink]="['/register']">Register</a></li>
+            <li *ngIf="!user"><a [routerLink]="['/login']">Login</a></li>
+			<li *ngIf="user" class="dropdown">
 			  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.firstName }} {{ user.lastName }} <span class="caret"></span></a>
 			  <ul class="dropdown-menu">
 				<li><a href="#">Settings</a></li>
