@@ -18,6 +18,19 @@ export class HttpClient
 {
 	public constructor(private http: Http, private connectivityService: ConnectivityService) { }
 	
+	public request(requestMethod: RequestMethod, url: string, data: any = {}, params: any = {}, headers: any = {}): Observable<Response>
+	{
+		let options = new Options();
+		
+		options.method = requestMethod;
+		options.headers = headers;
+		options.url = url;
+		options.params = params;
+		options.data = data;
+		
+		return this._request(options);
+	}
+	
 	public get(url: string, params: any = {}, headers: any = {}): Observable<Response>
 	{
 		let options = new Options();
@@ -27,9 +40,9 @@ export class HttpClient
 		options.url = url;
 		options.params = params;
 		
-		return this.request(options);
+		return this._request(options);
 	}
-	
+
 	public post(url: string, data: any = {}, params: any = {}, headers: any = {}): Observable<Response>
 	{
 		let options = new Options();
@@ -40,7 +53,7 @@ export class HttpClient
 		options.params = params;
 		options.data = data;
 		
-		return this.request(options);
+		return this._request(options);
 	}
 	
 	public put(url: string, headers: any = {}): Observable<Response>
@@ -51,7 +64,7 @@ export class HttpClient
 		options.headers = headers;
 		options.url = url;
 		
-		return this.request(options);
+		return this._request(options);
 	}
 	
 	public delete(url: string, headers: any = {}): Observable<Response>
@@ -62,10 +75,10 @@ export class HttpClient
 		options.headers = headers;
 		options.url = url;
 		
-		return this.request(options);
+		return this._request(options);
 	}
 	
-	private request(options: Options) : Observable<Response>
+	private _request(options: Options) : Observable<Response>
 	{
 		options.method = (options.method || RequestMethod.Get);
         options.url = (options.url || '');
@@ -113,7 +126,9 @@ export class HttpClient
 	{
         try
 		{
-            return (error.json());
+			// handle error vs error.result
+			let e = error.json();
+            return (e.result? e.result : e);
         } catch (jsonError) {
             return ({
 				status: error.status,

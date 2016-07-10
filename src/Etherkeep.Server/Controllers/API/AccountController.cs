@@ -38,6 +38,25 @@ namespace Etherkeep.Server.Controllers.API
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
+        [HttpGet, Route("")]
+        public async Task<IActionResult> AccountAction()
+        {
+            try
+            {
+                var user = await GetCurrentUserAsync();
+
+                return Ok(new ResponseViewModel<ProfileViewModel>(user.GetProfileViewModel()));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+
+                return BadRequest(new ErrorViewModel {
+                    ErrorDescription = ex.Message
+                });
+            }
+        }
+
         [HttpGet, Route("activities")]
         public async Task<IActionResult> ActivitiesAction(int? page)
         {
@@ -58,51 +77,6 @@ namespace Etherkeep.Server.Controllers.API
                 };
 
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex.Message);
-
-                ModelState.AddModelError(string.Empty, ex.Message);
-            }
-
-            return BadRequest(ModelState);
-        }
-
-        [HttpGet, Route("")]
-        public async Task<IActionResult> AccountAction()
-        {
-            try
-            {
-                var user = await GetCurrentUserAsync();
-
-                return Ok(new ResponseViewModel<ProfileViewModel>(user.GetProfileViewModel()));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex.Message);
-
-                return BadRequest(new ErrorViewModel {
-                    ErrorDescription = ex.Message
-                });
-            }
-        }
-
-        [HttpGet, Route("balance")]
-        public async Task<IActionResult> BalanceAction()
-        {
-            try
-            {
-                var user = await GetCurrentUserAsync();
-
-                var wallet = _applicationDbContext.Wallets.Where(e => e.UserId.Equals(user.Id)).FirstOrDefault();
-
-                if (wallet == null)
-                {
-                    return BadRequest();
-                }
-
-                return Ok(wallet.Balance);
             }
             catch (Exception ex)
             {
@@ -175,6 +149,43 @@ namespace Etherkeep.Server.Controllers.API
                     if (result.Succeeded)
                     {
                         return Ok(new ResponseViewModel<ProfileViewModel>(user.GetProfileViewModel()));
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex.Message);
+
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+
+            return BadRequest(ModelState.GetErrorResponse());
+        }
+
+        [HttpPost, Route("change_password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var user = await GetCurrentUserAsync();
+
+                    var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation(3, "User changed their password successfully.");
+
+                        return Ok(new ResponseViewModel<bool>(true));
                     }
                     else
                     {

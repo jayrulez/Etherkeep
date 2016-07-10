@@ -5,9 +5,10 @@ import { Subject } from 'rxjs/Subject';
 import { PageHeaderComponent } from './shared/layout/page-header.component';
 import { PageFooterComponent } from './shared/layout/page-footer.component';
 import { IndexComponent } from './default/index.component';
-import { HomeComponent } from './default/home.component';
 import { LoginComponent } from './account/login.component';
 import { RegisterComponent } from './account/register.component';
+import { SettingsComponent } from './account/settings.component';
+import { HomeComponent } from './default/home.component';
 import { HttpClient } from '../common/http-client';
 import { AuthGuard } from '../common/auth-guard';
 import { AuthService } from '../services/auth.service';
@@ -34,9 +35,10 @@ import { UserModel } from '../models/user.model';
   ],
   precompile: [
 	IndexComponent,
-	HomeComponent,
 	LoginComponent,
-	RegisterComponent
+	RegisterComponent,
+	SettingsComponent,
+	HomeComponent
   ]
 })
 export class AppComponent

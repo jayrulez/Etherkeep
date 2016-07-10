@@ -14,6 +14,7 @@ import { AuthService } from './auth.service';
 import { UserModel } from '../models/user.model';
 import { LoginModel } from '../models/login.model';
 import { RegisterModel } from '../models/register.model';
+import { ChangePasswordModel } from '../models/change-password.model';
 
 @Injectable()
 export class AccountService
@@ -45,6 +46,15 @@ export class AccountService
 			Password: model.password,
 			FirstName: model.firstName,
 			LastName: model.lastName
+		});
+	}
+
+	public changePassword(model: ChangePasswordModel)
+	{
+		return this.httpService.post(this.baseUrl + '/account/change_password', {
+			OldPassword: model.oldPassword,
+			NewPassword: model.newPassword,
+			ConfirmPassword: model.confirmPassword
 		});
 	}
 	

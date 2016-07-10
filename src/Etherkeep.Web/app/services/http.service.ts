@@ -4,6 +4,7 @@ import 'rxjs/add/operator/finally';
 import 'rxjs/add/observable/throw';
 
 import { Injectable } from '@angular/core';
+import { RequestMethod } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -12,12 +13,30 @@ import { HttpClient } from '../common/http-client';
 import { AuthService } from './auth.service';
 import { HttpErrorHandler } from './http-error-handler';
 
+export class RequestData
+{
+	public headers = {};
+	public requestMethod;
+	public params: any = {};
+	public data: any = {};
+}
+
 @Injectable()
 export class HttpService
 {
 	public constructor(private httpClient: HttpClient, private authService: AuthService, private httpErrorHandler: HttpErrorHandler) {}
 	
 	public get(url: string, params: any = {}): Observable<any>
+	{
+		return this.request(RequestMethod.Get, url, {}, params);
+	}
+	
+	public post(url: string, data: any = {}, params: any = {}): Observable<any>
+	{
+		return this.request(RequestMethod.Post, url, data, params);
+	}
+
+	private request(requestMethod: RequestMethod, url: string, data: any = {}, params: any = {}): Observable<any>
 	{
 		let authData = this.authService.getAuthData();
 		
@@ -28,17 +47,15 @@ export class HttpService
 			headers['Authorization'] = 'Bearer ' + authData.access_token;
 		}
 		
-		headers['Content-Type'] = 'application/json';
-		
-		let vm = this;
-		
-		let stream = this.httpClient.get(url, params, headers)
+		headers['Content-Type'] = 'application/json';		
+
+		let stream =  this.httpClient.request(requestMethod, url, data, params, headers)
 		.catch((error: any) => {
 			if(error.status == 401)
 			{
 				if(authData != null && authData.refresh_token)
 				{
-					return vm.authService
+					return this.authService
 						.refreshToken({ refreshToken: authData.refresh_token })
 						.flatMap((tokenResponse: any) => {
 							if(tokenResponse.access_token)
@@ -48,7 +65,7 @@ export class HttpService
 								
 								// retry request
 								headers['Authorization'] = 'Bearer ' + tokenResponse.access_token;
-								return this.httpClient.get(url, params, headers);
+								return this.httpClient.request(requestMethod, url, data, params, headers);
 							}
 							
 							return Observable.throw(error);
@@ -60,12 +77,5 @@ export class HttpService
 		});
 		
 		return stream;
-	}
-	
-	public post(url: string, data: any = {}, params: any = {}): Observable<any>
-	{
-		return this.httpClient.post(url, data, params, {
-			'Content-Type': 'application/json'
-		});
 	}
 }
