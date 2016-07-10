@@ -60,17 +60,23 @@ namespace Etherkeep.Server
             // Register the OpenIddict services, including the default Entity Framework stores.
             services.AddOpenIddict<User, IdentityRole<Guid>, ApplicationDbContext, Guid>()
                 .SetAccessTokenLifetime(TimeSpan.FromSeconds(15))
-                .SetAuthorizationEndpointPath("/connect/authorize")
-                .SetLogoutEndpointPath("/connect/logout")
+
+                // Enable the authorization, logout, token and userinfo endpoints.
+                .EnableAuthorizationEndpoint("/connect/authorize")
+                .EnableLogoutEndpoint("/connect/logout")
+                .EnableTokenEndpoint("/connect/token")
+                .EnableUserinfoEndpoint("/connect/userinfo")
+
+                // Note: the Mvc.Client sample only uses the authorization code flow but you can enable
+                // the other flows if you need to support implicit, password or client credentials.
+                .AllowAuthorizationCodeFlow()
+                .AllowRefreshTokenFlow()
+
+                // Allow client applications to use the grant_type=password flow.
+                .AllowPasswordFlow()
 
                 // During development, you can disable the HTTPS requirement.
                 .DisableHttpsRequirement();
-
-            // When using your own authorization controller instead of using the
-            // MVC module, you need to configure the authorization/logout paths:
-            // services.AddOpenIddict<User, ApplicationDbContext>()
-            //     .SetAuthorizationEndpointPath("/connect/authorize")
-            //     .SetLogoutEndpointPath("/connect/logout");
 
             // Note: if you don't explicitly register a signing key, one is automatically generated and
             // persisted on the disk. If the key cannot be persisted, an exception is thrown.
@@ -79,13 +85,13 @@ namespace Etherkeep.Server
             // You can generate a self-signed certificate using Pluralsight's self-cert utility:
             // https://s3.amazonaws.com/pluralsight-free/keith-brown/samples/SelfCert.zip
             // 
-            // services.AddOpenIddict<User, ApplicationDbContext>()
+            // services.AddOpenIddict<ApplicationUser, IdentityRole<Guid>, ApplicationDbContext, Guid>()
             //     .AddSigningCertificate("7D2A741FE34CC2C7369237A5F2078988E17A6A75");
             // 
             // Alternatively, you can also store the certificate as an embedded .pfx resource
             // directly in this assembly or in a file published alongside this project:
             // 
-            // services.AddOpenIddict<User, ApplicationDbContext>()
+            // services.AddOpenIddict<ApplicationUser, IdentityRole<Guid>, ApplicationDbContext, Guid>()
             //     .AddSigningCertificate(
             //          assembly: typeof(Startup).GetTypeInfo().Assembly,
             //          resource: "Etherkeep.Server.Certificate.pfx",
@@ -133,7 +139,8 @@ namespace Etherkeep.Server
             //     options.ClientSecret = "875sqd4s5d748z78z7ds1ff8zz8814ff88ed8ea4z4zzd";
             // });
 
-            app.UseCors(options => {
+            app.UseCors(options =>
+            {
                 options.AllowAnyHeader();
                 options.AllowAnyMethod();
                 options.AllowAnyOrigin();
@@ -152,8 +159,8 @@ namespace Etherkeep.Server
 
             app.UseXfo(options => options.Deny());
 
-            app.UseXXssProtection(options => options.EnabledWithBlockMode());			
-			
+            app.UseXXssProtection(options => options.EnabledWithBlockMode());
+
             app.UseIdentity();
 
             app.UseGoogleAuthentication(new GoogleOptions
