@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
+import { Subject } from 'rxjs/Subject';
 
 import { PageHeaderComponent } from './shared/layout/page-header.component';
 import { PageFooterComponent } from './shared/layout/page-footer.component';
@@ -24,7 +25,6 @@ import { UserModel } from '../models/user.model';
   ],
   providers: [
 	HttpClient, 
-	AuthService, 
 	HttpService, 
 	HttpErrorHandler,
 	AuthGuard,
@@ -36,15 +36,31 @@ import { UserModel } from '../models/user.model';
 	RegisterComponent
   ]
 })
-export class AppComponent implements OnInit
+export class AppComponent
 { 
 	user: UserModel = null;
 	
 	constructor(private router: Router, private authService: AuthService, private accountService: AccountService)
 	{
-		this.accountService.getProfile()
+		authService.loggedIn.subscribe(response => {
+			this.getUser();
+		});
+		
+		authService.loggedOut.subscribe(response => {
+			this.user = null;
+			this.router.navigate(['login']);
+		});
+		
+		if(authService.isLoggedIn())
+		{
+			this.getUser();
+		}
+	}
+	
+	getUser()
+	{
+		this.accountService.getAccount()
 			.subscribe(response => {
-				
 				let userData = response.result;
 				
 				this.user = {
@@ -56,16 +72,10 @@ export class AppComponent implements OnInit
 					username: userData.userName,
 					firstName: userData.firstName,
 					lastName: userData.lastName
-				}
+				};
 				
-			}, errorResponse => {
-				this.authService.logout()
-					.subscribe(response => this.router.navigate(['login']));
-			});
-
-	}
-	
-	ngOnInit()
-	{
+			}, error => {
+				this.user = null;
+			})
 	}
 }

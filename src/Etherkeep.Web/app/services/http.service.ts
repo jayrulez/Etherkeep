@@ -41,16 +41,15 @@ export class HttpService
 					return vm.authService
 						.refreshToken({ refreshToken: authData.refresh_token })
 						.flatMap((tokenResponse: any) => {
-							
-							console.log(tokenResponse);
-							/*
-							if(false)
+							if(tokenResponse.access_token)
 							{
-								// retry request
-								headers['Authorization'] = 'Bearer ' + 'new token';
+								this.authService.setAuthData(tokenResponse);
+								this.authService.loggedIn.emit(true);
 								
+								// retry request
+								headers['Authorization'] = 'Bearer ' + tokenResponse.access_token;
 								return this.httpClient.get(url, params, headers);
-							}*/
+							}
 							
 							return Observable.throw(error);
 						});

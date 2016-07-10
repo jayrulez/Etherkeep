@@ -28,7 +28,7 @@ export class HttpClient
 		return this.request(options);
 	}
 	
-	public post(url: string, data: any = {}, params: any = {}, headers: any = {})
+	public post(url: string, data: any = {}, params: any = {}, headers: any = {}): Observable<Response>
 	{
 		let options = new Options();
 		
@@ -41,7 +41,7 @@ export class HttpClient
 		return this.request(options);
 	}
 	
-	public put(url: string, headers: any = {})
+	public put(url: string, headers: any = {}): Observable<Response>
 	{
 		let options = new Options();
 		
@@ -52,7 +52,7 @@ export class HttpClient
 		return this.request(options);
 	}
 	
-	public delete(url: string, headers: any = {})
+	public delete(url: string, headers: any = {}): Observable<Response>
 	{
 		let options = new Options();
 		
@@ -101,7 +101,28 @@ export class HttpClient
 		}
 
         return this.http.request(options.url, requestOptions)
-			.map(response => response.json())
-			.catch(error => Observable.throw(error.json()));
+			.map(this.unwrapHttpValue)
+            .catch((error: any) => {
+                return Observable.throw(this.unwrapHttpError(error));
+            });
 	}
+	
+    private unwrapHttpError(error: any): any
+	{
+        try
+		{
+            return (error.json());
+        } catch (jsonError) {
+            return ({
+				status: error.status,
+                error: -1,
+                error_description: 'An unexpected error occurred.'
+            });
+        }
+    }
+
+    private unwrapHttpValue(value: Response): any
+	{
+        return (value.json());
+    }
 }

@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter, Output } from '@angular/core';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
+import {Subject } from 'rxjs/Subject';
 import 'rxjs/Rx';
 
 import { HttpClient } from '../common/http-client';
@@ -10,9 +11,15 @@ import { AccessTokenModel, RefreshTokenModel } from '../models/auth-model';
 @Injectable()
 export class AuthService
 {
+	@Output()
+	public loggedIn: EventEmitter<any> = new EventEmitter();
+	public loggedOut: EventEmitter<any> = new EventEmitter();
+	
 	private authServerUrl: string = 'http://localhost:5001';
 	
-	public constructor(private httpClient: HttpClient) {}
+	public constructor(private httpClient: HttpClient)
+	{
+	}
 	
 	public token(model: AccessTokenModel): Observable<Response>
 	{

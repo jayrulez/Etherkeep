@@ -28,7 +28,7 @@ namespace Etherkeep.Server.Controllers
             var response = HttpContext.GetOpenIdConnectResponse();
             if (response == null)
             {
-                return View();
+                return View(new ErrorViewModel());
             }
 
             return View(new ErrorViewModel

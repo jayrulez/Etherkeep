@@ -59,6 +59,7 @@ namespace Etherkeep.Server
 
             // Register the OpenIddict services, including the default Entity Framework stores.
             services.AddOpenIddict<User, IdentityRole<Guid>, ApplicationDbContext, Guid>()
+                .SetAccessTokenLifetime(TimeSpan.FromSeconds(15))
                 .SetAuthorizationEndpointPath("/connect/authorize")
                 .SetLogoutEndpointPath("/connect/logout")
 

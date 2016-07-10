@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { NgForm }    from '@angular/common';
 import { AccountService } from '../../services/account.service';
@@ -11,7 +11,7 @@ import { Observable } from 'rxjs/Observable';
 @Component({
   selector: 'login',
   templateUrl: 'app/components/account/login.component.html',
-  providers: [AccountService, AuthService],
+  providers: [AccountService],
   directives: [NgSwitch, NgSwitchCase]
 })
 
@@ -52,11 +52,13 @@ export class LoginComponent
 					})
 					.subscribe(
 						(tokenResponse) => {
-							console.log(tokenResponse);
 							this.authService.setAuthData(tokenResponse);
+							
+							this.authService.loggedIn.emit(true);
+							
 							this.router.navigate(['']);
+							
 						}, (tokenResponse) => {
-							console.log(tokenResponse);
 							this.error = tokenResponse.error_description;
 						}
 					);

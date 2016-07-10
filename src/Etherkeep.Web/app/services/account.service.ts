@@ -1,3 +1,9 @@
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/finally';
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/toPromise';
+
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Response, Headers, RequestOptions} from '@angular/http';
@@ -42,8 +48,8 @@ export class AccountService
 		});
 	}
 	
-	public getProfile()
+	public getAccount()
 	{
-		return this.httpService.get(this.baseUrl + '/account/profile');
+		return this.httpService.get(this.baseUrl + '/account');
 	}
 }

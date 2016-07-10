@@ -69,8 +69,8 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [HttpGet, Route("profile")]
-        public async Task<IActionResult> ProfileAction()
+        [HttpGet, Route("")]
+        public async Task<IActionResult> AccountAction()
         {
             try
             {
