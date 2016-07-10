@@ -5,14 +5,17 @@ import { AccountService } from '../../services/account.service';
 import { AuthService } from '../../services/auth.service';
 import { IdentityType } from '../../common/identity-type';
 import { LoginModel } from '../../models/login.model';
-import { Router } from '@angular/router';
+import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'login',
   templateUrl: 'app/components/account/login.component.html',
-  providers: [],
-  directives: [NgSwitch, NgSwitchCase]
+  directives: [
+	  NgSwitch, 
+	  NgSwitchCase,
+	  ROUTER_DIRECTIVES
+  ]
 })
 
 export class LoginComponent

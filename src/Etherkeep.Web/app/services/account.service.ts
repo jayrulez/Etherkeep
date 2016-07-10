@@ -15,6 +15,8 @@ import { UserModel } from '../models/user.model';
 import { LoginModel } from '../models/login.model';
 import { RegisterModel } from '../models/register.model';
 import { ChangePasswordModel } from '../models/change-password.model';
+import { ResetPasswordModel } from '../models/reset-password.model';
+import { ConfirmResetPasswordModel } from '../models/confirm-reset-password.model';
 
 @Injectable()
 export class AccountService
@@ -46,6 +48,23 @@ export class AccountService
 			Password: model.password,
 			FirstName: model.firstName,
 			LastName: model.lastName
+		});
+	}
+
+	public resetPassword(model: ResetPasswordModel)
+	{
+		return this.httpService.post(this.baseUrl + '/account/reset_password', {
+			EmailAddress: model.emailAddress
+		});
+	}
+
+	public confirmResetPassword(model: ConfirmResetPasswordModel)
+	{
+		return this.httpService.post(this.baseUrl + '/account/reset_password', {
+			EmailAddress: model.emailAddress,
+			Password: model.password,
+			ConfirmPassword: model.confirmPassword,
+			Code: model.code
 		});
 	}
 

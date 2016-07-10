@@ -33,6 +33,7 @@
 		</label>
 	</div>
 	<button type="submit" class="btn btn-default">Sign in</button>
+	<a [routerLink]="['/reset-password']">Forgot Password?</a>
 	<a *ngIf="loginModel.identityType==identityType.MobileNumber" (click)="setIdentityType(identityType.EmailAddress)" href="javascript:void(null);">Login with email address</a>
 	<a *ngIf="loginModel.identityType==identityType.EmailAddress" (click)="setIdentityType(identityType.MobileNumber)" href="javascript:void(null);">Login with mobile number</a>
 </form>

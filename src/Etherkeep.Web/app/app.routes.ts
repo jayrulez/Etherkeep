@@ -7,12 +7,16 @@ import { SettingsHomeComponent } from './components/account/settings-home.compon
 import { ChangePasswordComponent } from './components/account/change-password.component';
 import { LoginComponent } from './components/account/login.component';
 import { RegisterComponent } from './components/account/register.component';
+import { ResetPasswordComponent } from './components/account/reset-password.component';
+import { ConfirmResetPasswordComponent } from './components/account/confirm-reset-password.component';
 import { AuthGuard } from './common/auth-guard';
 
 export const routes: RouterConfig = [
   { path: '', component: IndexComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'confirm-reset-password', component: ConfirmResetPasswordComponent },
   { path: 'settings', 
     component: SettingsComponent,
     children: [

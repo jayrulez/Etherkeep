@@ -170,6 +170,40 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState.GetErrorResponse());
         }
 
+        [AllowAnonymous, HttpPost, Route("reset_password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var user = await _userManager.FindByNameAsync(model.EmailAddress);
+
+                    if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                    {
+                        ModelState.AddModelError("", string.Empty);
+                    }else {
+
+                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                        // Send an email with this link
+                        //var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                        //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                        //await _emailSender.SendEmailAsync(model.Email, "Reset Password",
+                        //   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
+                        return Ok(new ResponseViewModel<bool>(true));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex.Message);
+
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+
+            return BadRequest(ModelState.GetErrorResponse());
+        }
+
         [HttpPost, Route("change_password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
         {
