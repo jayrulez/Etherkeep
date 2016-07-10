@@ -13,6 +13,8 @@ export class AuthService
 {
 	@Output()
 	public loggedIn: EventEmitter<any> = new EventEmitter();
+	
+	@Output()
 	public loggedOut: EventEmitter<any> = new EventEmitter();
 	
 	private authServerUrl: string = 'http://localhost:5001';
@@ -78,6 +80,8 @@ export class AuthService
 	public setAuthData(authData: any)
 	{
 		localStorage.setItem('authData', JSON.stringify(authData));
+		
+		this.loggedIn.emit(true);
 	}
 	
 	public isLoggedIn(): boolean
@@ -88,6 +92,8 @@ export class AuthService
 	public logout(): Observable<any>
 	{
 		localStorage.removeItem('authData');
+		
+		this.loggedOut.emit(true);
 		
 		return Observable.of(true);
 	}

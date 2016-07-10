@@ -11,7 +11,7 @@ import { Observable } from 'rxjs/Observable';
 @Component({
   selector: 'login',
   templateUrl: 'app/components/account/login.component.html',
-  providers: [AccountService],
+  providers: [],
   directives: [NgSwitch, NgSwitchCase]
 })
 
@@ -54,17 +54,14 @@ export class LoginComponent
 						(tokenResponse) => {
 							this.authService.setAuthData(tokenResponse);
 							
-							this.authService.loggedIn.emit(true);
-							
-							this.router.navigate(['']);
+							this.router.navigate(['home']);
 							
 						}, (tokenResponse) => {
 							this.error = tokenResponse.error_description;
 						}
 					);
 				}, (response: any) => {
-					console.log(response);
-					//this.error = response.result.errorDescription || 'An unexpected error has occured.';
+					this.error = response.result.error_description;
 				}
 			);
 	}

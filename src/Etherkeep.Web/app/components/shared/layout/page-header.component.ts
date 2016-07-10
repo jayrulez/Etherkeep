@@ -19,6 +19,6 @@ export class PageHeaderComponent
 	
 	logout(event)
 	{
-		this.authService.loggedOut.emit(true);
+		this.authService.logout();
 	}
 }

@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'register',
   templateUrl: 'app/components/account/register.component.html',
-  providers: [AccountService],
+  providers: [],
   directives: [NgSwitch, NgSwitchCase]
 })
 
@@ -54,15 +54,14 @@ export class RegisterComponent
 				})
 				.subscribe(
 					(tokenResponse) => {
-						console.log(tokenResponse);
 						this.authService.setAuthData(tokenResponse);
-						this.router.navigate(['']);
+						this.router.navigate(['home']);
 					}, (tokenResponse) => {
 						this.router.navigate(['login']);
 					}
 				);
 			}, (response) => {
-				this.error = response.result.errorDescription || 'An unexpected error has occured.';
+				this.error = response.result.error_description;
 			});
 	}
 }

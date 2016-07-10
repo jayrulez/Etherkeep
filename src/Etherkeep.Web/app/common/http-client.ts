@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Http, Response, RequestOptions, RequestMethod, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
+import { ConnectivityService } from '../services/connectivity.service';
+
 export class Options
 {
 	method: RequestMethod;
@@ -14,7 +16,7 @@ export class Options
 @Injectable()
 export class HttpClient
 {
-	public constructor(private http: Http) { }
+	public constructor(private http: Http, private connectivityService: ConnectivityService) { }
 	
 	public get(url: string, params: any = {}, headers: any = {}): Observable<Response>
 	{
@@ -99,7 +101,7 @@ export class HttpClient
 		}else{
 			requestOptions.body = JSON.stringify(options.data);
 		}
-
+		
         return this.http.request(options.url, requestOptions)
 			.map(this.unwrapHttpValue)
             .catch((error: any) => {

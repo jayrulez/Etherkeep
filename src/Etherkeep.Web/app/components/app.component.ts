@@ -4,7 +4,8 @@ import { Subject } from 'rxjs/Subject';
 
 import { PageHeaderComponent } from './shared/layout/page-header.component';
 import { PageFooterComponent } from './shared/layout/page-footer.component';
-import { HomeComponent } from './home.component';
+import { IndexComponent } from './default/index.component';
+import { HomeComponent } from './default/home.component';
 import { LoginComponent } from './account/login.component';
 import { RegisterComponent } from './account/register.component';
 import { HttpClient } from '../common/http-client';
@@ -13,6 +14,7 @@ import { AuthService } from '../services/auth.service';
 import { HttpService } from '../services/http.service';
 import { HttpErrorHandler } from '../services/http-error-handler';
 import { AccountService } from '../services/account.service';
+import { ConnectivityService } from '../services/connectivity.service';
 import { UserModel } from '../models/user.model';
 
 @Component({
@@ -31,6 +33,7 @@ import { UserModel } from '../models/user.model';
 	AccountService
   ],
   precompile: [
+	IndexComponent,
 	HomeComponent,
 	LoginComponent,
 	RegisterComponent
@@ -40,8 +43,16 @@ export class AppComponent
 { 
 	user: UserModel = null;
 	
-	constructor(private router: Router, private authService: AuthService, private accountService: AccountService)
+	constructor(private router: Router, private authService: AuthService, private accountService: AccountService, private connectivityService: ConnectivityService)
 	{
+		connectivityService.isOnline.subscribe(isOnline => {
+			if(!isOnline)
+			{
+				console.log("Offline");
+			}
+			
+		});
+		
 		authService.loggedIn.subscribe(response => {
 			this.getUser();
 		});
