@@ -87,7 +87,7 @@ namespace Etherkeep.Server.Controllers.API
             {
                 _logger.LogCritical(ex.Message);
 
-                return BadRequest(new ErrorModel {
+                return BadRequest(new ErrorViewModel {
                     ErrorDescription = ex.Message
                 });
             }

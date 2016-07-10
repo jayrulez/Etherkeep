@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Etherkeep.Server.ViewModels.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Etherkeep.Server.Models
         {
             get
             {
-                return !(Result is ErrorModel);
+                return !(Result is ErrorViewModel);
             }
         }
     }

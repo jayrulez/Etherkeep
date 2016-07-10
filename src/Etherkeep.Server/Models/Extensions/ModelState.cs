@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Etherkeep.Server.ViewModels.Shared;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Etherkeep.Server.Models.Extensions
 {
     public static partial class Extensions
     {
-        public static ResponseModel<ErrorModel> GetErrorResponse(this ModelStateDictionary source)
+        public static ResponseModel<ErrorViewModel> GetErrorResponse(this ModelStateDictionary source)
         {
             if(source != null)
             {
@@ -16,12 +13,12 @@ namespace Etherkeep.Server.Models.Extensions
                 {
                     foreach(var error in modelState.Value.Errors)
                     {
-                        return new ResponseModel<ErrorModel>(new ErrorModel() { ErrorDescription = error.ErrorMessage });
+                        return new ResponseModel<ErrorViewModel>(new ErrorViewModel() { ErrorDescription = error.ErrorMessage });
                     }
                 }
             }
 
-            return new ResponseModel<ErrorModel>(new ErrorModel() { ErrorDescription = string.Empty });
+            return new ResponseModel<ErrorViewModel>(new ErrorViewModel() { ErrorDescription = string.Empty });
         }
     }
 }
