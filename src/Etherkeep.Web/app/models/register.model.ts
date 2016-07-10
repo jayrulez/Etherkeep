@@ -1,8 +1,8 @@
-import { RegisterMode } from '../common/register-mode';
+import { IdentityType } from '../common/identity-type';
 
 export class RegisterModel
 {
-	public registerMode: RegisterMode;
+	public identityType: IdentityType;
 	public countryCallingCode: string;
 	public areaCode: string;
 	public subscriberNumber: string;

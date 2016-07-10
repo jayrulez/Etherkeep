@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { AccountService } from '../../../services/account.service';
-import { UserModel } from '../../../services/account.service';
+import { UserModel } from '../../../models/user.model';
 
 @Component({
   selector: 'page-header',
@@ -15,7 +15,7 @@ import { UserModel } from '../../../services/account.service';
 
 export class PageHeaderComponent implements OnInit
 { 
-	user: UserModel = {};
+	user: UserModel = null;
 	constructor(private router: Router, private authService: AuthService, private accountService: AccountService)
 	{
 

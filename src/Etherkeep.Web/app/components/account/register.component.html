@@ -10,8 +10,8 @@
 		<label for="last-name">Last Name</label>
 		<input [(ngModel)]="registerModel.lastName" name="lastName" type="text" class="form-control" id="last-name">
 	</div>
-	<div [ngSwitch]="registerModel.registerMode" class="form-group">
-		<div *ngSwitchCase="registerMode.MobileNumber">
+	<div [ngSwitch]="registerModel.identityType" class="form-group">
+		<div *ngSwitchCase="identityType.MobileNumber">
 			<label>Mobile Number</label>
 			<br/>
 			<div class="col-lg-1">
@@ -24,7 +24,7 @@
 				<input [(ngModel)]="registerModel.subscriberNumber" name="subscriberNumber" type="text" class="form-control" id="subscriberNumber">
 			</div>
 		</div>
-		<div *ngSwitchCase="registerMode.EmailAddress">
+		<div *ngSwitchCase="identityType.EmailAddress">
 			<label for="email-address">Email Address</label>
 			<input [(ngModel)]="registerModel.emailAddress" name="emailAddress" type="email" class="form-control" id="email-address">
 		</div>
@@ -35,6 +35,6 @@
 		<input [(ngModel)]="registerModel.password" name="password" type="password" class="form-control" id="password">
 	</div>
 	<button type="submit" class="btn btn-default">Register</button>
-	<a *ngIf="registerModel.registerMode==registerMode.MobileNumber" (click)="setRegisterMode(registerMode.EmailAddress)" href="javascript:void(null);">Register with email address</a>
-	<a *ngIf="registerModel.registerMode==registerMode.EmailAddress" (click)="setRegisterMode(registerMode.MobileNumber)" href="javascript:void(null);">Register with mobile number</a>
+	<a *ngIf="registerModel.identityType==identityType.MobileNumber" (click)="setIdentityType(identityType.EmailAddress)" href="javascript:void(null);">Register with email address</a>
+	<a *ngIf="registerModel.identityType==identityType.EmailAddress" (click)="setIdentityType(identityType.MobileNumber)" href="javascript:void(null);">Register with mobile number</a>
 </form>

@@ -1,8 +1,8 @@
-import { LoginMode } from '../common/login-mode';
+import { IdentityType } from '../common/identity-type';
 
 export class LoginModel
 {
-	public loginMode: LoginMode;
+	public identityType: IdentityType;
 	public countryCallingCode: string;
 	public areaCode: string;
 	public subscriberNumber: string;

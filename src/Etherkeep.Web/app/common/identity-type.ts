@@ -1,4 +1,4 @@
-export enum RegisterMode
+export enum IdentityType
 {
 	EmailAddress,
 	MobileNumber

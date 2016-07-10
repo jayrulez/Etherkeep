@@ -19,7 +19,7 @@ export class AccountService
 	public username(model: LoginModel)
 	{
 		return this.httpService.post(this.baseUrl + '/account/username', {
-			LoginMode: model.loginMode,
+			IdentityType: model.identityType,
 			CountryCallingCode: model.countryCallingCode,
 			AreaCode: model.areaCode,
 			SubscriberNumber: model.subscriberNumber,
@@ -31,7 +31,7 @@ export class AccountService
 	public register(model: RegisterModel)
 	{
 		return this.httpService.post(this.baseUrl + '/account/register', {
-			RegisterMode: model.registerMode,
+			IdentityType: model.identityType,
 			CountryCallingCode: model.countryCallingCode,
 			AreaCode: model.areaCode,
 			SubscriberNumber: model.subscriberNumber,

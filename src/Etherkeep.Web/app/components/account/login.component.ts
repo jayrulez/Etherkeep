@@ -3,7 +3,7 @@ import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { NgForm }    from '@angular/common';
 import { AccountService } from '../../services/account.service';
 import { AuthService } from '../../services/auth.service';
-import { LoginMode } from '../../common/login-mode';
+import { IdentityType } from '../../common/identity-type';
 import { LoginModel } from '../../models/login.model';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -20,12 +20,12 @@ export class LoginComponent
 	error: string;
 	
 	loginModel: LoginModel;
-	loginMode = LoginMode;
+	identityType = IdentityType;
 	
 	constructor(private accountService: AccountService, private authService: AuthService, private router: Router)
 	{
 		this.loginModel = {
-			loginMode: this.loginMode.EmailAddress,
+			identityType: this.identityType.EmailAddress,
 			emailAddress: '',
 			countryCallingCode: '',
 			areaCode: '',
@@ -35,9 +35,9 @@ export class LoginComponent
 		};
 	}
 	
-	setLoginMode(mode: LoginMode)
+	setIdentityType(type: IdentityType)
 	{
-		this.loginModel.loginMode = mode;
+		this.loginModel.identityType = type;
 	}
 	
 	login()

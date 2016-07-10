@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { NgForm }    from '@angular/common';
 import { AccountService } from '../../services/account.service';
-import { RegisterMode } from '../../common/register-mode';
 import { AuthService } from '../../services/auth.service';
-import { LoginMode } from '../../common/login-mode';
+import { IdentityType } from '../../common/identity-type';
 import { LoginModel } from '../../models/login.model';
 import { RegisterModel } from '../../models/register.model';
 import { Router } from '@angular/router';
@@ -21,12 +20,12 @@ export class RegisterComponent
 	error: string;
 	
 	registerModel: RegisterModel;
-	registerMode = RegisterMode;
+	identityType = IdentityType;
 	
 	constructor(private accountService: AccountService, private authService: AuthService, private router: Router)
 	{
 		this.registerModel = {
-			registerMode: this.registerMode.EmailAddress,
+			identityType: this.identityType.EmailAddress,
 			emailAddress: '',
 			countryCallingCode: '',
 			areaCode: '',
@@ -37,9 +36,9 @@ export class RegisterComponent
 		};
 	}
 	
-	setRegisterMode(mode: RegisterMode)
+	setIdentityType(type: IdentityType)
 	{
-		this.registerModel.registerMode = mode;
+		this.registerModel.identityType = type;
 	}
 	
 	register()
