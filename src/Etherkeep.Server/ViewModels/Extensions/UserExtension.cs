@@ -1,4 +1,5 @@
 ﻿using Etherkeep.Server.Data.Entities;
+using Etherkeep.Server.ViewModels.Account;
 
 namespace Etherkeep.Server.ViewModels.Extensions
 {

@@ -13,14 +13,9 @@ using Etherkeep.Server.Data;
 using Etherkeep.Server.Data.Entities;
 using Etherkeep.Server.Data.Repository;
 using OpenIddict;
-using Etherkeep.Server.ViewModels.Authorization;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
-using Etherkeep.Server.Models;
-using Etherkeep.Server.Models.Extensions;
 using Etherkeep.Server.ViewModels.Shared;
+using Etherkeep.Server.ViewModels.Account;
 
 namespace Etherkeep.Server.Controllers.API
 {
@@ -81,7 +76,7 @@ namespace Etherkeep.Server.Controllers.API
             {
                 var user = await GetCurrentUserAsync();
 
-                return Ok(new ResponseModel<ProfileViewModel>(user.GetProfileViewModel()));
+                return Ok(new ResponseViewModel<ProfileViewModel>(user.GetProfileViewModel()));
             }
             catch (Exception ex)
             {
@@ -135,7 +130,7 @@ namespace Etherkeep.Server.Controllers.API
                         throw new Exception(string.Format("{0} was not found.", model.LoginMode == LoginMode.EmailAddress ? "Email Address" : "Mobile Number"));
                     }
 
-                    return Ok(new ResponseModel<string>(user.UserName));
+                    return Ok(new ResponseViewModel<string>(user.UserName));
                 }
                 catch (Exception ex)
                 {
@@ -179,7 +174,7 @@ namespace Etherkeep.Server.Controllers.API
 
                     if (result.Succeeded)
                     {
-                        return Ok(new ResponseModel<ProfileViewModel>(user.GetProfileViewModel()));
+                        return Ok(new ResponseViewModel<ProfileViewModel>(user.GetProfileViewModel()));
                     }
                     else
                     {
