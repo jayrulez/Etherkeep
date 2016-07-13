@@ -13,6 +13,7 @@ namespace Etherkeep.Server.Data.Entities
         public int Confirmations { get; set; }
         public TransactionStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         public virtual Transfer Transfer { get; set; }
     }

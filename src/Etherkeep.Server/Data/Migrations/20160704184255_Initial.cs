@@ -1031,7 +1031,7 @@ namespace Etherkeep.Server.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Transfers_InvokerUserId",
                 table: "Transfers",
-                column: "InvokerUserId");
+                column: "SenderUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transfers_TargetCurrencyCode",
@@ -1041,7 +1041,7 @@ namespace Etherkeep.Server.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Transfers_TargetUserId",
                 table: "Transfers",
-                column: "TargetUserId");
+                column: "ReceiverUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransferFees_FeeId",
@@ -1061,7 +1061,7 @@ namespace Etherkeep.Server.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_TransferInvitations_InvokerUserId",
                 table: "TransferInvitations",
-                column: "InvokerUserId");
+                column: "SenderUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransferInvitations_TargetCurrencyCode",

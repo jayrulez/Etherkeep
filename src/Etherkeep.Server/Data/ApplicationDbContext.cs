@@ -106,10 +106,8 @@ namespace Etherkeep.Server.Data
             {
                 entity.HasKey(e => e.Code);
                 entity.HasMany(e => e.Countries).WithOne(e => e.Currency).HasForeignKey(e => e.CurrencyCode);
-                entity.HasMany(e => e.TargetTransfers).WithOne(e => e.TargetCurrency).HasForeignKey(e => e.TargetCurrencyCode);
-                entity.HasMany(e => e.InvokerTransfers).WithOne(e => e.InvokerCurrency).HasForeignKey(e => e.InvokerCurrencyCode);
-                entity.HasMany(e => e.TargetTransferInvitations).WithOne(e => e.TargetCurrency).HasForeignKey(e => e.TargetCurrencyCode);
-                entity.HasMany(e => e.InvokerTransferInvitations).WithOne(e => e.InvokerCurrency).HasForeignKey(e => e.InvokerCurrencyCode);
+                entity.HasMany(e => e.TargetTransfers).WithOne(e => e.Currency).HasForeignKey(e => e.CurrencyCode);
+                entity.HasMany(e => e.InvokerTransferInvitations).WithOne(e => e.Currency).HasForeignKey(e => e.CurrencyCode);
                 entity.HasMany(e => e.Fees).WithOne(e => e.Currency).HasForeignKey(e => e.CurrencyCode);
             });
 
@@ -199,10 +197,9 @@ namespace Etherkeep.Server.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.HasOne(e => e.Transaction).WithOne(e => e.Transfer).HasPrincipalKey<Transfer>(e => e.TransactionId);
-                entity.HasOne(e => e.Invoker).WithMany(e => e.InvokedTransfers).HasForeignKey(e => e.InvokerUserId);
-                entity.HasOne(e => e.Target).WithMany(e => e.TargetedTransfers).HasForeignKey(e => e.TargetUserId);
-                entity.HasOne(e => e.InvokerCurrency).WithMany(e => e.InvokerTransfers).HasForeignKey(e => e.InvokerCurrencyCode);
-                entity.HasOne(e => e.TargetCurrency).WithMany(e => e.TargetTransfers).HasForeignKey(e => e.TargetCurrencyCode);
+                entity.HasOne(e => e.Sender).WithMany(e => e.InvokedTransfers).HasForeignKey(e => e.SenderUserId);
+                entity.HasOne(e => e.Receiver).WithMany(e => e.TargetedTransfers).HasForeignKey(e => e.ReceiverUserId);
+                entity.HasOne(e => e.Currency).WithMany(e => e.InvokerTransfers).HasForeignKey(e => e.CurrencyCode);
                 entity.HasMany(e => e.TransferFees).WithOne(e => e.Transfer).HasForeignKey(e => e.TransferId);
                 entity.HasMany(e => e.TransferMessages).WithOne(e => e.Transfer).HasForeignKey(e => e.TransferId);
             });
@@ -218,8 +215,7 @@ namespace Etherkeep.Server.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.HasOne(e => e.Invoker).WithMany(e => e.InvokedTransferInvitations).HasForeignKey(e => e.InvokerUserId);
-                entity.HasOne(e => e.InvokerCurrency).WithMany(e => e.InvokerTransferInvitations).HasForeignKey(e => e.InvokerCurrencyCode);
-                entity.HasOne(e => e.TargetCurrency).WithMany(e => e.TargetTransferInvitations).HasForeignKey(e => e.TargetCurrencyCode);
+                entity.HasOne(e => e.Currency).WithMany(e => e.InvokerTransferInvitations).HasForeignKey(e => e.CurrencyCode);
                 entity.HasMany(e => e.TransferInvitationFees).WithOne(e => e.TransferInvitation).HasForeignKey(e => e.TransferInvitationId);
                 entity.HasMany(e => e.TransferInvitationMessages).WithOne(e => e.TransferInvitation).HasForeignKey(e => e.TransferInvitationId);
                 entity.HasOne(e => e.SuspenseWallet).WithOne(e => e.TransferInvitation).HasPrincipalKey<SuspenseWallet>(e => e.TransferInvitationId);
@@ -256,8 +252,8 @@ namespace Etherkeep.Server.Data
                 entity.HasMany(e => e.Devices).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.LoginAttempts).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.Notifications).WithOne(e => e.User).HasForeignKey(e => e.UserId);
-                entity.HasMany(e => e.InvokedTransfers).WithOne(e => e.Invoker).HasForeignKey(e => e.InvokerUserId);
-                entity.HasMany(e => e.TargetedTransfers).WithOne(e => e.Target).HasForeignKey(e => e.TargetUserId);
+                entity.HasMany(e => e.InvokedTransfers).WithOne(e => e.Sender).HasForeignKey(e => e.SenderUserId);
+                entity.HasMany(e => e.TargetedTransfers).WithOne(e => e.Receiver).HasForeignKey(e => e.ReceiverUserId);
                 entity.HasMany(e => e.InvokedTransferInvitations).WithOne(e => e.Invoker).HasForeignKey(e => e.InvokerUserId);
                 entity.HasMany(e => e.TransferInvitationMessages).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.TransferMessages).WithOne(e => e.User).HasForeignKey(e => e.UserId);

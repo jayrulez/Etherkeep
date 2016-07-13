@@ -411,7 +411,7 @@ namespace Etherkeep.Server.Data.Migrations
 
                     b.Property<double>("InvokerExchangeRate");
 
-                    b.Property<Guid>("InvokerUserId");
+                    b.Property<Guid>("SenderUserId");
 
                     b.Property<int>("Status");
 
@@ -421,7 +421,7 @@ namespace Etherkeep.Server.Data.Migrations
 
                     b.Property<double>("TargetExchangeRate");
 
-                    b.Property<Guid>("TargetUserId");
+                    b.Property<Guid>("ReceiverUserId");
 
                     b.Property<double>("TotalCharge");
 
@@ -435,11 +435,11 @@ namespace Etherkeep.Server.Data.Migrations
 
                     b.HasIndex("InvokerCurrencyCode");
 
-                    b.HasIndex("InvokerUserId");
+                    b.HasIndex("SenderUserId");
 
                     b.HasIndex("TargetCurrencyCode");
 
-                    b.HasIndex("TargetUserId");
+                    b.HasIndex("ReceiverUserId");
 
                     b.ToTable("Transfers");
                 });
@@ -482,7 +482,7 @@ namespace Etherkeep.Server.Data.Migrations
 
                     b.Property<double>("InvokerExchangeRate");
 
-                    b.Property<Guid>("InvokerUserId");
+                    b.Property<Guid>("SenderUserId");
 
                     b.Property<int>("Status");
 
@@ -506,7 +506,7 @@ namespace Etherkeep.Server.Data.Migrations
 
                     b.HasIndex("InvokerCurrencyCode");
 
-                    b.HasIndex("InvokerUserId");
+                    b.HasIndex("SenderUserId");
 
                     b.HasIndex("SuspenseWalletTransferInvitationId")
                         .IsUnique();
@@ -1010,18 +1010,18 @@ namespace Etherkeep.Server.Data.Migrations
                         .WithMany("InvokerTransfers")
                         .HasForeignKey("InvokerCurrencyCode");
 
-                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Invoker")
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Sender")
                         .WithMany("InvokedTransfers")
-                        .HasForeignKey("InvokerUserId")
+                        .HasForeignKey("SenderUserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Etherkeep.Server.Data.Entities.Currency", "TargetCurrency")
                         .WithMany("TargetTransfers")
                         .HasForeignKey("TargetCurrencyCode");
 
-                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Target")
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Receiver")
                         .WithMany("TargetedTransfers")
-                        .HasForeignKey("TargetUserId")
+                        .HasForeignKey("ReceiverUserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -1044,9 +1044,9 @@ namespace Etherkeep.Server.Data.Migrations
                         .WithMany("InvokerTransferInvitations")
                         .HasForeignKey("InvokerCurrencyCode");
 
-                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Invoker")
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Sender")
                         .WithMany("InvokedTransferInvitations")
-                        .HasForeignKey("InvokerUserId")
+                        .HasForeignKey("SenderUserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Etherkeep.Server.Data.Entities.SuspenseWallet", "SuspenseWallet")

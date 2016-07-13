@@ -8,5 +8,6 @@ namespace Etherkeep.Server.Data.Entities
     public class Invoice
     {
         public int Id { get; set; }
+        public string WalletAddress { get; set; }
     }
 }
