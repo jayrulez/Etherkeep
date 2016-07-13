@@ -16,6 +16,7 @@ using OpenIddict;
 using Microsoft.EntityFrameworkCore;
 using Etherkeep.Server.ViewModels.Shared;
 using Etherkeep.Server.ViewModels.Account;
+using Etherkeep.Server.Data.Enums;
 
 namespace Etherkeep.Server.Controllers.API
 {
@@ -88,35 +89,6 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [AllowAnonymous, HttpPost, Route("username")]
-        public async Task<IActionResult> UsernameAction([FromBody] UsernameViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    User user = model.IdentityType == IdentityType.EmailAddress
-                        ? await _userManager.FindByEmailAsync(model.EmailAddress) : model.IdentityType == IdentityType.MobileNumber
-                        ? await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.PhoneNumber.Equals(string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber))) : null;
-
-                    if (user == null)
-                    {
-                        throw new Exception(string.Format("{0} was not found.", model.IdentityType == IdentityType.EmailAddress ? "Email Address" : "Mobile Number"));
-                    }
-
-                    return Ok(new { username = user.UserName });
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogCritical(ex.Message);
-
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-            }
-
-            return BadRequest(ModelState.GetErrorResponse());
-        }
-
         [AllowAnonymous, HttpPost, Route("register")]
         public async Task<IActionResult> RegisterAction([FromBody] RegisterViewModel model)
         {
@@ -126,22 +98,26 @@ namespace Etherkeep.Server.Controllers.API
                 {
                     var user = new User
                     {
-                        UserName = Guid.NewGuid().ToString(),
+                        UserType = UserType.Personal,
                         FirstName = model.FirstName,
                         LastName = model.LastName
                     };
 
                     if (model.IdentityType == IdentityType.EmailAddress)
                     {
-                        user.Email = model.EmailAddress;
+                        await _userManager.SetEmailAsync(user, model.EmailAddress);
+                        await _userManager.SetUserNameAsync(user, model.EmailAddress);
                     }
                     else if (model.IdentityType == IdentityType.MobileNumber)
                     {
-                        user.PhoneNumber = string.Concat(model.CountryCallingCode, model.AreaCode, model.SubscriberNumber);
+                        var phoneNumber = string.Concat(model.CountryCallingCode,"-", model.AreaCode, "-", model.SubscriberNumber);
+
+                        await _userManager.SetPhoneNumberAsync(user, phoneNumber);
+                        await _userManager.SetUserNameAsync(user, phoneNumber);
                     }
                     else
                     {
-                        throw new Exception("Invalid RegistrationMode.");
+                        throw new Exception("Invalid IdentityType.");
                     }
 
                     var result = await _userManager.CreateAsync(user, model.Password);

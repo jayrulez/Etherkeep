@@ -9,7 +9,6 @@ namespace Etherkeep.Server.Data.Entities
     public class Transaction
     {
         public int Id { get; set; }
-        public int? TransferId { get; set; }
         public string Hash { get; set; }
         public int Confirmations { get; set; }
         public TransactionStatus Status { get; set; }

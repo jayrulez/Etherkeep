@@ -33,7 +33,7 @@ export class LoginComponent
 			countryCallingCode: '',
 			areaCode: '',
 			subscriberNumber: '',
-			password: 'password',
+			password: '',
 			persistent: true
 		};
 	}
@@ -45,27 +45,22 @@ export class LoginComponent
 	
 	login()
 	{
-		this.accountService.username(this.loginModel)
-			.subscribe(
-				(response: any) => {
-					this.authService.token({
-						username: response.username,
-						password: this.loginModel.password,
-						persistent: this.loginModel.persistent
-					})
-					.subscribe(
-						(tokenResponse) => {
-							this.authService.setAuthData(tokenResponse);
-							
-							this.router.navigate(['home']);
-							
-						}, (tokenResponse) => {
-							this.error = tokenResponse.error_description;
-						}
-					);
-				}, (errorResponse: any) => {
-					this.error = errorResponse.error_description;
-				}
-			);
+		let username = this.loginModel.identityType == IdentityType.EmailAddress ? this.loginModel.emailAddress : this.loginModel.countryCallingCode +"-"+ this.loginModel.areaCode +"-"+ this.loginModel.subscriberNumber;
+		
+		this.authService.token({
+			username: username,
+			password: this.loginModel.password,
+			persistent: this.loginModel.persistent
+		})
+		.subscribe(
+			(tokenResponse) => {
+				this.authService.setAuthData(tokenResponse);
+				
+				this.router.navigate(['home']);
+				
+			}, (tokenResponse) => {
+				this.error = tokenResponse.error_description;
+			}
+		);
 	}
 }

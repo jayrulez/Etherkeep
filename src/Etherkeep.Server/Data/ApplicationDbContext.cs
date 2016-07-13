@@ -22,17 +22,19 @@ namespace Etherkeep.Server.Data
         public virtual DbSet<ConfigOption> ConfigOptions { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
-        public virtual DbSet<CountryCurrency> CountryCurrencies { get; set; }
         public virtual DbSet<Currency> Currencies { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<Fee> Fees { get; set; }
+        public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<LoginAttempt> LoginAttempts { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<NotificationParam> NotificationParams { get; set; }
         public virtual DbSet<NotificationType> NotificationTypes { get; set; }
+        public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<Setting> Settings { get; set; }
         public virtual DbSet<SettingGroup> SettingGroups { get; set; }
         public virtual DbSet<SettingOption> SettingOptions { get; set; }
+        public virtual DbSet<SuspenseWallet> SuspenseWallets { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<Transfer> Transfers { get; set; }
         public virtual DbSet<TransferFee> TransferFees { get; set; }
@@ -40,8 +42,8 @@ namespace Etherkeep.Server.Data
         public virtual DbSet<TransferMessage> TransferMessages { get; set; }
         public virtual new DbSet<User> Users { get; set; }
         public virtual DbSet<UserSetting> UserSettings { get; set; }
-        public virtual DbSet<UserWallet> Wallets { get; set; }
-        public virtual DbSet<UserWalletAddress> WalletAddresses { get; set; }
+        public virtual DbSet<Wallet> Wallets { get; set; }
+        public virtual DbSet<WalletAddress> WalletAddresses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -89,28 +91,21 @@ namespace Etherkeep.Server.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.HasAlternateKey(e => new { e.UserId, e.ContactId });
-                entity.HasOne(e => e.Owner).WithMany(e => e.OwnedContacts).HasForeignKey(e => e.UserId);
+                entity.HasOne(e => e.User).WithMany(e => e.OwnedContacts).HasForeignKey(e => e.UserId);
                 entity.HasOne(e => e.Subject).WithMany(e => e.SubjectContacts).HasForeignKey(e => e.ContactId);
             });
 
             builder.Entity<Country>(entity =>
             {
                 entity.HasKey(e => e.Code);
-                entity.HasMany(e => e.CountryCurrencies).WithOne(e => e.Country).HasForeignKey(e => e.CountryCode);
+                entity.HasOne(e => e.Currency).WithMany(e => e.Countries).HasForeignKey(e => e.CurrencyCode);
                 entity.HasMany(e => e.LoginAttempts).WithOne(e => e.Country).HasForeignKey(e => e.CountryCode);
-            });
-
-            builder.Entity<CountryCurrency>(entity =>
-            {
-                entity.HasKey(e => new { e.CountryCode, e.CurrencyCode });
-                entity.HasOne(e => e.Country).WithMany(e => e.CountryCurrencies).HasForeignKey(e => e.CountryCode);
-                entity.HasOne(e => e.Currency).WithMany(e => e.CountryCurrencies).HasForeignKey(e => e.CurrencyCode);
             });
 
             builder.Entity<Currency>(entity =>
             {
                 entity.HasKey(e => e.Code);
-                entity.HasMany(e => e.CountryCurrencies).WithOne(e => e.Currency).HasForeignKey(e => e.CurrencyCode);
+                entity.HasMany(e => e.Countries).WithOne(e => e.Currency).HasForeignKey(e => e.CurrencyCode);
                 entity.HasMany(e => e.TargetTransfers).WithOne(e => e.TargetCurrency).HasForeignKey(e => e.TargetCurrencyCode);
                 entity.HasMany(e => e.InvokerTransfers).WithOne(e => e.InvokerCurrency).HasForeignKey(e => e.InvokerCurrencyCode);
                 entity.HasMany(e => e.TargetTransferInvitations).WithOne(e => e.TargetCurrency).HasForeignKey(e => e.TargetCurrencyCode);
@@ -132,6 +127,11 @@ namespace Etherkeep.Server.Data
                 entity.HasMany(e => e.TransferInvitationFees).WithOne(e => e.Fee).HasForeignKey(e => e.FeeId);
             });
 
+            builder.Entity<Invoice>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+            });
+
             builder.Entity<LoginAttempt>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -143,8 +143,7 @@ namespace Etherkeep.Server.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.HasOne(e => e.NotificationType).WithMany(e => e.Notifications).HasForeignKey(e => e.NotificationTypeId);
-                entity.HasOne(e => e.User).WithMany(e => e.SentNotifications).HasForeignKey(e => e.UserId);
-                entity.HasOne(e => e.SubjectUser).WithMany(e => e.ReceivedNotifications).HasForeignKey(e => e.SubjectUserId);
+                entity.HasOne(e => e.User).WithMany(e => e.Notifications).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.NotificationParams).WithOne(e => e.Notification).HasForeignKey(e => e.NotificationId);
             });
 
@@ -158,6 +157,11 @@ namespace Etherkeep.Server.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.HasMany(e => e.Notifications).WithOne(e => e.NotificationType).HasForeignKey(e => e.NotificationTypeId);
+            });
+
+            builder.Entity<Payment>(entity =>
+            {
+                entity.HasKey(e => e.Id);
             });
 
             builder.Entity<Setting>(entity =>
@@ -179,14 +183,22 @@ namespace Etherkeep.Server.Data
                 entity.HasOne(e => e.Setting).WithMany(e => e.SettingOptions).HasForeignKey(e => e.SettingId);
             });
 
+            builder.Entity<SuspenseWallet>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasOne(e => e.TransferInvitation).WithOne(e => e.SuspenseWallet).HasPrincipalKey<SuspenseWallet>(e => e.TransferInvitationId);
+            });
+
             builder.Entity<Transaction>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.HasOne(e => e.Transfer).WithOne(e => e.Transaction).HasForeignKey<Transfer>(e => e.TransactionId);
             });
 
             builder.Entity<Transfer>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.HasOne(e => e.Transaction).WithOne(e => e.Transfer).HasPrincipalKey<Transfer>(e => e.TransactionId);
                 entity.HasOne(e => e.Invoker).WithMany(e => e.InvokedTransfers).HasForeignKey(e => e.InvokerUserId);
                 entity.HasOne(e => e.Target).WithMany(e => e.TargetedTransfers).HasForeignKey(e => e.TargetUserId);
                 entity.HasOne(e => e.InvokerCurrency).WithMany(e => e.InvokerTransfers).HasForeignKey(e => e.InvokerCurrencyCode);
@@ -210,6 +222,7 @@ namespace Etherkeep.Server.Data
                 entity.HasOne(e => e.TargetCurrency).WithMany(e => e.TargetTransferInvitations).HasForeignKey(e => e.TargetCurrencyCode);
                 entity.HasMany(e => e.TransferInvitationFees).WithOne(e => e.TransferInvitation).HasForeignKey(e => e.TransferInvitationId);
                 entity.HasMany(e => e.TransferInvitationMessages).WithOne(e => e.TransferInvitation).HasForeignKey(e => e.TransferInvitationId);
+                entity.HasOne(e => e.SuspenseWallet).WithOne(e => e.TransferInvitation).HasPrincipalKey<SuspenseWallet>(e => e.TransferInvitationId);
             });
 
             builder.Entity<TransferInvitationFee>(entity =>
@@ -238,19 +251,18 @@ namespace Etherkeep.Server.Data
                 entity.HasKey(e => e.Id);
                 entity.HasMany(e => e.UserActions).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.Activities).WithOne(e => e.User).HasForeignKey(e => e.UserId);
-                entity.HasMany(e => e.OwnedContacts).WithOne(e => e.Owner).HasForeignKey(e => e.UserId);
+                entity.HasMany(e => e.OwnedContacts).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.SubjectContacts).WithOne(e => e.Subject).HasForeignKey(e => e.ContactId);
                 entity.HasMany(e => e.Devices).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.LoginAttempts).WithOne(e => e.User).HasForeignKey(e => e.UserId);
-                entity.HasMany(e => e.SentNotifications).WithOne(e => e.User).HasForeignKey(e => e.UserId);
-                entity.HasMany(e => e.ReceivedNotifications).WithOne(e => e.SubjectUser).HasForeignKey(e => e.SubjectUserId);
+                entity.HasMany(e => e.Notifications).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.InvokedTransfers).WithOne(e => e.Invoker).HasForeignKey(e => e.InvokerUserId);
                 entity.HasMany(e => e.TargetedTransfers).WithOne(e => e.Target).HasForeignKey(e => e.TargetUserId);
                 entity.HasMany(e => e.InvokedTransferInvitations).WithOne(e => e.Invoker).HasForeignKey(e => e.InvokerUserId);
                 entity.HasMany(e => e.TransferInvitationMessages).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.TransferMessages).WithOne(e => e.User).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.UserSettings).WithOne(e => e.User).HasForeignKey(e => e.UserId);
-                entity.HasOne(e => e.UserWallet).WithOne(e => e.User).HasPrincipalKey<UserWallet>(e => e.UserId);
+                entity.HasOne(e => e.Wallet).WithOne(e => e.User).HasPrincipalKey<Wallet>(e => e.UserId);
             });
 
             builder.Entity<UserSetting>(entity =>
@@ -259,19 +271,19 @@ namespace Etherkeep.Server.Data
                 entity.HasOne(e => e.User).WithMany(e => e.UserSettings).HasForeignKey(e => e.UserId);
             });
 
-            builder.Entity<UserWallet>(entity =>
+            builder.Entity<Wallet>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.HasAlternateKey(e => e.UserId);
 
-                entity.HasOne(e => e.User).WithOne(e => e.UserWallet).HasForeignKey<UserWallet>(e => e.UserId);
-                entity.HasMany(e => e.UserWalletAddresses).WithOne(e => e.UserWallet).HasForeignKey(e => e.WalletId);
+                entity.HasOne(e => e.User).WithOne(e => e.Wallet).HasForeignKey<Wallet>(e => e.UserId);
+                entity.HasMany(e => e.WalletAddresses).WithOne(e => e.Wallet).HasForeignKey(e => e.WalletId);
             });
 
-            builder.Entity<UserWalletAddress>(entity =>
+            builder.Entity<WalletAddress>(entity =>
             {
                 entity.HasKey(e => e.Address);
-                entity.HasOne(e => e.UserWallet).WithMany(e => e.UserWalletAddresses).HasForeignKey(e => e.WalletId);
+                entity.HasOne(e => e.Wallet).WithMany(e => e.WalletAddresses).HasForeignKey(e => e.WalletId);
             });
         }
     }

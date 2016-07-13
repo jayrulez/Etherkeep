@@ -10,7 +10,7 @@ namespace Etherkeep.Server.Data.Entities
     {
         public int Id { get; set; }
         public Guid UserId { get; set; }
-        public ActionType Type { get; set; }
+        public ActionType ActionType { get; set; }
         public string Data { get; set; }
 
         public virtual User User { get; set; }

@@ -9,8 +9,9 @@ namespace Etherkeep.Server.Data.Entities
     {
         public string Code { get; set; }
         public string Name { get; set; }
+        public string CurrencyCode { get; set; }
 
-        public virtual ICollection<CountryCurrency> CountryCurrencies { get; set; }
+        public Currency Currency { get; set; }
         public virtual ICollection<LoginAttempt> LoginAttempts { get; set; }
     }
 }

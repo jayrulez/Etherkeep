@@ -13,7 +13,7 @@ namespace Etherkeep.Server.Data.Entities
         public int Precision { get; set; }
         public string Template { get; set; }
 
-        public virtual ICollection<CountryCurrency> CountryCurrencies { get; set; }
+        public virtual ICollection<Country> Countries { get; set; }
         public virtual ICollection<Transfer> TargetTransfers { get; set; }
         public virtual ICollection<Transfer> InvokerTransfers { get; set; }
         public virtual ICollection<TransferInvitation> TargetTransferInvitations { get; set; }

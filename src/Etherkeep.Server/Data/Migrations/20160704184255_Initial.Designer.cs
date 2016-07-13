@@ -626,7 +626,7 @@ namespace Etherkeep.Server.Data.Migrations
                     b.ToTable("UserSettings");
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserWallet", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.Wallet", b =>
                 {
                     b.Property<string>("Id");
 
@@ -884,7 +884,7 @@ namespace Etherkeep.Server.Data.Migrations
                         .HasForeignKey("ContactId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Owner")
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
                         .WithMany("OwnedContacts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -1081,18 +1081,18 @@ namespace Etherkeep.Server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserWallet", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.Wallet", b =>
                 {
                     b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
-                        .WithOne("UserWallet")
-                        .HasForeignKey("Etherkeep.Server.Data.Entities.UserWallet", "UserId")
+                        .WithOne("Wallet")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.Wallet", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserWalletAddress", b =>
                 {
-                    b.HasOne("Etherkeep.Server.Data.Entities.UserWallet", "UserWallet")
-                        .WithMany("UserWalletAddresses")
+                    b.HasOne("Etherkeep.Server.Data.Entities.Wallet", "Wallet")
+                        .WithMany("WalletAddresses")
                         .HasForeignKey("WalletId");
                 });
 

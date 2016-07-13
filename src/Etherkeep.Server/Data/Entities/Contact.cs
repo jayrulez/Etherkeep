@@ -12,7 +12,7 @@ namespace Etherkeep.Server.Data.Entities
         public Guid ContactId { get; set; }
         public DateTime LastActivity { get; set; }
 
-        public virtual User Owner { get; set; }
+        public virtual User User { get; set; }
         public virtual User Subject { get; set; }
     }
 }

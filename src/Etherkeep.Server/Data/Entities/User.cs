@@ -1,4 +1,5 @@
-﻿using OpenIddict;
+﻿using Etherkeep.Server.Data.Enums;
+using OpenIddict;
 using System;
 using System.Collections.Generic;
 
@@ -14,8 +15,7 @@ namespace Etherkeep.Server.Data.Entities
             SubjectContacts = new HashSet<Contact>();
             Devices = new HashSet<Device>();
             LoginAttempts = new HashSet<LoginAttempt>();
-            SentNotifications = new HashSet<Notification>();
-            ReceivedNotifications = new HashSet<Notification>();
+            Notifications = new HashSet<Notification>();
             InvokedTransfers = new HashSet<Transfer>();
             TargetedTransfers = new HashSet<Transfer>();
             InvokedTransferInvitations = new HashSet<TransferInvitation>();
@@ -26,14 +26,14 @@ namespace Etherkeep.Server.Data.Entities
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public UserType UserType { get; set; }
 
         public virtual ICollection<Activity> Activities { get; set; }
         public virtual ICollection<Contact> OwnedContacts { get; set; }
         public virtual ICollection<Contact> SubjectContacts { get; set; }
         public virtual ICollection<Device> Devices { get; set; }
         public virtual ICollection<LoginAttempt> LoginAttempts { get; set; }
-        public virtual ICollection<Notification> SentNotifications { get; set; }
-        public virtual ICollection<Notification> ReceivedNotifications { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Transfer> InvokedTransfers { get; set; }
         public virtual ICollection<Transfer> TargetedTransfers { get; set; }
         public virtual ICollection<TransferInvitation> InvokedTransferInvitations { get; set; }
@@ -41,6 +41,6 @@ namespace Etherkeep.Server.Data.Entities
         public virtual ICollection<TransferMessage> TransferMessages { get; set; }
         public virtual ICollection<UserAction> UserActions { get; set; }
         public virtual ICollection<UserSetting> UserSettings { get; set; }
-        public virtual UserWallet UserWallet { get; set; }
+        public virtual Wallet Wallet { get; set; }
     }
 }

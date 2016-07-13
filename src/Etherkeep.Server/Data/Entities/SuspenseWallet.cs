@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Data.Entities
 {
-    public class UserWallet
+    public class SuspenseWallet
     {
         public string Id { get; set; }
-        public Guid UserId { get; set; }
+        public int TransferInvitationId { get; set; }
         public string Label { get; set; }
         public double Balance { get; set; }
 
-        public virtual User User { get; set; }
-        public virtual ICollection<UserWalletAddress> UserWalletAddresses { get; set; }
+        public virtual TransferInvitation TransferInvitation { get; set; }
     }
 }
