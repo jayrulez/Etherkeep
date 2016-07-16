@@ -9,5 +9,7 @@ namespace Etherkeep.Server.Data.Entities
     {
         public int Id { get; set; }
         public string WalletAddress { get; set; }
+
+        public virtual ICollection<Payment> Payments { get; set; }
     }
 }

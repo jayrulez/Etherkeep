@@ -126,7 +126,7 @@ export class HttpClient
 	{
         try
 		{
-			console.log(error);
+			console.log(true, error);
             return (error.json());
         } catch (jsonError) {
             return ({

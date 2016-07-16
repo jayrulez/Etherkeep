@@ -1,39 +1,71 @@
-<form (ngSubmit)="login()" #loginForm="ngForm">
+  <br class="xs-80">
+  <div class="account-wrapper">
+
+    <div class="account-body">
+
+      <h5>Please sign in to get access.</h5>
 	<div *ngIf="error != null" class="alert alert-danger">
 		{{ error }}
 	</div>
-	<div [ngSwitch]="loginModel.identityType" class="form-group">
-		<div *ngSwitchCase="identityType.MobileNumber">
-			<label>Mobile Number</label>
-			<br/>
-			<div class="col-lg-1">
-				<input [(ngModel)]="loginModel.countryCallingCode" name="countryCallingCode" type="text" class="form-control" id="countryCallingCode">
-			</div>
-			<div class="col-lg-3">
-				<input [(ngModel)]="loginModel.areaCode" name="areaCode" type="text" class="form-control" id="areaCode">
-			</div>
-			<div class="col-lg-8">
-				<input [(ngModel)]="loginModel.subscriberNumber" name="subscriberNumber" type="text" class="form-control" id="subscriberNumber">
-			</div>
-		</div>
-		<div *ngSwitchCase="identityType.EmailAddress">
-			<label for="email-address">Email Address</label>
-			<input [(ngModel)]="loginModel.emailAddress" name="emailAddress" type="email" class="form-control" id="email-address">
-		</div>
-	</div>
-	
-	<div class="form-group">
-		<label for="password">Password</label>
-		<input [(ngModel)]="loginModel.password" name="password" type="password" class="form-control" id="password">
-	</div>
-	
-	<div class="checkbox">
-		<label>
-		  <input [(ngModel)]="loginModel.persistent" name="persistent" type="checkbox"> Keep me signed in
-		</label>
-	</div>
-	<button type="submit" class="btn btn-default">Sign in</button>
-	<a [routerLink]="['/reset-password']">Forgot Password?</a>
+
 	<a *ngIf="loginModel.identityType==identityType.MobileNumber" (click)="setIdentityType(identityType.EmailAddress)" href="javascript:void(null);">Login with email address</a>
 	<a *ngIf="loginModel.identityType==identityType.EmailAddress" (click)="setIdentityType(identityType.MobileNumber)" href="javascript:void(null);">Login with mobile number</a>
-</form>
+
+	  <form class="form account-form" (ngSubmit)="login()" #loginForm="ngForm">
+		<div [ngSwitch]="loginModel.identityType" class="form-group">
+			<div *ngSwitchCase="identityType.MobileNumber">
+				<label class="placeholder-hidden">Mobile Number</label>
+				<br/>
+				<div class="col-lg-1">
+					<input [(ngModel)]="loginModel.countryCallingCode" name="countryCallingCode" type="text" class="form-control" id="countryCallingCode" tabindex="1">
+				</div>
+				<div class="col-lg-3">
+					<input [(ngModel)]="loginModel.areaCode" name="areaCode" type="text" class="form-control" id="areaCode">
+				</div>
+				<div class="col-lg-8">
+					<input [(ngModel)]="loginModel.subscriberNumber" name="subscriberNumber" type="text" class="form-control" id="subscriberNumber">
+				</div>
+			</div>
+			<div *ngSwitchCase="identityType.EmailAddress">
+				<label for="email-address" class="placeholder-hidden">Email Address</label>
+				<input [(ngModel)]="loginModel.emailAddress" name="emailAddress" type="email" class="form-control" id="email-address" tabindex="1">
+			</div>
+		</div>
+		<!-- /.form-group -->
+
+        <div class="form-group">
+          <label for="login-password" class="placeholder-hidden">Password</label>
+		  <input [(ngModel)]="loginModel.password" name="password" type="password" class="form-control" id="password" placeholder="Password" tabindex="2">
+        </div> <!-- /.form-group -->
+
+        <div class="form-group clearfix">
+          <div class="pull-left">
+            <label class="checkbox-inline">
+			<input [(ngModel)]="loginModel.persistent" name="persistent" type="checkbox" tabindex="3"> <small>Keep me signed in</small>
+            </label>
+          </div>
+
+          <div class="pull-right">
+            <small><a [routerLink]="['/reset-password']">Forgot Password?</a></small>
+          </div>
+        </div> <!-- /.form-group -->
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-block btn-lg" tabindex="4">
+            Signin &nbsp; <i class="fa fa-play-circle"></i>
+          </button>
+        </div> <!-- /.form-group -->
+
+      </form>
+
+
+    </div> <!-- /.account-body -->
+
+    <div class="account-footer">
+      <p>
+      Don't have an account? &nbsp;
+      <a [routerLink]="['/register']">Create an Account!</a>
+      </p>
+    </div> <!-- /.account-footer -->
+
+  </div> <!-- /.account-wrapper -->

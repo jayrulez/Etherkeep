@@ -22,6 +22,7 @@ namespace Etherkeep.Server.Data.Entities
 
         public TransferStatus Status { get; set; }
         public bool Processed { get; set; }
+        public string Message { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
@@ -29,6 +30,5 @@ namespace Etherkeep.Server.Data.Entities
         public virtual Currency Currency { get; set; }
         public virtual SuspenseWallet SuspenseWallet { get; set; }
         public virtual ICollection<TransferInvitationFee> TransferInvitationFees { get; set; }
-        public virtual ICollection<TransferInvitationMessage> TransferInvitationMessages { get; set; }
     }
 }

@@ -16,10 +16,9 @@ namespace Etherkeep.Server.Data.Entities
             Devices = new HashSet<Device>();
             LoginAttempts = new HashSet<LoginAttempt>();
             Notifications = new HashSet<Notification>();
-            InvokedTransfers = new HashSet<Transfer>();
-            TargetedTransfers = new HashSet<Transfer>();
+            SentTransfers = new HashSet<Transfer>();
+            ReceivedTransfers = new HashSet<Transfer>();
             InvokedTransferInvitations = new HashSet<TransferInvitation>();
-            TransferInvitationMessages = new HashSet<TransferInvitationMessage>();
             TransferMessages = new HashSet<TransferMessage>();
             UserSettings = new HashSet<UserSetting>();
         }
@@ -34,10 +33,9 @@ namespace Etherkeep.Server.Data.Entities
         public virtual ICollection<Device> Devices { get; set; }
         public virtual ICollection<LoginAttempt> LoginAttempts { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
-        public virtual ICollection<Transfer> InvokedTransfers { get; set; }
-        public virtual ICollection<Transfer> TargetedTransfers { get; set; }
+        public virtual ICollection<Transfer> SentTransfers { get; set; }
+        public virtual ICollection<Transfer> ReceivedTransfers { get; set; }
         public virtual ICollection<TransferInvitation> InvokedTransferInvitations { get; set; }
-        public virtual ICollection<TransferInvitationMessage> TransferInvitationMessages { get; set; }
         public virtual ICollection<TransferMessage> TransferMessages { get; set; }
         public virtual ICollection<UserAction> UserActions { get; set; }
         public virtual ICollection<UserSetting> UserSettings { get; set; }

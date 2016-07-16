@@ -1,13 +1,37 @@
-﻿<html>
+﻿
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<html>
   <head>
     <base href="/">
     <title>Etherkeep</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+	
+    <!-- Google Font: Open Sans -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,800,800italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:400,300,700">
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+
     <!-- Bootstrap core CSS -->
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-	
-    <link rel="stylesheet" href="styles.css">
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="css/mvpready-admin.css">
+    <link href="node_modules/animate.css/animate.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
     <!-- 1. Load libraries -->
      <!-- Polyfill(s) for older browsers -->
@@ -15,9 +39,18 @@
     <script src="node_modules/zone.js/dist/zone.js"></script>
     <script src="node_modules/reflect-metadata/Reflect.js"></script>
     <script src="node_modules/systemjs/dist/system.src.js"></script>
-	
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Core JS -->
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- App JS -->
+    <script src="js/mvpready-core.js"></script>
+    <script src="js/mvpready-helpers.js"></script>
+    <script src="js/mvpready-admin.js"></script>
 	
     <!-- 2. Configure SystemJS -->
     <script src="systemjs.config.js"></script>
@@ -26,7 +59,7 @@
     </script>
   </head>
   <!-- 3. Display the application -->
-  <body>
+  <body class="">
     <app>Loading...</app>
   </body>
 </html>

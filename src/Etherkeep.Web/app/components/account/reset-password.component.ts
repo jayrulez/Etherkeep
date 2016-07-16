@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { NgForm }    from '@angular/common';
+import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 import { AccountService } from '../../services/account.service';
 import { IdentityType } from '../../common/identity-type';
 import { ResetPasswordModel } from '../../models/reset-password.model';
-import { Router } from '@angular/router';
 
 @Component({
   templateUrl: 'app/components/account/reset-password.component.html',
   providers: [],
-  directives: [NgSwitch, NgSwitchCase]
+  directives: [
+	  ROUTER_DIRECTIVES
+  ]
 })
 
 export class ResetPasswordComponent
