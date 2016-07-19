@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Data.Enums
 {
-    public enum TransferStatus
+    public enum ContactType
     {
-        Pending,
-        Accepted,
-        Completed,
-        Canceled,
-        Rejected
+        User,
+        EmailAddress,
+        MobileNumber
     }
 }

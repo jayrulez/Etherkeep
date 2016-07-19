@@ -16,12 +16,12 @@ namespace Etherkeep.Server.Controllers.API
 {
     [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
-    public class TransferController : BaseController
+    public class PaymentController : BaseController
     {
-        public TransferController(ApplicationDbContext applicationDbContext, OpenIddictUserManager<User> userManager, ILoggerFactory loggerFactory) 
+        public PaymentController(ApplicationDbContext applicationDbContext, OpenIddictUserManager<User> userManager, ILoggerFactory loggerFactory) 
             : base(applicationDbContext, userManager, loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<TransferController>();
+            _logger = loggerFactory.CreateLogger<PaymentController>();
         }
 
         [Route("request")]
@@ -31,9 +31,9 @@ namespace Etherkeep.Server.Controllers.API
             {
                 try
                 {
-                    var transfer = new Transfer();
+                    var request = new PaymentRequest();
 
-                    _applicationDbContext.Transfers.Add(transfer);
+                    _applicationDbContext.PaymentRequests.Add(request);
 
                     await _applicationDbContext.SaveChangesAsync();
 
@@ -50,16 +50,16 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("request_invitation")]
+        [Route("request_external")]
         public async Task<IActionResult> RequestInvitationAction([FromBody] RequestTransferInvitationViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var transferInvitation = new TransferInvitation();
+                    var request = new ExternalPaymentRequest();
 
-                    _applicationDbContext.TransferInvitations.Add(transferInvitation);
+                    _applicationDbContext.ExternalPaymentRequests.Add(request);
 
                     await _applicationDbContext.SaveChangesAsync();
                     
@@ -96,7 +96,7 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [Route("send_invitation")]
+        [Route("send_external")]
         public IActionResult SendInvitationAction([FromBody] SendTransferInvitationViewModel model)
         {
             if (ModelState.IsValid)
@@ -176,7 +176,7 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [HttpPost("{id:int}/cancel_invitation")]
+        [HttpPost("{id:int}/cancel_external")]
         public IActionResult CancelInvitationAction(int id)
         {
             if (ModelState.IsValid)
@@ -216,8 +216,8 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [HttpGet("{id:int}/details")]
-        public IActionResult DetailsAction(int id)
+        [HttpGet("{id:int}")]
+        public IActionResult PaymentDetailsAction(int id)
         {
             if (ModelState.IsValid)
             {
@@ -236,8 +236,8 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [HttpGet("{id:int}/invitation_details")]
-        public IActionResult InvitationDetailsAction(int id)
+        [HttpGet("external/{id:int}")]
+        public IActionResult ExternalPaymentDetailsAction(int id)
         {
             if (ModelState.IsValid)
             {
@@ -256,8 +256,8 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [HttpPost("{id:int}/send_message")]
-        public IActionResult SendMessageAction(int id, [FromBody] SendTransferMessageViewModel model)
+        [HttpGet("request/{id:int}")]
+        public IActionResult PaymentRequestDetailsAction(int id)
         {
             if (ModelState.IsValid)
             {
@@ -276,48 +276,8 @@ namespace Etherkeep.Server.Controllers.API
             return BadRequest(ModelState);
         }
 
-        [HttpPost("{id:int}/send_invitation_message")]
-        public IActionResult SendInvitationMessageAction(int id, [FromBody] SendTransferInvitationMessageViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    return Ok();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogCritical(ex.Message);
-
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-            }
-
-            return BadRequest(ModelState);
-        }
-
-        [HttpGet("{id:int}/messages")]
-        public IActionResult MessagesAction(int id)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    return Ok();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogCritical(ex.Message);
-
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-            }
-
-            return BadRequest(ModelState);
-        }
-
-        [HttpGet("{id:int}/invitation_messages")]
-        public IActionResult InvitationMessagesAction(int id)
+        [HttpGet("external_request/{id:int}")]
+        public IActionResult ExternalPaymentRequestDetailsAction(int id)
         {
             if (ModelState.IsValid)
             {

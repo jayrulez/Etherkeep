@@ -14,8 +14,10 @@ namespace Etherkeep.Server.Data.Entities
         public string Template { get; set; }
 
         public virtual ICollection<Country> Countries { get; set; }
-        public virtual ICollection<Transfer> Transfers { get; set; }
-        public virtual ICollection<TransferInvitation> TransferInvitations { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; }
+        public virtual ICollection<PaymentRequest> PaymentRequests { get; set; }
+        public virtual ICollection<ExternalPayment> ExternalPayments { get; set; }
+        public virtual ICollection<ExternalPaymentRequest> ExternalPaymentRequests { get; set; }
         public virtual ICollection<Fee> Fees { get; set; }
     }
 }

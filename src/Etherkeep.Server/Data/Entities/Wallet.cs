@@ -12,5 +12,6 @@ namespace Etherkeep.Server.Data.Entities
 
         public virtual User User { get; set; }
         public virtual ICollection<WalletAddress> WalletAddresses { get; set; }
+        public virtual UserPrimaryWallet PrimaryWallet { get; set; }
     }
 }

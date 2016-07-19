@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Etherkeep.Server.Data;
 
-namespace Etherkeep.Server.Migrations
+namespace Etherkeep.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20160713180657_Update2")]
-    partial class Update2
+    [Migration("20160719193358_Update1")]
+    partial class Update1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -17,12 +17,46 @@ namespace Etherkeep.Server.Migrations
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.Action", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ActionType");
+
+                    b.Property<Guid>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Actions");
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ActionParameter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ActionId");
+
+                    b.Property<string>("Parameter");
+
+                    b.Property<string>("Value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActionId");
+
+                    b.ToTable("ActionParameters");
+                });
+
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Activity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("ActivityTypeId");
+                    b.Property<string>("ActivityType");
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -32,14 +66,12 @@ namespace Etherkeep.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ActivityTypeId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Activities");
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ActivityParam", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ActivityParameter", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -54,18 +86,16 @@ namespace Etherkeep.Server.Migrations
 
                     b.HasIndex("ActivityId");
 
-                    b.ToTable("ActivityParams");
+                    b.ToTable("ActivityParameters");
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ActivityType", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.AddressBookEntry", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Name");
 
-                    b.Property<string>("Template");
+                    b.HasKey("Name");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("ActivityTypes");
+                    b.ToTable("AddressBookEntries");
                 });
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Config", b =>
@@ -125,6 +155,8 @@ namespace Etherkeep.Server.Migrations
 
                     b.Property<DateTime>("LastActivity");
 
+                    b.Property<int>("Type");
+
                     b.Property<Guid>("UserId");
 
                     b.HasKey("Id");
@@ -183,6 +215,99 @@ namespace Etherkeep.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Devices");
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.EmailAddress", b =>
+                {
+                    b.Property<string>("Address");
+
+                    b.Property<Guid>("UserId");
+
+                    b.Property<bool>("Verified");
+
+                    b.HasKey("Address");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EmailAddresses");
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ExternalPayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<double>("Amount");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<string>("CurrencyCode");
+
+                    b.Property<double>("ExchangeRate");
+
+                    b.Property<double>("Fee");
+
+                    b.Property<int?>("PaymentExternalPaymentId");
+
+                    b.Property<string>("Receiver");
+
+                    b.Property<int>("ReceiverType");
+
+                    b.Property<Guid>("SenderId");
+
+                    b.Property<int>("Status");
+
+                    b.Property<double>("Tokens");
+
+                    b.Property<double>("Total");
+
+                    b.Property<DateTime>("UpdatedAt");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrencyCode");
+
+                    b.HasIndex("PaymentExternalPaymentId")
+                        .IsUnique();
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ExternalPayments");
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ExternalPaymentRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<double>("Amount");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<string>("CurrencyCode");
+
+                    b.Property<int?>("PaymentRequestExternalPaymentRequestId");
+
+                    b.Property<string>("Receiver");
+
+                    b.Property<int>("ReceiverType");
+
+                    b.Property<Guid>("SenderId");
+
+                    b.Property<int>("Status");
+
+                    b.Property<DateTime>("UpdatedAt");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrencyCode");
+
+                    b.HasIndex("PaymentRequestExternalPaymentRequestId")
+                        .IsUnique();
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ExternalPaymentRequests");
                 });
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Fee", b =>
@@ -249,6 +374,25 @@ namespace Etherkeep.Server.Migrations
                     b.ToTable("LoginAttempts");
                 });
 
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.MobileNumber", b =>
+                {
+                    b.Property<string>("CountryCallingCode");
+
+                    b.Property<string>("AreaCode");
+
+                    b.Property<string>("SubscriberNumber");
+
+                    b.Property<Guid>("UserId");
+
+                    b.Property<bool>("Verified");
+
+                    b.HasKey("CountryCallingCode", "AreaCode", "SubscriberNumber");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MobileNumbers");
+                });
+
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Notification", b =>
                 {
                     b.Property<int>("Id")
@@ -256,7 +400,7 @@ namespace Etherkeep.Server.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<string>("NotificationTypeId");
+                    b.Property<string>("NotificationType");
 
                     b.Property<DateTime>("UpdatedAt");
 
@@ -264,14 +408,12 @@ namespace Etherkeep.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NotificationTypeId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.NotificationParam", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.NotificationParameter", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -286,18 +428,7 @@ namespace Etherkeep.Server.Migrations
 
                     b.HasIndex("NotificationId");
 
-                    b.ToTable("NotificationParams");
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.NotificationType", b =>
-                {
-                    b.Property<string>("Id");
-
-                    b.Property<string>("Template");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("NotificationTypes");
+                    b.ToTable("NotificationParameters");
                 });
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Payment", b =>
@@ -305,9 +436,85 @@ namespace Etherkeep.Server.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<double>("Amount");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<string>("CurrencyCode");
+
+                    b.Property<double>("ExchangeRate");
+
+                    b.Property<int?>("ExternalPaymentId")
+                        .IsRequired();
+
+                    b.Property<double>("Fee");
+
+                    b.Property<int?>("InvoiceId");
+
+                    b.Property<int?>("PaymentRequestId")
+                        .IsRequired();
+
+                    b.Property<Guid>("ReceiverId");
+
+                    b.Property<Guid>("SenderId");
+
+                    b.Property<int>("Status");
+
+                    b.Property<double>("Tokens");
+
+                    b.Property<double>("Total");
+
+                    b.Property<DateTime>("UpdatedAt");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("CurrencyCode");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
                     b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.PaymentRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<double>("Amount");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<string>("CurrencyCode");
+
+                    b.Property<int?>("ExternalPaymentRequestId")
+                        .IsRequired();
+
+                    b.Property<int?>("PaymentRequestId");
+
+                    b.Property<Guid>("ReceiverId");
+
+                    b.Property<Guid>("SenderId");
+
+                    b.Property<int>("Status");
+
+                    b.Property<DateTime>("UpdatedAt");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrencyCode");
+
+                    b.HasIndex("PaymentRequestId")
+                        .IsUnique();
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("PaymentRequests");
                 });
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Setting", b =>
@@ -366,8 +573,6 @@ namespace Etherkeep.Server.Migrations
 
                     b.Property<string>("Label");
 
-                    b.Property<int>("TransferInvitationId");
-
                     b.HasKey("Id");
 
                     b.ToTable("SuspenseWallets");
@@ -386,189 +591,11 @@ namespace Etherkeep.Server.Migrations
 
                     b.Property<int>("Status");
 
-                    b.Property<int?>("TransferTransactionId");
-
                     b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TransferTransactionId")
-                        .IsUnique();
 
                     b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.Transfer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<double>("Amount");
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<string>("CurrencyCode");
-
-                    b.Property<double>("ExchangeRate");
-
-                    b.Property<double>("FeeAmount");
-
-                    b.Property<Guid>("ReceiverUserId");
-
-                    b.Property<Guid>("SenderUserId");
-
-                    b.Property<int>("Status");
-
-                    b.Property<double>("TokenAmount");
-
-                    b.Property<double>("TotalCharge");
-
-                    b.Property<int>("TransactionId");
-
-                    b.Property<int>("Type");
-
-                    b.Property<DateTime>("UpdatedAt");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CurrencyCode");
-
-                    b.HasIndex("ReceiverUserId");
-
-                    b.HasIndex("SenderUserId");
-
-                    b.ToTable("Transfers");
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferFee", b =>
-                {
-                    b.Property<int>("TransferId");
-
-                    b.Property<int>("FeeId");
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("FeeType");
-
-                    b.Property<double>("FeeValue");
-
-                    b.HasKey("TransferId", "FeeId");
-
-                    b.HasIndex("FeeId");
-
-                    b.HasIndex("TransferId");
-
-                    b.ToTable("TransferFees");
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferInvitation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<double>("Amount");
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<string>("CurrencyCode");
-
-                    b.Property<double>("ExchangeRate");
-
-                    b.Property<double>("FeeAmount");
-
-                    b.Property<Guid>("InvokerUserId");
-
-                    b.Property<bool>("Processed");
-
-                    b.Property<int>("Status");
-
-                    b.Property<int?>("SuspenseWalletTransferInvitationId");
-
-                    b.Property<string>("TargetIdentity");
-
-                    b.Property<int>("TargetType");
-
-                    b.Property<double>("TokenAmount");
-
-                    b.Property<double>("TotalCharge");
-
-                    b.Property<int>("Type");
-
-                    b.Property<DateTime>("UpdatedAt");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CurrencyCode");
-
-                    b.HasIndex("InvokerUserId");
-
-                    b.HasIndex("SuspenseWalletTransferInvitationId")
-                        .IsUnique();
-
-                    b.ToTable("TransferInvitations");
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferInvitationFee", b =>
-                {
-                    b.Property<int>("TransferInvitationId");
-
-                    b.Property<int>("FeeId");
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("FeeType");
-
-                    b.Property<double>("FeeValue");
-
-                    b.HasKey("TransferInvitationId", "FeeId");
-
-                    b.HasIndex("FeeId");
-
-                    b.HasIndex("TransferInvitationId");
-
-                    b.ToTable("TransferInvitationFee");
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferInvitationMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<int>("TransferInvitationId");
-
-                    b.Property<Guid>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TransferInvitationId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TransferInvitationMessage");
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<bool>("Read");
-
-                    b.Property<int>("TransferId");
-
-                    b.Property<Guid>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TransferId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TransferMessages");
                 });
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.User", b =>
@@ -608,12 +635,14 @@ namespace Etherkeep.Server.Migrations
 
                     b.Property<string>("SecurityStamp");
 
+                    b.Property<int>("Status");
+
                     b.Property<bool>("TwoFactorEnabled");
+
+                    b.Property<int>("Type");
 
                     b.Property<string>("UserName")
                         .HasAnnotation("MaxLength", 256);
-
-                    b.Property<int>("UserType");
 
                     b.HasKey("Id");
 
@@ -627,22 +656,67 @@ namespace Etherkeep.Server.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserAction", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserPrimaryEmailAddress", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActionType");
-
-                    b.Property<string>("Data");
-
                     b.Property<Guid>("UserId");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Address")
+                        .IsRequired();
 
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId");
 
-                    b.ToTable("Actions");
+                    b.HasAlternateKey("Address");
+
+                    b.HasIndex("Address")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserPrimaryEmailAddresses");
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserPrimaryMobileNumber", b =>
+                {
+                    b.Property<Guid>("UserId");
+
+                    b.Property<string>("AreaCode")
+                        .IsRequired();
+
+                    b.Property<string>("CountryCallingCode")
+                        .IsRequired();
+
+                    b.Property<string>("SubscriberNumber")
+                        .IsRequired();
+
+                    b.HasKey("UserId");
+
+                    b.HasAlternateKey("CountryCallingCode", "AreaCode", "SubscriberNumber");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("CountryCallingCode", "AreaCode", "SubscriberNumber")
+                        .IsUnique();
+
+                    b.ToTable("UserPrimaryMobileNumbers");
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserPrimaryWallet", b =>
+                {
+                    b.Property<Guid>("UserId");
+
+                    b.Property<string>("WalletId");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("WalletId")
+                        .IsUnique();
+
+                    b.ToTable("UserPrimaryWallets");
                 });
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserSetting", b =>
@@ -668,10 +742,7 @@ namespace Etherkeep.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("UserId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Wallets");
                 });
@@ -873,22 +944,34 @@ namespace Etherkeep.Server.Migrations
                     b.ToTable("OpenIddictTokens");
                 });
 
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.Action", b =>
+                {
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
+                        .WithMany("Actions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ActionParameter", b =>
+                {
+                    b.HasOne("Etherkeep.Server.Data.Entities.Action", "Action")
+                        .WithMany("Parameters")
+                        .HasForeignKey("ActionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Activity", b =>
                 {
-                    b.HasOne("Etherkeep.Server.Data.Entities.ActivityType", "ActivityType")
-                        .WithMany("Activities")
-                        .HasForeignKey("ActivityTypeId");
-
                     b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
                         .WithMany("Activities")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ActivityParam", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ActivityParameter", b =>
                 {
                     b.HasOne("Etherkeep.Server.Data.Entities.Activity", "Activity")
-                        .WithMany("ActivityParams")
+                        .WithMany("Parameters")
                         .HasForeignKey("ActivityId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -934,6 +1017,48 @@ namespace Etherkeep.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.EmailAddress", b =>
+                {
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
+                        .WithMany("EmailAddresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ExternalPayment", b =>
+                {
+                    b.HasOne("Etherkeep.Server.Data.Entities.Currency", "Currency")
+                        .WithMany("ExternalPayments")
+                        .HasForeignKey("CurrencyCode");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.Payment", "Payment")
+                        .WithOne("ExternalPayment")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.ExternalPayment", "PaymentExternalPaymentId")
+                        .HasPrincipalKey("Etherkeep.Server.Data.Entities.Payment", "ExternalPaymentId");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Sender")
+                        .WithMany("SentExternalPayments")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.ExternalPaymentRequest", b =>
+                {
+                    b.HasOne("Etherkeep.Server.Data.Entities.Currency", "Currency")
+                        .WithMany("ExternalPaymentRequests")
+                        .HasForeignKey("CurrencyCode");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.PaymentRequest", "PaymentRequest")
+                        .WithOne("ExternalPaymentRequest")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.ExternalPaymentRequest", "PaymentRequestExternalPaymentRequestId")
+                        .HasPrincipalKey("Etherkeep.Server.Data.Entities.PaymentRequest", "ExternalPaymentRequestId");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Sender")
+                        .WithMany("SentExternalPaymentRequests")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Fee", b =>
                 {
                     b.HasOne("Etherkeep.Server.Data.Entities.Currency", "Currency")
@@ -953,23 +1078,68 @@ namespace Etherkeep.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.MobileNumber", b =>
+                {
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
+                        .WithMany("MobileNumbers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Notification", b =>
                 {
-                    b.HasOne("Etherkeep.Server.Data.Entities.NotificationType", "NotificationType")
-                        .WithMany("Notifications")
-                        .HasForeignKey("NotificationTypeId");
-
                     b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.NotificationParam", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.NotificationParameter", b =>
                 {
                     b.HasOne("Etherkeep.Server.Data.Entities.Notification", "Notification")
-                        .WithMany("NotificationParams")
+                        .WithMany("Parameters")
                         .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.Payment", b =>
+                {
+                    b.HasOne("Etherkeep.Server.Data.Entities.Currency", "Currency")
+                        .WithMany("Payments")
+                        .HasForeignKey("CurrencyCode");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.Invoice", "Invoice")
+                        .WithMany("Payments")
+                        .HasForeignKey("InvoiceId");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Receiver")
+                        .WithMany("ReceivedPayments")
+                        .HasForeignKey("ReceiverId");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Sender")
+                        .WithMany("SentPayments")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.PaymentRequest", b =>
+                {
+                    b.HasOne("Etherkeep.Server.Data.Entities.Currency", "Currency")
+                        .WithMany("PaymentRequests")
+                        .HasForeignKey("CurrencyCode");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.Payment", "Payment")
+                        .WithOne("PaymentRequest")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.PaymentRequest", "PaymentRequestId")
+                        .HasPrincipalKey("Etherkeep.Server.Data.Entities.Payment", "PaymentRequestId");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Receiver")
+                        .WithMany("ReceivedPaymentRequests")
+                        .HasForeignKey("ReceiverId");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Sender")
+                        .WithMany("SentPaymentRequests")
+                        .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -987,103 +1157,39 @@ namespace Etherkeep.Server.Migrations
                         .HasForeignKey("SettingId");
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.Transaction", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserPrimaryEmailAddress", b =>
                 {
-                    b.HasOne("Etherkeep.Server.Data.Entities.Transfer", "Transfer")
-                        .WithOne("Transaction")
-                        .HasForeignKey("Etherkeep.Server.Data.Entities.Transaction", "TransferTransactionId")
-                        .HasPrincipalKey("Etherkeep.Server.Data.Entities.Transfer", "TransactionId");
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.Transfer", b =>
-                {
-                    b.HasOne("Etherkeep.Server.Data.Entities.Currency", "Currency")
-                        .WithMany("Transfers")
-                        .HasForeignKey("CurrencyCode");
-
-                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Receiver")
-                        .WithMany("ReceivedTransfers")
-                        .HasForeignKey("ReceiverUserId");
-
-                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Sender")
-                        .WithMany("SentTransfers")
-                        .HasForeignKey("SenderUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferFee", b =>
-                {
-                    b.HasOne("Etherkeep.Server.Data.Entities.Fee", "Fee")
-                        .WithMany("TransferFees")
-                        .HasForeignKey("FeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Etherkeep.Server.Data.Entities.Transfer", "Transfer")
-                        .WithMany("TransferFees")
-                        .HasForeignKey("TransferId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferInvitation", b =>
-                {
-                    b.HasOne("Etherkeep.Server.Data.Entities.Currency", "Currency")
-                        .WithMany("TransferInvitations")
-                        .HasForeignKey("CurrencyCode");
-
-                    b.HasOne("Etherkeep.Server.Data.Entities.User", "Invoker")
-                        .WithMany("InvokedTransferInvitations")
-                        .HasForeignKey("InvokerUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Etherkeep.Server.Data.Entities.SuspenseWallet", "SuspenseWallet")
-                        .WithOne("TransferInvitation")
-                        .HasForeignKey("Etherkeep.Server.Data.Entities.TransferInvitation", "SuspenseWalletTransferInvitationId")
-                        .HasPrincipalKey("Etherkeep.Server.Data.Entities.SuspenseWallet", "TransferInvitationId");
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferInvitationFee", b =>
-                {
-                    b.HasOne("Etherkeep.Server.Data.Entities.Fee", "Fee")
-                        .WithMany("TransferInvitationFees")
-                        .HasForeignKey("FeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Etherkeep.Server.Data.Entities.TransferInvitation", "TransferInvitation")
-                        .WithMany("TransferInvitationFees")
-                        .HasForeignKey("TransferInvitationId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferInvitationMessage", b =>
-                {
-                    b.HasOne("Etherkeep.Server.Data.Entities.TransferInvitation", "TransferInvitation")
-                        .WithMany("TransferInvitationMessages")
-                        .HasForeignKey("TransferInvitationId")
+                    b.HasOne("Etherkeep.Server.Data.Entities.EmailAddress", "EmailAddress")
+                        .WithOne("PrimaryEmailAddress")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.UserPrimaryEmailAddress", "Address")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
-                        .WithMany("TransferInvitationMessages")
-                        .HasForeignKey("UserId");
+                        .WithOne("PrimaryEmailAddress")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.UserPrimaryEmailAddress", "UserId");
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.TransferMessage", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserPrimaryMobileNumber", b =>
                 {
-                    b.HasOne("Etherkeep.Server.Data.Entities.Transfer", "Transfer")
-                        .WithMany("TransferMessages")
-                        .HasForeignKey("TransferId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
-                        .WithMany("TransferMessages")
-                        .HasForeignKey("UserId");
+                        .WithOne("PrimaryMobileNumber")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.UserPrimaryMobileNumber", "UserId");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.MobileNumber", "MobileNumber")
+                        .WithOne("PrimaryMobileNumber")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.UserPrimaryMobileNumber", "CountryCallingCode", "AreaCode", "SubscriberNumber")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserAction", b =>
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserPrimaryWallet", b =>
                 {
                     b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
-                        .WithMany("UserActions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithOne("PrimaryWallet")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.UserPrimaryWallet", "UserId");
+
+                    b.HasOne("Etherkeep.Server.Data.Entities.Wallet", "Wallet")
+                        .WithOne("PrimaryWallet")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.UserPrimaryWallet", "WalletId");
                 });
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserSetting", b =>
@@ -1097,8 +1203,8 @@ namespace Etherkeep.Server.Migrations
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Wallet", b =>
                 {
                     b.HasOne("Etherkeep.Server.Data.Entities.User", "User")
-                        .WithOne("Wallet")
-                        .HasForeignKey("Etherkeep.Server.Data.Entities.Wallet", "UserId")
+                        .WithMany("Wallets")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -19,7 +19,5 @@ namespace Etherkeep.Server.Data.Entities
 
 
         public virtual Currency Currency { get; set; }
-        public virtual ICollection<TransferFee> TransferFees { get; set; }
-        public virtual ICollection<TransferInvitationFee> TransferInvitationFees { get; set; }
     }
 }

@@ -1,19 +1,18 @@
-﻿using System;
+﻿using Etherkeep.Server.Data.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Data.Entities
 {
-    public class TransferMessage
+    public class Action
     {
         public int Id { get; set; }
-        public int TransferId { get; set; }
         public Guid UserId { get; set; }
-        public bool Read { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public string ActionType { get; set; }
 
-        public virtual Transfer Transfer { get; set; }
         public virtual User User { get; set; }
+        public virtual ICollection<ActionParameter> Parameters { get; set; }
     }
 }

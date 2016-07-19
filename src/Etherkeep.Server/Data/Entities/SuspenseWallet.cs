@@ -8,10 +8,7 @@ namespace Etherkeep.Server.Data.Entities
     public class SuspenseWallet
     {
         public string Id { get; set; }
-        public int TransferInvitationId { get; set; }
         public string Label { get; set; }
         public double Balance { get; set; }
-
-        public virtual TransferInvitation TransferInvitation { get; set; }
     }
 }

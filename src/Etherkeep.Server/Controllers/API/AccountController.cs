@@ -98,7 +98,7 @@ namespace Etherkeep.Server.Controllers.API
                 {
                     var user = new User
                     {
-                        UserType = UserType.Personal,
+                        Type = UserType.Personal,
                         FirstName = model.FirstName,
                         LastName = model.LastName
                     };

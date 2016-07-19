@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Etherkeep.Server.Migrations
+namespace Etherkeep.Server.Data.Migrations
 {
-    public partial class Update2 : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ActivityTypes",
+                name: "AddressBookEntries",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
-                    Template = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ActivityTypes", x => x.Id);
+                    table.PrimaryKey("PK_AddressBookEntries", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -62,30 +61,6 @@ namespace Etherkeep.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NotificationTypes",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    Template = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NotificationTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Payments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Payments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SettingGroups",
                 columns: table => new
                 {
@@ -103,13 +78,28 @@ namespace Etherkeep.Server.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     Balance = table.Column<double>(nullable: false),
-                    Label = table.Column<string>(nullable: true),
-                    TransferInvitationId = table.Column<int>(nullable: false)
+                    Label = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SuspenseWallets", x => x.Id);
-                    table.UniqueConstraint("AK_SuspenseWallets_TransferInvitationId", x => x.TransferInvitationId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transactions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Confirmations = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    Hash = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -131,9 +121,10 @@ namespace Etherkeep.Server.Migrations
                     PhoneNumber = table.Column<string>(nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),
                     SecurityStamp = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true),
-                    UserType = table.Column<int>(nullable: false)
+                    Type = table.Column<int>(nullable: false),
+                    UserName = table.Column<string>(maxLength: 256, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -286,12 +277,32 @@ namespace Etherkeep.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Actions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ActionType = table.Column<string>(nullable: true),
+                    UserId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Actions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Actions_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Activities",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ActivityTypeId = table.Column<string>(nullable: true),
+                    ActivityType = table.Column<string>(nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<string>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false)
@@ -299,12 +310,6 @@ namespace Etherkeep.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Activities", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Activities_ActivityTypes_ActivityTypeId",
-                        column: x => x.ActivityTypeId,
-                        principalTable: "ActivityTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Activities_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -361,25 +366,59 @@ namespace Etherkeep.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EmailAddresses",
+                columns: table => new
+                {
+                    Address = table.Column<string>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    Verified = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailAddresses", x => x.Address);
+                    table.ForeignKey(
+                        name: "FK_EmailAddresses_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MobileNumbers",
+                columns: table => new
+                {
+                    CountryCallingCode = table.Column<string>(nullable: false),
+                    AreaCode = table.Column<string>(nullable: false),
+                    SubscriberNumber = table.Column<string>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
+                    Verified = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MobileNumbers", x => new { x.CountryCallingCode, x.AreaCode, x.SubscriberNumber });
+                    table.ForeignKey(
+                        name: "FK_MobileNumbers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notifications",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    NotificationTypeId = table.Column<string>(nullable: true),
+                    NotificationType = table.Column<string>(nullable: true),
                     UpdatedAt = table.Column<DateTime>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Notifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Notifications_NotificationTypes_NotificationTypeId",
-                        column: x => x.NotificationTypeId,
-                        principalTable: "NotificationTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Notifications_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -389,7 +428,7 @@ namespace Etherkeep.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transfers",
+                name: "Payments",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -398,101 +437,43 @@ namespace Etherkeep.Server.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     CurrencyCode = table.Column<string>(nullable: true),
                     ExchangeRate = table.Column<double>(nullable: false),
-                    FeeAmount = table.Column<double>(nullable: false),
-                    ReceiverUserId = table.Column<Guid>(nullable: false),
-                    SenderUserId = table.Column<Guid>(nullable: false),
+                    ExternalPaymentId = table.Column<int>(nullable: false),
+                    Fee = table.Column<double>(nullable: false),
+                    InvoiceId = table.Column<int>(nullable: true),
+                    PaymentRequestId = table.Column<int>(nullable: false),
+                    ReceiverId = table.Column<Guid>(nullable: false),
+                    SenderId = table.Column<Guid>(nullable: false),
                     Status = table.Column<int>(nullable: false),
-                    TokenAmount = table.Column<double>(nullable: false),
-                    TotalCharge = table.Column<double>(nullable: false),
-                    TransactionId = table.Column<int>(nullable: false),
-                    Type = table.Column<int>(nullable: false),
+                    Tokens = table.Column<double>(nullable: false),
+                    Total = table.Column<double>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transfers", x => x.Id);
-                    table.UniqueConstraint("AK_Transfers_TransactionId", x => x.TransactionId);
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.UniqueConstraint("AK_Payments_ExternalPaymentId", x => x.ExternalPaymentId);
+                    table.UniqueConstraint("AK_Payments_PaymentRequestId", x => x.PaymentRequestId);
                     table.ForeignKey(
-                        name: "FK_Transfers_Currencies_CurrencyCode",
+                        name: "FK_Payments_Currencies_CurrencyCode",
                         column: x => x.CurrencyCode,
                         principalTable: "Currencies",
                         principalColumn: "Code",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Transfers_AspNetUsers_ReceiverUserId",
-                        column: x => x.ReceiverUserId,
+                        name: "FK_Payments_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Payments_AspNetUsers_ReceiverId",
+                        column: x => x.ReceiverId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Transfers_AspNetUsers_SenderUserId",
-                        column: x => x.SenderUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TransferInvitations",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Amount = table.Column<double>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    CurrencyCode = table.Column<string>(nullable: true),
-                    ExchangeRate = table.Column<double>(nullable: false),
-                    FeeAmount = table.Column<double>(nullable: false),
-                    InvokerUserId = table.Column<Guid>(nullable: false),
-                    Processed = table.Column<bool>(nullable: false),
-                    Status = table.Column<int>(nullable: false),
-                    SuspenseWalletTransferInvitationId = table.Column<int>(nullable: true),
-                    TargetIdentity = table.Column<string>(nullable: true),
-                    TargetType = table.Column<int>(nullable: false),
-                    TokenAmount = table.Column<double>(nullable: false),
-                    TotalCharge = table.Column<double>(nullable: false),
-                    Type = table.Column<int>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransferInvitations", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TransferInvitations_Currencies_CurrencyCode",
-                        column: x => x.CurrencyCode,
-                        principalTable: "Currencies",
-                        principalColumn: "Code",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TransferInvitations_AspNetUsers_InvokerUserId",
-                        column: x => x.InvokerUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TransferInvitations_SuspenseWallets_SuspenseWalletTransferInvitationId",
-                        column: x => x.SuspenseWalletTransferInvitationId,
-                        principalTable: "SuspenseWallets",
-                        principalColumn: "TransferInvitationId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Actions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ActionType = table.Column<int>(nullable: false),
-                    Data = table.Column<string>(nullable: true),
-                    UserId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Actions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Actions_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Payments_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -527,7 +508,6 @@ namespace Etherkeep.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Wallets", x => x.Id);
-                    table.UniqueConstraint("AK_Wallets_UserId", x => x.UserId);
                     table.ForeignKey(
                         name: "FK_Wallets_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -712,7 +692,28 @@ namespace Etherkeep.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ActivityParams",
+                name: "ActionParameters",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ActionId = table.Column<int>(nullable: false),
+                    Parameter = table.Column<string>(nullable: true),
+                    Value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActionParameters", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ActionParameters_Actions_ActionId",
+                        column: x => x.ActionId,
+                        principalTable: "Actions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ActivityParameters",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -723,9 +724,9 @@ namespace Etherkeep.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ActivityParams", x => x.Id);
+                    table.PrimaryKey("PK_ActivityParameters", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ActivityParams_Activities_ActivityId",
+                        name: "FK_ActivityParameters_Activities_ActivityId",
                         column: x => x.ActivityId,
                         principalTable: "Activities",
                         principalColumn: "Id",
@@ -733,7 +734,59 @@ namespace Etherkeep.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NotificationParams",
+                name: "UserPrimaryEmailAddresses",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(nullable: false),
+                    Address = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPrimaryEmailAddresses", x => x.UserId);
+                    table.UniqueConstraint("AK_UserPrimaryEmailAddresses_Address", x => x.Address);
+                    table.ForeignKey(
+                        name: "FK_UserPrimaryEmailAddresses_EmailAddresses_Address",
+                        column: x => x.Address,
+                        principalTable: "EmailAddresses",
+                        principalColumn: "Address",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserPrimaryEmailAddresses_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPrimaryMobileNumbers",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(nullable: false),
+                    AreaCode = table.Column<string>(nullable: false),
+                    CountryCallingCode = table.Column<string>(nullable: false),
+                    SubscriberNumber = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPrimaryMobileNumbers", x => x.UserId);
+                    table.UniqueConstraint("AK_UserPrimaryMobileNumbers_CountryCallingCode_AreaCode_SubscriberNumber", x => new { x.CountryCallingCode, x.AreaCode, x.SubscriberNumber });
+                    table.ForeignKey(
+                        name: "FK_UserPrimaryMobileNumbers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserPrimaryMobileNumbers_MobileNumbers_CountryCallingCode_AreaCode_SubscriberNumber",
+                        columns: x => new { x.CountryCallingCode, x.AreaCode, x.SubscriberNumber },
+                        principalTable: "MobileNumbers",
+                        principalColumns: new[] { "CountryCallingCode", "AreaCode", "SubscriberNumber" },
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NotificationParameters",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -744,9 +797,9 @@ namespace Etherkeep.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NotificationParams", x => x.Id);
+                    table.PrimaryKey("PK_NotificationParameters", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NotificationParams_Notifications_NotificationId",
+                        name: "FK_NotificationParameters_Notifications_NotificationId",
                         column: x => x.NotificationId,
                         principalTable: "Notifications",
                         principalColumn: "Id",
@@ -754,134 +807,114 @@ namespace Etherkeep.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transactions",
+                name: "ExternalPayments",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Confirmations = table.Column<int>(nullable: false),
+                    Amount = table.Column<double>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    Hash = table.Column<string>(nullable: true),
+                    CurrencyCode = table.Column<string>(nullable: true),
+                    ExchangeRate = table.Column<double>(nullable: false),
+                    Fee = table.Column<double>(nullable: false),
+                    PaymentExternalPaymentId = table.Column<int>(nullable: true),
+                    Receiver = table.Column<string>(nullable: true),
+                    ReceiverType = table.Column<int>(nullable: false),
+                    SenderId = table.Column<Guid>(nullable: false),
                     Status = table.Column<int>(nullable: false),
-                    TransferTransactionId = table.Column<int>(nullable: true),
+                    Tokens = table.Column<double>(nullable: false),
+                    Total = table.Column<double>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transactions", x => x.Id);
+                    table.PrimaryKey("PK_ExternalPayments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transactions_Transfers_TransferTransactionId",
-                        column: x => x.TransferTransactionId,
-                        principalTable: "Transfers",
-                        principalColumn: "TransactionId",
+                        name: "FK_ExternalPayments_Currencies_CurrencyCode",
+                        column: x => x.CurrencyCode,
+                        principalTable: "Currencies",
+                        principalColumn: "Code",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TransferFees",
-                columns: table => new
-                {
-                    TransferId = table.Column<int>(nullable: false),
-                    FeeId = table.Column<int>(nullable: false),
-                    Amount = table.Column<double>(nullable: false),
-                    FeeType = table.Column<int>(nullable: false),
-                    FeeValue = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransferFees", x => new { x.TransferId, x.FeeId });
                     table.ForeignKey(
-                        name: "FK_TransferFees_Fees_FeeId",
-                        column: x => x.FeeId,
-                        principalTable: "Fees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_ExternalPayments_Payments_PaymentExternalPaymentId",
+                        column: x => x.PaymentExternalPaymentId,
+                        principalTable: "Payments",
+                        principalColumn: "ExternalPaymentId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TransferFees_Transfers_TransferId",
-                        column: x => x.TransferId,
-                        principalTable: "Transfers",
+                        name: "FK_ExternalPayments_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TransferMessages",
+                name: "PaymentRequests",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Amount = table.Column<double>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    Read = table.Column<bool>(nullable: false),
-                    TransferId = table.Column<int>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false)
+                    CurrencyCode = table.Column<string>(nullable: true),
+                    ExternalPaymentRequestId = table.Column<int>(nullable: false),
+                    PaymentRequestId = table.Column<int>(nullable: true),
+                    ReceiverId = table.Column<Guid>(nullable: false),
+                    SenderId = table.Column<Guid>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TransferMessages", x => x.Id);
+                    table.PrimaryKey("PK_PaymentRequests", x => x.Id);
+                    table.UniqueConstraint("AK_PaymentRequests_ExternalPaymentRequestId", x => x.ExternalPaymentRequestId);
                     table.ForeignKey(
-                        name: "FK_TransferMessages_Transfers_TransferId",
-                        column: x => x.TransferId,
-                        principalTable: "Transfers",
+                        name: "FK_PaymentRequests_Currencies_CurrencyCode",
+                        column: x => x.CurrencyCode,
+                        principalTable: "Currencies",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PaymentRequests_Payments_PaymentRequestId",
+                        column: x => x.PaymentRequestId,
+                        principalTable: "Payments",
+                        principalColumn: "PaymentRequestId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PaymentRequests_AspNetUsers_ReceiverId",
+                        column: x => x.ReceiverId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PaymentRequests_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPrimaryWallets",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(nullable: false),
+                    WalletId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPrimaryWallets", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_TransferMessages_AspNetUsers_UserId",
+                        name: "FK_UserPrimaryWallets_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TransferInvitationFee",
-                columns: table => new
-                {
-                    TransferInvitationId = table.Column<int>(nullable: false),
-                    FeeId = table.Column<int>(nullable: false),
-                    Amount = table.Column<double>(nullable: false),
-                    FeeType = table.Column<int>(nullable: false),
-                    FeeValue = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransferInvitationFee", x => new { x.TransferInvitationId, x.FeeId });
                     table.ForeignKey(
-                        name: "FK_TransferInvitationFee_Fees_FeeId",
-                        column: x => x.FeeId,
-                        principalTable: "Fees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TransferInvitationFee_TransferInvitations_TransferInvitationId",
-                        column: x => x.TransferInvitationId,
-                        principalTable: "TransferInvitations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TransferInvitationMessage",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    TransferInvitationId = table.Column<int>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransferInvitationMessage", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TransferInvitationMessage_TransferInvitations_TransferInvitationId",
-                        column: x => x.TransferInvitationId,
-                        principalTable: "TransferInvitations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TransferInvitationMessage_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_UserPrimaryWallets_Wallets_WalletId",
+                        column: x => x.WalletId,
+                        principalTable: "Wallets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -938,10 +971,54 @@ namespace Etherkeep.Server.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ExternalPaymentRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Amount = table.Column<double>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    CurrencyCode = table.Column<string>(nullable: true),
+                    PaymentRequestExternalPaymentRequestId = table.Column<int>(nullable: true),
+                    Receiver = table.Column<string>(nullable: true),
+                    ReceiverType = table.Column<int>(nullable: false),
+                    SenderId = table.Column<Guid>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExternalPaymentRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExternalPaymentRequests_Currencies_CurrencyCode",
+                        column: x => x.CurrencyCode,
+                        principalTable: "Currencies",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ExternalPaymentRequests_PaymentRequests_PaymentRequestExternalPaymentRequestId",
+                        column: x => x.PaymentRequestExternalPaymentRequestId,
+                        principalTable: "PaymentRequests",
+                        principalColumn: "ExternalPaymentRequestId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ExternalPaymentRequests_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Activities_ActivityTypeId",
-                table: "Activities",
-                column: "ActivityTypeId");
+                name: "IX_Actions_UserId",
+                table: "Actions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActionParameters_ActionId",
+                table: "ActionParameters",
+                column: "ActionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Activities_UserId",
@@ -949,8 +1026,8 @@ namespace Etherkeep.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ActivityParams_ActivityId",
-                table: "ActivityParams",
+                name: "IX_ActivityParameters_ActivityId",
+                table: "ActivityParameters",
                 column: "ActivityId");
 
             migrationBuilder.CreateIndex(
@@ -984,6 +1061,43 @@ namespace Etherkeep.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmailAddresses_UserId",
+                table: "EmailAddresses",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExternalPayments_CurrencyCode",
+                table: "ExternalPayments",
+                column: "CurrencyCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExternalPayments_PaymentExternalPaymentId",
+                table: "ExternalPayments",
+                column: "PaymentExternalPaymentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExternalPayments_SenderId",
+                table: "ExternalPayments",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExternalPaymentRequests_CurrencyCode",
+                table: "ExternalPaymentRequests",
+                column: "CurrencyCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExternalPaymentRequests_PaymentRequestExternalPaymentRequestId",
+                table: "ExternalPaymentRequests",
+                column: "PaymentRequestExternalPaymentRequestId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExternalPaymentRequests_SenderId",
+                table: "ExternalPaymentRequests",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Fees_CurrencyCode",
                 table: "Fees",
                 column: "CurrencyCode");
@@ -999,9 +1113,9 @@ namespace Etherkeep.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_NotificationTypeId",
-                table: "Notifications",
-                column: "NotificationTypeId");
+                name: "IX_MobileNumbers_UserId",
+                table: "MobileNumbers",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserId",
@@ -1009,9 +1123,50 @@ namespace Etherkeep.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NotificationParams_NotificationId",
-                table: "NotificationParams",
+                name: "IX_NotificationParameters_NotificationId",
+                table: "NotificationParameters",
                 column: "NotificationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_CurrencyCode",
+                table: "Payments",
+                column: "CurrencyCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_InvoiceId",
+                table: "Payments",
+                column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_ReceiverId",
+                table: "Payments",
+                column: "ReceiverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_SenderId",
+                table: "Payments",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentRequests_CurrencyCode",
+                table: "PaymentRequests",
+                column: "CurrencyCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentRequests_PaymentRequestId",
+                table: "PaymentRequests",
+                column: "PaymentRequestId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentRequests_ReceiverId",
+                table: "PaymentRequests",
+                column: "ReceiverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentRequests_SenderId",
+                table: "PaymentRequests",
+                column: "SenderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Settings_SettingGroupId",
@@ -1022,83 +1177,6 @@ namespace Etherkeep.Server.Migrations
                 name: "IX_SettingOptions_SettingId",
                 table: "SettingOptions",
                 column: "SettingId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_TransferTransactionId",
-                table: "Transactions",
-                column: "TransferTransactionId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transfers_CurrencyCode",
-                table: "Transfers",
-                column: "CurrencyCode");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transfers_ReceiverUserId",
-                table: "Transfers",
-                column: "ReceiverUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transfers_SenderUserId",
-                table: "Transfers",
-                column: "SenderUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferFees_FeeId",
-                table: "TransferFees",
-                column: "FeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferFees_TransferId",
-                table: "TransferFees",
-                column: "TransferId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferInvitations_CurrencyCode",
-                table: "TransferInvitations",
-                column: "CurrencyCode");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferInvitations_InvokerUserId",
-                table: "TransferInvitations",
-                column: "InvokerUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferInvitations_SuspenseWalletTransferInvitationId",
-                table: "TransferInvitations",
-                column: "SuspenseWalletTransferInvitationId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferInvitationFee_FeeId",
-                table: "TransferInvitationFee",
-                column: "FeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferInvitationFee_TransferInvitationId",
-                table: "TransferInvitationFee",
-                column: "TransferInvitationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferInvitationMessage_TransferInvitationId",
-                table: "TransferInvitationMessage",
-                column: "TransferInvitationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferInvitationMessage_UserId",
-                table: "TransferInvitationMessage",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferMessages_TransferId",
-                table: "TransferMessages",
-                column: "TransferId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransferMessages_UserId",
-                table: "TransferMessages",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -1112,9 +1190,40 @@ namespace Etherkeep.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Actions_UserId",
-                table: "Actions",
-                column: "UserId");
+                name: "IX_UserPrimaryEmailAddresses_Address",
+                table: "UserPrimaryEmailAddresses",
+                column: "Address",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPrimaryEmailAddresses_UserId",
+                table: "UserPrimaryEmailAddresses",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPrimaryMobileNumbers_UserId",
+                table: "UserPrimaryMobileNumbers",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPrimaryMobileNumbers_CountryCallingCode_AreaCode_SubscriberNumber",
+                table: "UserPrimaryMobileNumbers",
+                columns: new[] { "CountryCallingCode", "AreaCode", "SubscriberNumber" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPrimaryWallets_UserId",
+                table: "UserPrimaryWallets",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPrimaryWallets_WalletId",
+                table: "UserPrimaryWallets",
+                column: "WalletId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSettings_UserId",
@@ -1124,8 +1233,7 @@ namespace Etherkeep.Server.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Wallets_UserId",
                 table: "Wallets",
-                column: "UserId",
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WalletAddresses_WalletId",
@@ -1192,7 +1300,13 @@ namespace Etherkeep.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ActivityParams");
+                name: "ActionParameters");
+
+            migrationBuilder.DropTable(
+                name: "ActivityParameters");
+
+            migrationBuilder.DropTable(
+                name: "AddressBookEntries");
 
             migrationBuilder.DropTable(
                 name: "ConfigOptions");
@@ -1204,37 +1318,37 @@ namespace Etherkeep.Server.Migrations
                 name: "Devices");
 
             migrationBuilder.DropTable(
-                name: "Invoices");
+                name: "ExternalPayments");
+
+            migrationBuilder.DropTable(
+                name: "ExternalPaymentRequests");
+
+            migrationBuilder.DropTable(
+                name: "Fees");
 
             migrationBuilder.DropTable(
                 name: "LoginAttempts");
 
             migrationBuilder.DropTable(
-                name: "NotificationParams");
-
-            migrationBuilder.DropTable(
-                name: "Payments");
+                name: "NotificationParameters");
 
             migrationBuilder.DropTable(
                 name: "SettingOptions");
 
             migrationBuilder.DropTable(
+                name: "SuspenseWallets");
+
+            migrationBuilder.DropTable(
                 name: "Transactions");
 
             migrationBuilder.DropTable(
-                name: "TransferFees");
+                name: "UserPrimaryEmailAddresses");
 
             migrationBuilder.DropTable(
-                name: "TransferInvitationFee");
+                name: "UserPrimaryMobileNumbers");
 
             migrationBuilder.DropTable(
-                name: "TransferInvitationMessage");
-
-            migrationBuilder.DropTable(
-                name: "TransferMessages");
-
-            migrationBuilder.DropTable(
-                name: "Actions");
+                name: "UserPrimaryWallets");
 
             migrationBuilder.DropTable(
                 name: "UserSettings");
@@ -1264,10 +1378,16 @@ namespace Etherkeep.Server.Migrations
                 name: "OpenIddictTokens");
 
             migrationBuilder.DropTable(
+                name: "Actions");
+
+            migrationBuilder.DropTable(
                 name: "Activities");
 
             migrationBuilder.DropTable(
                 name: "Configs");
+
+            migrationBuilder.DropTable(
+                name: "PaymentRequests");
 
             migrationBuilder.DropTable(
                 name: "Countries");
@@ -1279,13 +1399,10 @@ namespace Etherkeep.Server.Migrations
                 name: "Settings");
 
             migrationBuilder.DropTable(
-                name: "Fees");
+                name: "EmailAddresses");
 
             migrationBuilder.DropTable(
-                name: "TransferInvitations");
-
-            migrationBuilder.DropTable(
-                name: "Transfers");
+                name: "MobileNumbers");
 
             migrationBuilder.DropTable(
                 name: "Wallets");
@@ -1300,22 +1417,19 @@ namespace Etherkeep.Server.Migrations
                 name: "OpenIddictAuthorizations");
 
             migrationBuilder.DropTable(
-                name: "ActivityTypes");
-
-            migrationBuilder.DropTable(
                 name: "ConfigGroups");
 
             migrationBuilder.DropTable(
-                name: "NotificationTypes");
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "SettingGroups");
 
             migrationBuilder.DropTable(
-                name: "SuspenseWallets");
+                name: "Currencies");
 
             migrationBuilder.DropTable(
-                name: "Currencies");
+                name: "Invoices");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

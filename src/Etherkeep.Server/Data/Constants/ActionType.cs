@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherkeep.Server.Data.Enums
+namespace Etherkeep.Server.Data.Constants
 {
-    public enum TransferType
+    public class ActionType
     {
-        Send,
-        Request
     }
 }
