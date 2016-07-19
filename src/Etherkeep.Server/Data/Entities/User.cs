@@ -37,6 +37,15 @@ namespace Etherkeep.Server.Data.Entities
         public virtual ICollection<Transfer> ReceivedTransfers { get; set; }
         public virtual ICollection<TransferInvitation> InvokedTransferInvitations { get; set; }
         public virtual ICollection<TransferMessage> TransferMessages { get; set; }
+
+
+        public virtual ICollection<Payment> SentPayments { get; set; }
+        public virtual ICollection<Payment> ReceivedPayments { get; set; }
+        public virtual ICollection<PaymentRequest> SentPaymentRequests { get; set; }
+        public virtual ICollection<PaymentRequest> ReceivedPaymentRequests { get; set; }
+        public virtual ICollection<ExternalPayment> SentExternalPayments { get; set; }
+        public virtual ICollection<ExternalPaymentRequest> SentExternalPaymentRequests { get; set; }
+
         public virtual ICollection<UserAction> UserActions { get; set; }
         public virtual ICollection<UserSetting> UserSettings { get; set; }
         public virtual Wallet Wallet { get; set; }
