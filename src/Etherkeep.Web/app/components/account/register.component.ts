@@ -19,12 +19,12 @@ export class RegisterComponent
 {
 	error: string;
 	
-	registerModel: RegisterModel;
+	model: RegisterModel;
 	identityType = IdentityType;
 	
 	constructor(private accountService: AccountService, private authService: AuthService, private router: Router)
 	{
-		this.registerModel = {
+		this.model = {
 			identityType: this.identityType.EmailAddress,
 			emailAddress: '',
 			countryCallingCode: '',
@@ -38,18 +38,18 @@ export class RegisterComponent
 	
 	setIdentityType(type: IdentityType)
 	{
-		this.registerModel.identityType = type;
+		this.model.identityType = type;
 	}
 	
 	register()
 	{
-		this.accountService.register(this.registerModel)
+		this.accountService.register(this.model)
 			.subscribe((response) => {
 				this.error = null;
 				
 				this.authService.token({
 					username: response.userName,
-					password: this.registerModel.password,
+					password: this.model.password,
 					persistent: false
 				})
 				.subscribe(

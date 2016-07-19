@@ -22,12 +22,12 @@ export class LoginComponent
 {
 	error: string;
 	
-	loginModel: LoginModel;
+	model: LoginModel;
 	identityType = IdentityType;
 	
 	constructor(private accountService: AccountService, private authService: AuthService, private router: Router)
 	{
-		this.loginModel = {
+		this.model = {
 			identityType: this.identityType.EmailAddress,
 			emailAddress: '',
 			countryCallingCode: '',
@@ -40,17 +40,17 @@ export class LoginComponent
 	
 	setIdentityType(type: IdentityType)
 	{
-		this.loginModel.identityType = type;
+		this.model.identityType = type;
 	}
 	
 	login()
 	{
-		let username = this.loginModel.identityType == IdentityType.EmailAddress ? this.loginModel.emailAddress : this.loginModel.countryCallingCode +"-"+ this.loginModel.areaCode +"-"+ this.loginModel.subscriberNumber;
+		let username = this.model.identityType == IdentityType.EmailAddress ? this.model.emailAddress : this.model.countryCallingCode +"-"+ this.model.areaCode +"-"+ this.model.subscriberNumber;
 		
 		this.authService.token({
 			username: username,
-			password: this.loginModel.password,
-			persistent: this.loginModel.persistent
+			password: this.model.password,
+			persistent: this.model.persistent
 		})
 		.subscribe(
 			(tokenResponse) => {

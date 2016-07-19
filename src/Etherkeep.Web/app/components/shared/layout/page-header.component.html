@@ -1,64 +1,36 @@
-  <header class="navbar" role="banner">
-
-    <div class="container">
-
-      <div class="navbar-header">
-        <a [routerLink]="['/']" class="navbar-brand navbar-brand-img">
-          <img src="./img/logo.png" alt="MVP Ready">
-        </a>
-
-        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <i class="fa fa-bars"></i>
-        </button>
-
-      </div> <!-- /.navbar-header -->
-
-
-      <nav *ngIf="!user" class="collapse navbar-collapse" role="navigation">
-
-        <ul class="nav navbar-nav navbar-right">
-          <li><a [routerLink]="['/register']">Register</a></li>
-          <li><a [routerLink]="['/login']">Login</a></li>
-        </ul>
-      </nav>
-
-      <nav *ngIf="user" class="collapse navbar-collapse" role="navigation">
-
-        <ul class="nav navbar-nav navbar-right">
-
-          <li class="dropdown navbar-profile">
-
-            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">
-              <img src="../../global/img/avatars/avatar-6-sm.jpg" class="navbar-profile-avatar" alt="">
-              <!--<span class="visible-xs-inline">-->{{ user.firstName }} {{ user.lastName }} &nbsp;<!--</span>-->
-              <i class="fa fa-caret-down"></i>
-            </a>
-
-            <ul class="dropdown-menu" role="menu">
-
-              <li>
-                <a [routerLink]="['/settings']">
-                  <i class="fa fa-cogs"></i>
-                  &nbsp;&nbsp;Settings
-                </a>
-              </li>
-
-              <li class="divider"></li>
-              <li>
-                <a href="javascript:;" (click)="logout()">
-                  <i class="fa fa-sign-out"></i>
-                  &nbsp;&nbsp;Logout</a>
-              </li>
-
-            </ul>
-
-          </li>
-
-        </ul>
-
-      </nav>
-
-    </div> <!-- /.container -->
-
-  </header>
+            <!--header start-->
+          <header class="header white-bg">
+              <div class="container ">
+                  <!--logo start-->
+                  <a [routerLink]="['/']" class="logo" >Cari<span>coin</span></a>
+                  <!--logo end-->
+                  <div class="top-nav ">
+                      <ul *ngIf="!user" class="nav pull-right top-menu">
+                            <li><a [routerLink]="['/register']">Register</a></li>
+                            <li><a [routerLink]="['/login']">Login</a></li>
+                      </ul>
+                      <ul *ngIf="user" class="nav pull-right top-menu">
+                          <li>
+                              <input type="text" class="form-control search" placeholder="Search">
+                          </li>
+                          <!-- user login dropdown start-->
+                          <li class="dropdown">
+                              <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                  <img alt="" src="img/avatar1_small.jpg">
+                                  <span class="username">{{user.firstName}} {{user.lastName}}</span>
+                                  <b class="caret"></b>
+                              </a>
+                              <ul class="dropdown-menu extended logout">
+                                  <div class="log-arrow-up"></div>
+                                  <li><a [routerLink]="['/settings']"><i class=" fa fa-suitcase"></i>Profile</a></li>
+                                  <li><a [routerLink]="['/settings']"><i class="fa fa-cog"></i> Settings</a></li>
+                                  <li><a [routerLink]="['/settings']"><i class="fa fa-bell-o"></i> Notification</a></li>
+                                  <li><a href="javascript:;" (click)="logout()"><i class="fa fa-key"></i> Log Out</a></li>
+                              </ul>
+                          </li>
+                          <!-- user login dropdown end -->
+                      </ul>
+                  </div>
+              </div>
+          </header>
+          <!--header end-->
