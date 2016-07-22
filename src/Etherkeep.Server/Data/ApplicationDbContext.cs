@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenIddict;
 using Etherkeep.Server.Data.Entities;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace Etherkeep.Server.Data
 {
@@ -54,6 +55,8 @@ namespace Etherkeep.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.HasPostgresExtension("uuid-ossp");
 
             builder.Entity<Entities.Action>(entity =>
             {

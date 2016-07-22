@@ -44,7 +44,7 @@ namespace Etherkeep.Server
 
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {

@@ -8,14 +8,14 @@ using Etherkeep.Server.Data;
 namespace Etherkeep.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20160719193358_Update1")]
-    partial class Update1
+    [Migration("20160722074019_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Npgsql:PostgresExtension:.uuid-ossp", "'uuid-ossp', '', ''")
+                .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.Action", b =>
                 {
@@ -374,6 +374,16 @@ namespace Etherkeep.Server.Data.Migrations
                     b.ToTable("LoginAttempts");
                 });
 
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.MerchantInfo", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd();
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("MerchantInfos");
+                });
+
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.MobileNumber", b =>
                 {
                     b.Property<string>("CountryCallingCode");
@@ -621,6 +631,8 @@ namespace Etherkeep.Server.Data.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
 
+                    b.Property<int?>("MerchantInfoUserId");
+
                     b.Property<string>("NormalizedEmail")
                         .HasAnnotation("MaxLength", 256);
 
@@ -645,6 +657,9 @@ namespace Etherkeep.Server.Data.Migrations
                         .HasAnnotation("MaxLength", 256);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MerchantInfoUserId")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -1155,6 +1170,13 @@ namespace Etherkeep.Server.Data.Migrations
                     b.HasOne("Etherkeep.Server.Data.Entities.Setting", "Setting")
                         .WithMany("SettingOptions")
                         .HasForeignKey("SettingId");
+                });
+
+            modelBuilder.Entity("Etherkeep.Server.Data.Entities.User", b =>
+                {
+                    b.HasOne("Etherkeep.Server.Data.Entities.MerchantInfo", "MerchantInfo")
+                        .WithOne("User")
+                        .HasForeignKey("Etherkeep.Server.Data.Entities.User", "MerchantInfoUserId");
                 });
 
             modelBuilder.Entity("Etherkeep.Server.Data.Entities.UserPrimaryEmailAddress", b =>

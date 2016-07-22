@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Etherkeep.Server.Data.Migrations
 {
@@ -9,6 +8,8 @@ namespace Etherkeep.Server.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreatePostgresExtension("uuid-ossp");
+
             migrationBuilder.CreateTable(
                 name: "AddressBookEntries",
                 columns: table => new
@@ -52,12 +53,24 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     WalletAddress = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Invoices", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MerchantInfos",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MerchantInfos", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,7 +103,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     Confirmations = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Hash = table.Column<string>(nullable: true),
@@ -103,39 +116,11 @@ namespace Etherkeep.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
-                    PasswordHash = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    Status = table.Column<int>(nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    Type = table.Column<int>(nullable: false),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true)
@@ -163,7 +148,8 @@ namespace Etherkeep.Server.Data.Migrations
                 name: "OpenIddictApplications",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     ClientId = table.Column<string>(nullable: true),
                     ClientSecret = table.Column<string>(nullable: true),
                     DisplayName = table.Column<string>(nullable: true),
@@ -180,7 +166,8 @@ namespace Etherkeep.Server.Data.Migrations
                 name: "OpenIddictScopes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -234,7 +221,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     CurrencyCode = table.Column<string>(nullable: true),
                     Enabled = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: true),
@@ -251,6 +238,43 @@ namespace Etherkeep.Server.Data.Migrations
                         column: x => x.CurrencyCode,
                         principalTable: "Currencies",
                         principalColumn: "Code",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(nullable: false),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    LockoutEnabled = table.Column<bool>(nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    MerchantInfoUserId = table.Column<int>(nullable: true),
+                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
+                    PasswordHash = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
+                    SecurityStamp = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    Type = table.Column<int>(nullable: false),
+                    UserName = table.Column<string>(maxLength: 256, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_MerchantInfos_MerchantInfoUserId",
+                        column: x => x.MerchantInfoUserId,
+                        principalTable: "MerchantInfos",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -277,11 +301,52 @@ namespace Etherkeep.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    ClaimType = table.Column<string>(nullable: true),
+                    ClaimValue = table.Column<string>(nullable: true),
+                    RoleId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ConfigOptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    ConfigId = table.Column<string>(nullable: true),
+                    Value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConfigOptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ConfigOptions_Configs_ConfigId",
+                        column: x => x.ConfigId,
+                        principalTable: "Configs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Actions",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     ActionType = table.Column<string>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false)
                 },
@@ -301,7 +366,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     ActivityType = table.Column<string>(nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     UpdatedAt = table.Column<string>(nullable: true),
@@ -323,9 +388,10 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     ContactId = table.Column<Guid>(nullable: false),
                     LastActivity = table.Column<DateTime>(nullable: false),
+                    Type = table.Column<int>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -385,6 +451,36 @@ namespace Etherkeep.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LoginAttempts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    CountryCode = table.Column<string>(nullable: true),
+                    GeoLocation = table.Column<string>(nullable: true),
+                    IpAddress = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
+                    TimeStamp = table.Column<DateTime>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoginAttempts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LoginAttempts_Countries_CountryCode",
+                        column: x => x.CountryCode,
+                        principalTable: "Countries",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_LoginAttempts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MobileNumbers",
                 columns: table => new
                 {
@@ -410,7 +506,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     NotificationType = table.Column<string>(nullable: true),
                     UpdatedAt = table.Column<DateTime>(nullable: false),
@@ -432,7 +528,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     Amount = table.Column<double>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     CurrencyCode = table.Column<string>(nullable: true),
@@ -521,7 +617,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true),
                     UserId = table.Column<Guid>(nullable: false)
@@ -558,46 +654,6 @@ namespace Etherkeep.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OpenIddictAuthorizations",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    Scope = table.Column<string>(nullable: true),
-                    UserId = table.Column<Guid>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OpenIddictAuthorizations", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OpenIddictAuthorizations_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true),
-                    RoleId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
@@ -622,53 +678,23 @@ namespace Etherkeep.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ConfigOptions",
+                name: "OpenIddictAuthorizations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ConfigId = table.Column<string>(nullable: true),
-                    Value = table.Column<string>(nullable: true)
+                    Id = table.Column<Guid>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
+                    Scope = table.Column<string>(nullable: true),
+                    UserId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ConfigOptions", x => x.Id);
+                    table.PrimaryKey("PK_OpenIddictAuthorizations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ConfigOptions_Configs_ConfigId",
-                        column: x => x.ConfigId,
-                        principalTable: "Configs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LoginAttempts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CountryCode = table.Column<string>(nullable: true),
-                    GeoLocation = table.Column<string>(nullable: true),
-                    IpAddress = table.Column<string>(nullable: true),
-                    Status = table.Column<int>(nullable: false),
-                    TimeStamp = table.Column<DateTime>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LoginAttempts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LoginAttempts_Countries_CountryCode",
-                        column: x => x.CountryCode,
-                        principalTable: "Countries",
-                        principalColumn: "Code",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_LoginAttempts_AspNetUsers_UserId",
+                        name: "FK_OpenIddictAuthorizations_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -676,7 +702,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     SettingId = table.Column<string>(nullable: true),
                     Value = table.Column<string>(nullable: true)
                 },
@@ -696,7 +722,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     ActionId = table.Column<int>(nullable: false),
                     Parameter = table.Column<string>(nullable: true),
                     Value = table.Column<string>(nullable: true)
@@ -717,7 +743,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     ActivityId = table.Column<int>(nullable: false),
                     Parameter = table.Column<string>(nullable: true),
                     Value = table.Column<string>(nullable: true)
@@ -790,7 +816,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     NotificationId = table.Column<int>(nullable: false),
                     Parameter = table.Column<string>(nullable: true),
                     Value = table.Column<string>(nullable: true)
@@ -811,7 +837,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     Amount = table.Column<double>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     CurrencyCode = table.Column<string>(nullable: true),
@@ -854,7 +880,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     Amount = table.Column<double>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     CurrencyCode = table.Column<string>(nullable: true),
@@ -942,7 +968,8 @@ namespace Etherkeep.Server.Data.Migrations
                 name: "OpenIddictTokens",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false)
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     ApplicationId = table.Column<Guid>(nullable: true),
                     AuthorizationId = table.Column<Guid>(nullable: true),
                     Type = table.Column<string>(nullable: true),
@@ -976,7 +1003,7 @@ namespace Etherkeep.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Npgsql:ValueGeneratedOnAdd", true),
                     Amount = table.Column<double>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     CurrencyCode = table.Column<string>(nullable: true),
@@ -1179,6 +1206,12 @@ namespace Etherkeep.Server.Data.Migrations
                 column: "SettingId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_MerchantInfoUserId",
+                table: "AspNetUsers",
+                column: "MerchantInfoUserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
@@ -1299,6 +1332,8 @@ namespace Etherkeep.Server.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropPostgresExtension("uuid-ossp");
+
             migrationBuilder.DropTable(
                 name: "ActionParameters");
 
@@ -1433,6 +1468,9 @@ namespace Etherkeep.Server.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "MerchantInfos");
         }
     }
 }
