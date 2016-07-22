@@ -46,5 +46,7 @@ namespace Etherkeep.Server.Data.Entities
         public virtual UserPrimaryEmailAddress PrimaryEmailAddress { get; set; }
         public virtual UserPrimaryMobileNumber PrimaryMobileNumber { get; set; }
         public virtual UserPrimaryWallet PrimaryWallet { get; set; }
+
+        public virtual MerchantInfo MerchantInfo { get; set; }
     }
 }

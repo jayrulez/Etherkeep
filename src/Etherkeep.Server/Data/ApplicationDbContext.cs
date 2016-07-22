@@ -32,6 +32,7 @@ namespace Etherkeep.Server.Data
         public virtual DbSet<Fee> Fees { get; set; }
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<LoginAttempt> LoginAttempts { get; set; }
+        public DbSet<MerchantInfo> MerchantInfos { get; set; }
         public DbSet<MobileNumber> MobileNumbers { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<NotificationParameter> NotificationParameters { get; set; }
@@ -174,6 +175,12 @@ namespace Etherkeep.Server.Data
                 entity.HasOne(e => e.Country).WithMany(e => e.LoginAttempts).HasForeignKey(e => e.CountryCode);
             });
 
+            builder.Entity<MerchantInfo>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
+                entity.HasOne(e => e.User).WithOne(e => e.MerchantInfo).HasPrincipalKey<MerchantInfo>(e => e.UserId);
+            });
+
             builder.Entity<MobileNumber>(entity =>
             {
                 entity.HasKey(e => new { e.CountryCallingCode, e.AreaCode, e.SubscriberNumber });
@@ -272,6 +279,7 @@ namespace Etherkeep.Server.Data
                 entity.HasOne(e => e.PrimaryEmailAddress).WithOne(e => e.User).HasForeignKey<UserPrimaryEmailAddress>(e => e.UserId);
                 entity.HasOne(e => e.PrimaryMobileNumber).WithOne(e => e.User).HasForeignKey<UserPrimaryMobileNumber>(e => e.UserId);
                 entity.HasOne(e => e.PrimaryWallet).WithOne(e => e.User).HasForeignKey<UserPrimaryWallet>(e => e.UserId);
+                entity.HasOne(e => e.MerchantInfo).WithOne(e => e.User).HasPrincipalKey<MerchantInfo>(e => e.UserId);
             });
 
             builder.Entity<UserPrimaryEmailAddress>(entity =>
