@@ -40,6 +40,12 @@ namespace Etherkeep.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen();
+            services.ConfigureSwaggerGen(options =>
+            {
+                options.DescribeAllEnumsAsStrings();
+            });
+
             services.AddMvc();
 
             // Add framework services.
@@ -184,6 +190,12 @@ namespace Etherkeep.Server
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
+            app.UseSwaggerUi();
 
             using (var context = new ApplicationDbContext(
                 app.ApplicationServices.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))

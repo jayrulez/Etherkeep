@@ -18,6 +18,9 @@ namespace Etherkeep.Server.Data.Entities
             Notifications = new HashSet<Notification>();
             UserSettings = new HashSet<UserSetting>();
             Wallets = new HashSet<Wallet>();
+            EmailAddresses = new HashSet<EmailAddress>();
+            MobileNumbers = new HashSet<MobileNumber>();
+
         }
 
         public string FirstName { get; set; }

@@ -20,7 +20,8 @@ using Etherkeep.Server.ViewModels.Account;
 namespace Etherkeep.Server.Controllers.API
 {
     [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
+    [Route("api/wallets")]
     public class WalletController : BaseController
     {
         public WalletController(
@@ -31,7 +32,7 @@ namespace Etherkeep.Server.Controllers.API
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
-        [HttpGet, Route("balance")]
+        [HttpGet, Route("{id}/balance")]
         public async Task<IActionResult> BalanceAction()
         {
             try

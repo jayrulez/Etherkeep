@@ -12,6 +12,7 @@ using Etherkeep.Server.Data;
 using System;
 using OpenIddict;
 using Etherkeep.Server.ViewModels.Account;
+using Etherkeep.Server.ViewModels.User;
 
 namespace Etherkeep.Server.Controllers
 {
