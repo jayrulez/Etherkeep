@@ -24,5 +24,11 @@ namespace Etherkeep.Server.Controllers
         {
             return View();
         }
+
+        [Route("test")]
+        public IActionResult TestAction()
+        {
+            return Ok();
+        }
     }
 }

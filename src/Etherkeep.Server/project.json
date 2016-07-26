@@ -23,6 +23,7 @@
     "NWebsec.AspNetCore.Middleware": "1.0.0-gamma1-15",
     "OpenIddict": "1.0.0-*",
     "Swashbuckle": "6.0.0-beta901",
+    "MailKit": "1.4.1",
     "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0",
     "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0",
     "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
