@@ -3,7 +3,9 @@ using Etherkeep.Server.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Etherkeep.Server.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using OpenIddict;
+using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Controllers
 {
@@ -26,8 +28,21 @@ namespace Etherkeep.Server.Controllers
         }
 
         [Route("test")]
-        public IActionResult TestAction()
+        public async Task<IActionResult> TestAction()
         {
+            var users = await _applicationDbContext.Users.ToListAsync();
+            var requests = await _applicationDbContext.PaymentRequests.ToListAsync();
+            var payments = await _applicationDbContext.PaymentRequests.ToListAsync();
+            var externalRequests = await _applicationDbContext.ExternalPaymentRequests.ToListAsync();
+            var externalPayments = await _applicationDbContext.ExternalPayments.ToListAsync();
+
+            var emails = await _applicationDbContext.EmailAddresses.ToListAsync();
+            var numbers = await _applicationDbContext.MobileNumbers.ToListAsync();
+
+            var countries = await _applicationDbContext.Countries.ToListAsync();
+            var currencies = await _applicationDbContext.Currencies.ToListAsync();
+            var devices = await _applicationDbContext.Devices.ToListAsync();
+
             return Ok();
         }
     }
