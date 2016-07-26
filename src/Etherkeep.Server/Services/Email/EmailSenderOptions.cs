@@ -9,9 +9,9 @@ namespace Etherkeep.Server.Services.Email
     {
         private ISmtpOptions SmtpOptions;
 
-        private string FromName;
+        /*private string FromName;
         private string FromAddress;
-        private string ReplyToAddress;
+        private string ReplyToAddress;*/
 
         public EmailSenderOptions(ISmtpOptions smtpOptions)
         {
