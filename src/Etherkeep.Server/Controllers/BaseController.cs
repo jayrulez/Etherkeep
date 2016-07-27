@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Controllers
 {
-    public class BaseController : Controller
+    abstract public class BaseController : Controller
     {
         protected readonly ApplicationDbContext _applicationDbContext;
         protected readonly OpenIddictUserManager<User> _userManager;
@@ -34,6 +34,18 @@ namespace Etherkeep.Server.Controllers
 
             return await _applicationDbContext.Users
                 .FirstOrDefaultAsync(e => e.Id.Equals(Guid.Parse(id)));
+        }
+
+        protected IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
         }
     }
 }

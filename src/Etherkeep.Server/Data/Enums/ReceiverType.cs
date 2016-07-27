@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Data.Enums
 {
-    public enum ExternalPaymentRequestReceiverType
+    public enum ReceiverType
     {
         EmailAddress,
         MobileNumber

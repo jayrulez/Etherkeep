@@ -30,5 +30,6 @@ namespace Etherkeep.Server.Data.Entities
         public virtual Invoice Invoice { get; set; }
         public virtual User Sender { get; set; }
         public virtual User Receiver { get; set; }
+        public virtual PaymentSuspenseWallet SuspenseWallet { get; set; }
     }
 }

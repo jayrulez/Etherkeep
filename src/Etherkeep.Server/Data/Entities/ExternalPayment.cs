@@ -10,7 +10,7 @@ namespace Etherkeep.Server.Data.Entities
     {
         public int Id { get; set; }
         public Guid SenderId { get; set; }
-        public ExternalPaymentReceiverType ReceiverType { get; set; }
+        public ReceiverType ReceiverType { get; set; }
         public string Receiver { get; set; }
         public string CurrencyCode { get; set; }
         public double ExchangeRate { get; set; }
@@ -25,5 +25,7 @@ namespace Etherkeep.Server.Data.Entities
         public virtual Currency Currency { get; set; }
         public virtual User Sender { get; set; }
         public virtual Payment Payment { get; set; }
+
+        public virtual ExternalPaymentSuspenseWallet SuspenseWallet { get; set; }
     }
 }

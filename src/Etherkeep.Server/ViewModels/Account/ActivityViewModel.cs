@@ -7,5 +7,6 @@ namespace Etherkeep.Server.ViewModels.Account
 {
     public class ActivityViewModel
     {
+        public int Id { get; set; }
     }
 }

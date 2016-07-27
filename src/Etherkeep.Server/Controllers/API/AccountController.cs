@@ -51,7 +51,9 @@ namespace Etherkeep.Server.Controllers.API
 
                 var user = await GetCurrentUserAsync();
 
-                var activities = _applicationDbContext.Activities.Where(e => e.UserId == user.Id);
+                var activities = _applicationDbContext.Activities
+                    .Include(e => e.Parameters)
+                    .Where(e => e.UserId == user.Id);
 
                 var result = new PagedResult<ActivityViewModel>
                 {
@@ -59,7 +61,7 @@ namespace Etherkeep.Server.Controllers.API
                     Items = activities.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToViewModel()
                 };
 
-                return Ok();
+                return Ok(result);
             }
             catch (Exception ex)
             {

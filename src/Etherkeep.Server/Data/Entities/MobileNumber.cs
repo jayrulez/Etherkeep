@@ -10,6 +10,8 @@ namespace Etherkeep.Server.Data.Entities
         public string CountryCallingCode { get; set; }
         public string AreaCode { get; set; }
         public string SubscriberNumber { get; set; }
+
+        public string FullMobileNumber { get { return string.Concat(CountryCallingCode, AreaCode, SubscriberNumber); } }
         public Guid UserId { get; set; }
         public bool Verified { get; set; }
 

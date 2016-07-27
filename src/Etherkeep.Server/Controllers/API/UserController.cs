@@ -17,8 +17,7 @@ using Etherkeep.Server.ViewModels.User;
 namespace Etherkeep.Server.Controllers.API
 {
     [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
-    //[Route("api/[controller]")]
-    [Route("api/users")]
+    [Route("api/[controller]")]
     public class UserController : BaseController
     {
         public UserController(ApplicationDbContext applicationDbContext, OpenIddictUserManager<User> userManager, ILoggerFactory loggerFactory) 

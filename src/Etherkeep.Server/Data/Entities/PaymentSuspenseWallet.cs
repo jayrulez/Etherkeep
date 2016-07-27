@@ -5,13 +5,15 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Data.Entities
 {
-    public class SuspenseWallet : ISuspenseWallet
+    public class PaymentSuspenseWallet : ISuspenseWallet
     {
-
         public string Id { get; set; }
+
+        public int PaymentId { get; set; }
 
         public string Label { get; set; }
 
         public double Balance { get; set; }
+        public virtual Payment Payment { get; set; }
     }
 }

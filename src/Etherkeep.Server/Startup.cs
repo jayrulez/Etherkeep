@@ -111,6 +111,7 @@ namespace Etherkeep.Server
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<IExchangeRateService, ExchangeRateService>();
             services.AddSingleton<ViewRenderer>();
         }
 

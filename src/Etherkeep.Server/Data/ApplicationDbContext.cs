@@ -30,6 +30,7 @@ namespace Etherkeep.Server.Data
         public DbSet<EmailAddress> EmailAddresses { get; set; }
         public DbSet<ExternalPayment> ExternalPayments { get; set; }
         public DbSet<ExternalPaymentRequest> ExternalPaymentRequests { get; set; }
+        public DbSet<ExternalPaymentSuspenseWallet> ExternalPaymentSuspenseWallets { get; set; }
         public virtual DbSet<Fee> Fees { get; set; }
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<LoginAttempt> LoginAttempts { get; set; }
@@ -38,6 +39,7 @@ namespace Etherkeep.Server.Data
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<NotificationParameter> NotificationParameters { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<PaymentSuspenseWallet> PaymentSuspenseWallets { get; set; }
         public DbSet<PaymentRequest> PaymentRequests { get; set; }
         public virtual DbSet<Setting> Settings { get; set; }
         public virtual DbSet<SettingGroup> SettingGroups { get; set; }
@@ -148,6 +150,7 @@ namespace Etherkeep.Server.Data
 
                 entity.HasOne(e => e.Sender).WithMany(e => e.SentExternalPayments).HasForeignKey(e => e.SenderId);
                 entity.HasOne(e => e.Payment).WithOne(e => e.ExternalPayment).HasPrincipalKey<Payment>(e => e.ExternalPaymentId).IsRequired(false);
+                entity.HasOne(e => e.SuspenseWallet).WithOne(e => e.ExternalPayment).HasForeignKey<ExternalPaymentSuspenseWallet>(e => e.ExternalPaymentId);
             });
 
             builder.Entity<ExternalPaymentRequest>(entity =>
@@ -156,6 +159,13 @@ namespace Etherkeep.Server.Data
 
                 entity.HasOne(e => e.Sender).WithMany(e => e.SentExternalPaymentRequests).HasForeignKey(e => e.SenderId);
                 entity.HasOne(e => e.PaymentRequest).WithOne(e => e.ExternalPaymentRequest).HasPrincipalKey<PaymentRequest>(e => e.ExternalPaymentRequestId).IsRequired(false);
+            });
+
+            builder.Entity<ExternalPaymentSuspenseWallet>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasAlternateKey(e => e.ExternalPaymentId);
+                entity.HasOne(e => e.ExternalPayment).WithOne(e => e.SuspenseWallet).HasForeignKey<ExternalPaymentSuspenseWallet>(e => e.ExternalPaymentId);
             });
 
             builder.Entity<Fee>(entity =>
@@ -216,6 +226,7 @@ namespace Etherkeep.Server.Data
                 entity.HasOne(e => e.ExternalPayment).WithOne(e => e.Payment).HasPrincipalKey<Payment>(e => e.ExternalPaymentId).IsRequired(false);
                 entity.HasOne(e => e.PaymentRequest).WithOne(e => e.Payment).HasPrincipalKey<Payment>(e => e.PaymentRequestId).IsRequired(false);
                 entity.HasOne(e => e.Invoice).WithMany(e => e.Payments).HasForeignKey(e => e.InvoiceId).IsRequired(false);
+                entity.HasOne(e => e.SuspenseWallet).WithOne(e => e.Payment).HasForeignKey<PaymentSuspenseWallet>(e => e.PaymentId);
             });
 
             builder.Entity<PaymentRequest>(entity =>
@@ -227,6 +238,13 @@ namespace Etherkeep.Server.Data
                 entity.HasOne(e => e.Currency).WithMany(e => e.PaymentRequests).HasForeignKey(e => e.CurrencyCode);
                 entity.HasOne(e => e.ExternalPaymentRequest).WithOne(e => e.PaymentRequest).HasPrincipalKey<PaymentRequest>(e => e.ExternalPaymentRequestId).IsRequired(false);
                 entity.HasOne(e => e.Payment).WithOne(e => e.PaymentRequest).HasPrincipalKey<Payment>(e => e.PaymentRequestId).IsRequired(false);
+            });
+
+            builder.Entity<PaymentSuspenseWallet>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasAlternateKey(e => e.PaymentId);
+                entity.HasOne(e => e.Payment).WithOne(e => e.SuspenseWallet).HasForeignKey<PaymentSuspenseWallet>(e => e.PaymentId);
             });
 
             builder.Entity<Setting>(entity =>
