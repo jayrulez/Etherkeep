@@ -7,6 +7,6 @@ namespace Etherkeep.Shared.Services
 {
     public interface IExchangeRateService
     {
-        double GetExchangeRate(string CurrencyCode);
+        Task<double> GetExchangeRateAsync(string CurrencyCode);
     }
 }

@@ -7,9 +7,9 @@ namespace Etherkeep.Shared.Services
 {
     public class ExchangeRateService : IExchangeRateService
     {
-        public double GetExchangeRate(string CurrencyCode)
+        public Task<double> GetExchangeRateAsync(string CurrencyCode)
         {
-            return 1;
+            return Task.FromResult<double>(1);
         }
     }
 }

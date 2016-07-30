@@ -19,27 +19,19 @@ using Etherkeep.Data.Repository;
 namespace Etherkeep.Server.Controllers
 {
     [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
-    //[Route("api/[controller]")]
-    [Route("api/accounts")]
-    public class AccountsController : BaseController
+    [Route("api/[controller]")]
+    public class ActivitiesController : BaseController
     {
-        private readonly IEmailSender _emailSender;
-        private readonly ISmsSender _smsSender;
-
-        public AccountsController(
+        public ActivitiesController(
             ApplicationDbContext applicationDbContext,
             OpenIddictUserManager<User> userManager,
-            IEmailSender emailSender,
-            ISmsSender smsSender,
             ILoggerFactory loggerFactory) : base(applicationDbContext, userManager, loggerFactory)
         {
-            _emailSender = emailSender;
-            _smsSender = smsSender;
-            _logger = loggerFactory.CreateLogger<AccountsController>();
+            _logger = loggerFactory.CreateLogger<ActivitiesController>();
         }
 
-        [HttpGet, Route("activities")]
-        public async Task<IActionResult> ActivitiesAction(int? page)
+        [HttpGet, Route("")]
+        public async Task<IActionResult> GetActivities(int? page)
         {
             try
             {
