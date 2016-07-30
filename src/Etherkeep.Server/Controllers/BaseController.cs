@@ -1,5 +1,5 @@
-﻿using Etherkeep.Server.Data;
-using Etherkeep.Server.Data.Entities;
+﻿using Etherkeep.Data;
+using Etherkeep.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -34,18 +34,6 @@ namespace Etherkeep.Server.Controllers
 
             return await _applicationDbContext.Users
                 .FirstOrDefaultAsync(e => e.Id.Equals(Guid.Parse(id)));
-        }
-
-        protected IActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
         }
     }
 }

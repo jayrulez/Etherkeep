@@ -7,7 +7,9 @@ import { AuthGuard } from './common/auth-guard';
 import { AuthService } from './services/auth.service';
 import { ConnectivityService } from './services/connectivity.service';
 import { HttpService } from './services/http.service';
-import { AccountService } from './services/account.service';
+import { UsersService } from './services/users.service';
+import { ActivitiesService } from './services/activities.service';
+import { WalletsService } from './services/wallets.service';
 
 bootstrap(AppComponent, [
   APP_ROUTER_PROVIDERS,
@@ -15,8 +17,10 @@ bootstrap(AppComponent, [
   HttpClient,
   AuthGuard,
   ConnectivityService,
+  HttpService,
   AuthService,
-  AccountService,
-  HttpService
+  UsersService,
+  ActivitiesService,
+  WalletsService
 ])
 .catch(err => console.error(err));

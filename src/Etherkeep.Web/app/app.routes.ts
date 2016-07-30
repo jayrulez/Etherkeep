@@ -2,13 +2,13 @@ import { provideRouter, RouterConfig } from '@angular/router';
 
 import { IndexComponent } from './components/default/index.component';
 import { HomeComponent } from './components/default/home.component';
-import { SettingsComponent } from './components/account/settings.component';
-import { SettingsHomeComponent } from './components/account/settings-home.component';
-import { ChangePasswordComponent } from './components/account/change-password.component';
-import { LoginComponent } from './components/account/login.component';
-import { RegisterComponent } from './components/account/register.component';
-import { ResetPasswordComponent } from './components/account/reset-password.component';
-import { ConfirmResetPasswordComponent } from './components/account/confirm-reset-password.component';
+import { SettingsComponent } from './components/users/settings.component';
+import { SettingsHomeComponent } from './components/users/settings-home.component';
+import { ChangePasswordComponent } from './components/users/change-password.component';
+import { LoginComponent } from './components/users/login.component';
+import { RegisterComponent } from './components/users/register.component';
+import { ResetPasswordComponent } from './components/users/reset-password.component';
+import { ConfirmResetPasswordComponent } from './components/users/confirm-reset-password.component';
 import { AuthGuard } from './common/auth-guard';
 
 export const routes: RouterConfig = [

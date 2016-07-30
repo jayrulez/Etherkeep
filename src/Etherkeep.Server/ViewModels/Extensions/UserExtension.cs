@@ -1,6 +1,5 @@
-﻿using Etherkeep.Server.ViewModels.Account;
-using Etherkeep.Server.ViewModels.User;
-using Entities = Etherkeep.Server.Data.Entities;
+﻿using Etherkeep.Server.ViewModels.User;
+using Entities = Etherkeep.Data.Entities;
 
 namespace Etherkeep.Server.ViewModels.Extensions
 {

@@ -1,9 +1,5 @@
-﻿using Etherkeep.Server.Data.Enums;
+﻿using Etherkeep.Data.Enums;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Etherkeep.Server.ViewModels.Payment
 {
