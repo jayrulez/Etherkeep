@@ -1,9 +1,9 @@
-﻿using Etherkeep.Server.ViewModels.Account;
+﻿using Etherkeep.Server.Models.Account;
 using System.ComponentModel.DataAnnotations;
 
-namespace Etherkeep.Server.ViewModels.User
+namespace Etherkeep.Server.Models.User
 {
-    public class RegisterViewModel
+    public class RegisterModel
     {
         [Required]
         public IdentityType IdentityType { get; set; }

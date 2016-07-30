@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Etherkeep.Server.ViewModels.User
+namespace Etherkeep.Server.Models.User
 {
-    public class SendCodeViewModel
+    public class SendCodeModel
     {
         public string SelectedProvider { get; set; }
 

@@ -4,13 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherkeep.Server.ViewModels.User
+namespace Etherkeep.Server.Models.User
 {
-    public class VerifyPhoneNumberViewModel
+    public class AddPhoneNumberModel
     {
-        [Required]
-        public string Code { get; set; }
-
         [Required]
         [Phone]
         [Display(Name = "Phone number")]

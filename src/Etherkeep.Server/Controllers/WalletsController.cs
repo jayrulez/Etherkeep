@@ -21,7 +21,7 @@ namespace Etherkeep.Server.Controllers
             OpenIddictUserManager<User> userManager,
             ILoggerFactory loggerFactory) : base(applicationDbContext, userManager, loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<AccountsController>();
+            _logger = loggerFactory.CreateLogger<ActivitiesController>();
         }
 
         [HttpGet, Route("{id}/balance")]

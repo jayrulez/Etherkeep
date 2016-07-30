@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherkeep.Server.ViewModels.User
+namespace Etherkeep.Server.Models.User
 {
-    public class UserViewModel
+    public class UserModel
     {
         public Guid Id { get; set; }
         public string UserName { get; set; }

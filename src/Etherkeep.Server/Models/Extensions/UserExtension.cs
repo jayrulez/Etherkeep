@@ -1,13 +1,13 @@
-﻿using Etherkeep.Server.ViewModels.User;
+﻿using Etherkeep.Server.Models.User;
 using Entities = Etherkeep.Data.Entities;
 
-namespace Etherkeep.Server.ViewModels.Extensions
+namespace Etherkeep.Server.Models.Extensions
 {
     public static partial class Extensions
     {
-        public static UserViewModel ToUserViewModel(this Entities.User source)
+        public static UserModel ToUserModel(this Entities.User source)
         {
-            var destination = new UserViewModel();
+            var destination = new UserModel();
 
             if (source != null)
             {

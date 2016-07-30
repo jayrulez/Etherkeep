@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherkeep.Server.ViewModels.Account
+namespace Etherkeep.Server.Models.User
 {
-    public class ActivityViewModel
+    public class FactorModel
     {
-        public int Id { get; set; }
+        public string Purpose { get; set; }
     }
 }

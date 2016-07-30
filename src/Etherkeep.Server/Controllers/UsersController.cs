@@ -1,19 +1,19 @@
 ﻿using AspNet.Security.OAuth.Validation;
-using Etherkeep.Server.ViewModels.Extensions;
+using Etherkeep.Server.Models.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using OpenIddict;
-using Etherkeep.Server.ViewModels.Shared;
-using Etherkeep.Server.ViewModels.User;
+using Etherkeep.Server.Models.Shared;
+using Etherkeep.Server.Models.User;
 using Etherkeep.Server.Managers;
 using Microsoft.EntityFrameworkCore;
 using Etherkeep.Data;
 using Etherkeep.Data.Entities;
 using Etherkeep.Data.Enums;
-using Etherkeep.Server.ViewModels.Account;
+using Etherkeep.Server.Models.Account;
 
 namespace Etherkeep.Server.Controllers
 {
@@ -36,13 +36,13 @@ namespace Etherkeep.Server.Controllers
             {
                 var user = await _applicationDbContext.Users.FirstOrDefaultAsync(e => e.Id == id);
 
-                return Ok(user.ToUserViewModel());
+                return Ok(user.ToUserModel());
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex.Message);
 
-                return BadRequest(new ErrorViewModel
+                return BadRequest(new ErrorModel
                 {
                     ErrorDescription = ex.Message
                 });
@@ -56,13 +56,13 @@ namespace Etherkeep.Server.Controllers
             {
                 var user = await GetCurrentUserAsync();
 
-                return Ok(user.ToUserViewModel());
+                return Ok(user.ToUserModel());
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex.Message);
 
-                return BadRequest(new ErrorViewModel
+                return BadRequest(new ErrorModel
                 {
                     Error = "internal_error",
                     ErrorDescription = ex.Message
@@ -71,7 +71,7 @@ namespace Etherkeep.Server.Controllers
         }
 
         [AllowAnonymous, HttpPost, Route("register")]
-        public async Task<IActionResult> RegisterAction([FromBody] RegisterViewModel model)
+        public async Task<IActionResult> RegisterAction([FromBody] RegisterModel model)
         {
             if (ModelState.IsValid)
             {
@@ -142,7 +142,7 @@ namespace Etherkeep.Server.Controllers
 
                                 dbTransaction.Commit();
 
-                                return Ok(user.ToUserViewModel());
+                                return Ok(user.ToUserModel());
                             }
                             else
                             {
@@ -172,7 +172,7 @@ namespace Etherkeep.Server.Controllers
         }
 
         [AllowAnonymous, HttpPost, Route("reset_password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
         {
             if (ModelState.IsValid)
             {
@@ -208,7 +208,7 @@ namespace Etherkeep.Server.Controllers
         }
 
         [HttpPost, Route("change_password")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
             if (ModelState.IsValid)
             {
@@ -270,7 +270,7 @@ namespace Etherkeep.Server.Controllers
 
                 if (user == null)
                 {
-                    return BadRequest(new ErrorViewModel
+                    return BadRequest(new ErrorModel
                     {
                         Error = "",
                         ErrorDescription = ""

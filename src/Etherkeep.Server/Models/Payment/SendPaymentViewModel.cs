@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Etherkeep.Server.Models
 {
-    public class SendPaymentViewModel
+    public class SendPaymentModel
     {
         [JsonProperty("receiver_id")]
         public Guid ReceiverId { get; set; }

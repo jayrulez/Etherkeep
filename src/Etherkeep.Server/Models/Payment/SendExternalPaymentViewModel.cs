@@ -1,9 +1,9 @@
 ﻿using Etherkeep.Data.Enums;
 using Newtonsoft.Json;
 
-namespace Etherkeep.Server.ViewModels.Payment
+namespace Etherkeep.Server.Models.Payment
 {
-    public class SendExternalPaymentViewModel
+    public class SendExternalPaymentModel
     {
         [JsonProperty("receiver_type")]
         public ReceiverType ReceiverType { get; set; }

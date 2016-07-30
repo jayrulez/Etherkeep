@@ -7,8 +7,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenIddict;
-using Etherkeep.Server.ViewModels.Payment;
-using Etherkeep.Server.ViewModels.Extensions;
+using Etherkeep.Server.Models.Payment;
+using Etherkeep.Server.Models.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Etherkeep.Server.Services;
 using Etherkeep.Shared.Services;
@@ -58,7 +58,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost, Route("request")]
-        public async Task<IActionResult> RequestAction([FromBody] RequestPaymentViewModel model)
+        public async Task<IActionResult> RequestAction([FromBody] RequestPaymentModel model)
         {
             if (ModelState.IsValid)
             {
@@ -101,7 +101,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost, Route("request_external")]
-        public async Task<IActionResult> RequestExternalAction([FromBody] RequestExternalPaymentViewModel model)
+        public async Task<IActionResult> RequestExternalAction([FromBody] RequestExternalPaymentModel model)
         {
             if (ModelState.IsValid)
             {
@@ -145,7 +145,7 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost, Route("send")]
-        public async Task<IActionResult> SendAction([FromBody] SendPaymentViewModel model)
+        public async Task<IActionResult> SendAction([FromBody] SendPaymentModel model)
         {
             if (ModelState.IsValid)
             {
@@ -169,7 +169,7 @@ namespace Etherkeep.Server.Controllers.API
                     return BadRequest();
                 }
 
-                var exchangeRate = _exchangeRateService.GetExchangeRate(currency.Code);
+                var exchangeRate = await _exchangeRateService.GetExchangeRateAsync(currency.Code);
 
                 var tokens = model.Amount * exchangeRate;
 
@@ -226,14 +226,14 @@ namespace Etherkeep.Server.Controllers.API
         }
 
         [HttpPost, Route("send_external")]
-        public async Task<IActionResult> SendExternalAction([FromBody] SendExternalPaymentViewModel model)
+        public async Task<IActionResult> SendExternalAction([FromBody] SendExternalPaymentModel model)
         {
             if (ModelState.IsValid)
             {
                 var receiver = FindReceiver(model.ReceiverType, model.Receiver);
                 if(receiver != null)
                 {
-                    return await this.SendAction(new SendPaymentViewModel() {
+                    return await this.SendAction(new SendPaymentModel() {
                         Amount = model.Amount,
                         CurrencyCode = model.CurrencyCode,
                         ReceiverId = receiver.Id
@@ -259,7 +259,7 @@ namespace Etherkeep.Server.Controllers.API
                     return BadRequest();
                 }
 
-                var exchangeRate = _exchangeRateService.GetExchangeRate(currency.Code);
+                var exchangeRate = await _exchangeRateService.GetExchangeRateAsync(currency.Code);
 
                 var tokens = model.Amount * exchangeRate;
 

@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace Etherkeep.Server.ViewModels.Shared {
-    public class ErrorViewModel
+namespace Etherkeep.Server.Models.Shared {
+    public class ErrorModel
     {
         [JsonProperty("error")]
         [Display(Name = "Error")]

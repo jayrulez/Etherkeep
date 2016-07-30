@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AspNet.Security.OAuth.Validation;
 using System;
-using Etherkeep.Server.ViewModels.Extensions;
+using Etherkeep.Server.Models.Extensions;
 using OpenIddict;
 using Microsoft.EntityFrameworkCore;
-using Etherkeep.Server.ViewModels.Account;
+using Etherkeep.Server.Models.Account;
 using Etherkeep.Data.Entities;
 using Etherkeep.Shared.Services.Email;
 using Etherkeep.Shared.Services.Sms;
@@ -45,10 +45,10 @@ namespace Etherkeep.Server.Controllers
                     .Include(e => e.Parameters)
                     .Where(e => e.UserId == user.Id);
 
-                var result = new PagedResult<ActivityViewModel>
+                var result = new PagedResult<ActivityModel>
                 {
                     TotalCount = activities.Count(),
-                    Items = activities.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToViewModel()
+                    Items = activities.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToModel()
                 };
 
                 return Ok(result);

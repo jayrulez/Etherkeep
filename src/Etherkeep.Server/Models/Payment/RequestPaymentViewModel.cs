@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherkeep.Server.ViewModels.Payment
+namespace Etherkeep.Server.Models.Payment
 {
-    public class RequestPaymentViewModel
+    public class RequestPaymentModel
     {
         [JsonProperty("receiver_id")]
         public Guid ReceiverId { get; set; }
