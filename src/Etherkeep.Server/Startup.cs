@@ -101,12 +101,12 @@ namespace Etherkeep.Server
 
             app.UseOAuthIntrospection(options =>
             {
+                options.Authority = "http://localhost:5000/";
                 options.AutomaticAuthenticate = true;
                 options.AutomaticChallenge = true;
-                options.Authority = "http://localhost:5000/";
-                //options.Audiences = new List<string>();
+                options.Audiences.Add("http://localhost:5001/");
                 options.ClientId = "resource_server";
-                options.ClientSecret = "875sqd4s5d748z78z7ds1ff8zz8814ff88ed8ea4z4zzd";
+                options.ClientSecret = "secret_secret_secret";
             });
 
             app.UseCors(options =>
@@ -139,7 +139,7 @@ namespace Etherkeep.Server
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller}/{action}/{id?}");
             });
 
             // Enable middleware to serve generated Swagger as a JSON endpoint

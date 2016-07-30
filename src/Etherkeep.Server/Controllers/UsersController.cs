@@ -29,28 +29,8 @@ namespace Etherkeep.Server.Controllers
             this.UserWalletManager = userWalletManager;
         }
 
-        [HttpGet, Route("{id:guid}")]
-        public async Task<IActionResult> AccountAction(Guid id)
-        {
-            try
-            {
-                var user = await _applicationDbContext.Users.FirstOrDefaultAsync(e => e.Id == id);
-
-                return Ok(user.ToUserModel());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex.Message);
-
-                return BadRequest(new ErrorModel
-                {
-                    ErrorDescription = ex.Message
-                });
-            }
-        }
-
         [HttpGet, Route("")]
-        public async Task<IActionResult> MeAction()
+        public async Task<IActionResult> GetCurrentUserAction()
         {
             try
             {

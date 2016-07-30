@@ -66,6 +66,8 @@ namespace Etherkeep.Accounts
             services.AddOpenIddict<User, IdentityRole<Guid>, ApplicationDbContext, Guid>()
                 .SetAccessTokenLifetime(TimeSpan.FromHours(24))
 
+                .EnableIntrospectionEndpoint("/connect/introspect")
+
                 // Enable the authorization, logout, token and userinfo endpoints.
                 .EnableAuthorizationEndpoint("/connect/authorize")
                 .EnableLogoutEndpoint("/connect/logout")
