@@ -6,14 +6,13 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using OpenIddict;
-using Etherkeep.Server.Models.Shared;
 using Etherkeep.Server.Models.User;
 using Etherkeep.Server.Managers;
-using Microsoft.EntityFrameworkCore;
 using Etherkeep.Data;
 using Etherkeep.Data.Entities;
 using Etherkeep.Data.Enums;
 using Etherkeep.Server.Models.Account;
+using Etherkeep.Server.ViewModels.Shared;
 
 namespace Etherkeep.Server.Controllers
 {
@@ -42,7 +41,7 @@ namespace Etherkeep.Server.Controllers
             {
                 _logger.LogCritical(ex.Message);
 
-                return BadRequest(new ErrorModel
+                return BadRequest(new ErrorViewModel
                 {
                     Error = "internal_error",
                     ErrorDescription = ex.Message
@@ -250,7 +249,7 @@ namespace Etherkeep.Server.Controllers
 
                 if (user == null)
                 {
-                    return BadRequest(new ErrorModel
+                    return BadRequest(new ErrorViewModel
                     {
                         Error = "",
                         ErrorDescription = ""
