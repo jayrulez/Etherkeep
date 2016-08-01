@@ -1,6 +1,9 @@
 ﻿using AspNet.Security.OAuth.Validation;
 using Etherkeep.Data;
 using Etherkeep.Data.Entities;
+using Etherkeep.Server.Services;
+using Etherkeep.Server.Shared.Constants;
+using Etherkeep.Server.ViewModels.Shared;
 using Etherkeep.Shared.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,20 +19,45 @@ namespace Etherkeep.Server.Controllers
     [Route("api/[controller]")]
     public class ExchangeRatesController : BaseController
     {
-        private IExchangeRateService ExchangeRateService;
+        private IExchangeRateService _exchangeRateService;
         public ExchangeRatesController(ApplicationDbContext applicationDbContext, OpenIddictUserManager<User> userManager, IExchangeRateService exchangeRateService, ILoggerFactory loggerFactory)
             : base(applicationDbContext, userManager, loggerFactory)
         {
-            this.ExchangeRateService = exchangeRateService;
+            _exchangeRateService = exchangeRateService;
             _logger = loggerFactory.CreateLogger<ExchangeRatesController>();
         }
 
 
-        public async Task<IActionResult> GetExhangeRate(string currencyCode)
+        public async Task<IActionResult> GetExhangeRate([FromBody] string currencyCode)
         {
-            var exchangeRate = await ExchangeRateService.GetExchangeRateAsync(currencyCode);
+            try
+            {
+                var exchangeRate = await _exchangeRateService.GetExchangeRateAsync(currencyCode);
 
-            return Ok(exchangeRate);
+                return Ok(exchangeRate);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
+            }
+        }
+
+        public async Task<IActionResult> GetExhangeRates()
+        {
+            try
+            {
+                var exchangeRates = await _exchangeRateService.GetExchangeRatesAsync();
+
+                return Ok(exchangeRates);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
+            }
         }
     }
 }

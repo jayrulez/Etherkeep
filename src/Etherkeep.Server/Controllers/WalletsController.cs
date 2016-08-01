@@ -8,12 +8,15 @@ using System;
 using OpenIddict;
 using Etherkeep.Data.Entities;
 using Etherkeep.Data;
+using Microsoft.EntityFrameworkCore;
+using Etherkeep.Server.ViewModels.Shared;
+using Etherkeep.Server.Shared.Constants;
+using Etherkeep.Server.Models.Extensions;
 
 namespace Etherkeep.Server.Controllers
 {
     [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
-    //[Route("api/[controller]")]
-    [Route("api/wallets")]
+    [Route("api/[controller]")]
     public class WalletsController : BaseController
     {
         public WalletsController(
@@ -24,30 +27,64 @@ namespace Etherkeep.Server.Controllers
             _logger = loggerFactory.CreateLogger<ActivitiesController>();
         }
 
-        [HttpGet, Route("{id}/balance")]
-        public async Task<IActionResult> BalanceAction(string id)
+        [HttpGet, Route("{id}")]
+        public async Task<IActionResult> GetWallet(string id)
         {
             try
             {
                 var user = await GetCurrentUserAsync();
 
-                var wallet = _applicationDbContext.UserWallets.Where(e => e.UserId.Equals(user.Id) && e.Id.Equals(id)).FirstOrDefault();
+                var wallet = _applicationDbContext.UserWallets
+                    .Where(e => e.UserId.Equals(user.Id) && e.Id.Equals(id)).FirstOrDefault();
 
                 if (wallet == null)
                 {
-                    return BadRequest();
+                    return BadRequest(new ErrorViewModel
+                    {
+                        Error = ErrorCode.NotFound,
+                        ErrorDescription = $"A wallet with Id='{id}' could not be found."
+                    });
                 }
 
-                return Ok(new { balance = wallet.Balance });
+                return Ok(wallet.ToModel());
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex.Message);
 
-                ModelState.AddModelError(string.Empty, ex.Message);
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
             }
 
-            return BadRequest(ModelState);
+        }
+
+        [HttpGet, Route("{id}/addresses")]
+        public async Task<IActionResult> GetWalletAddresses(string id)
+        {
+            try
+            {
+                var user = await GetCurrentUserAsync();
+
+                var wallet = _applicationDbContext.UserWallets
+                    .Include(e => e.WalletAddresses)
+                    .Where(e => e.UserId.Equals(user.Id) && e.Id.Equals(id)).FirstOrDefault();
+
+                if (wallet == null)
+                {
+                    return BadRequest(new ErrorViewModel
+                    {
+                        Error = ErrorCode.NotFound,
+                        ErrorDescription = $"A wallet with Id='{id}' could not be found."
+                    });
+                }
+
+                return Ok(wallet.WalletAddresses.ToModel());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
+            }
         }
     }
 }

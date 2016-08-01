@@ -11,7 +11,6 @@ using Etherkeep.Server.Models.Payment;
 using Etherkeep.Server.Models.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Etherkeep.Server.Services;
-using Etherkeep.Shared.Services;
 using Etherkeep.Data;
 using Etherkeep.Data.Entities;
 using Etherkeep.Data.Enums;
@@ -53,8 +52,8 @@ namespace Etherkeep.Server.Controllers.API
         public PaymentsController(ApplicationDbContext applicationDbContext, OpenIddictUserManager<User> userManager, IExchangeRateService exchangeRateService, ILoggerFactory loggerFactory)
             : base(applicationDbContext, userManager, loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<PaymentsController>();
             _exchangeRateService = exchangeRateService;
+            _logger = loggerFactory.CreateLogger<PaymentsController>();
         }
 
         [HttpPost, Route("request")]
@@ -171,7 +170,7 @@ namespace Etherkeep.Server.Controllers.API
 
                 var exchangeRate = await _exchangeRateService.GetExchangeRateAsync(currency.Code);
 
-                var tokens = model.Amount * exchangeRate;
+                var tokens = model.Amount * exchangeRate.Value;
 
                 var wallet = primaryWallet.Wallet;
 
@@ -190,7 +189,7 @@ namespace Etherkeep.Server.Controllers.API
                             ReceiverId = model.ReceiverId,
                             CurrencyCode = model.CurrencyCode,
                             Amount = model.Amount,
-                            ExchangeRate = exchangeRate,
+                            ExchangeRate = exchangeRate.Value,
                             Fee = 0,
                             Tokens = tokens,
                             Status = PaymentStatus.Pending,
@@ -261,7 +260,7 @@ namespace Etherkeep.Server.Controllers.API
 
                 var exchangeRate = await _exchangeRateService.GetExchangeRateAsync(currency.Code);
 
-                var tokens = model.Amount * exchangeRate;
+                var tokens = model.Amount * exchangeRate.Value;
 
                 var wallet = primaryWallet.Wallet;
 
@@ -281,7 +280,7 @@ namespace Etherkeep.Server.Controllers.API
                             Receiver = model.Receiver,
                             CurrencyCode = model.CurrencyCode,
                             Amount = model.Amount,
-                            ExchangeRate = exchangeRate,
+                            ExchangeRate = exchangeRate.Value,
                             Fee = 0,
                             Tokens = tokens,
                             Status = ExternalPaymentStatus.Pending,

@@ -1,11 +1,13 @@
-﻿using AspNet.Security.OAuth.Validation;
-using Etherkeep.Data;
+﻿using Etherkeep.Data;
 using Etherkeep.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OpenIddict;
-using System.Threading.Tasks;
+using Etherkeep.Server.Models.Extensions;
+using System.Linq;
+using System;
+using Etherkeep.Server.ViewModels.Shared;
+using Etherkeep.Server.Shared.Constants;
 
 namespace Etherkeep.Server.Controllers
 {
@@ -19,11 +21,46 @@ namespace Etherkeep.Server.Controllers
         }
 
         [HttpGet, Route("")]
-        public async Task<IActionResult> GetCurrenciesAsync()
+        public IActionResult GetCurrenciesAsync()
         {
-            var currencies = await _applicationDbContext.Currencies.ToListAsync();
+            try
+            {
+                var currencies = _applicationDbContext.Currencies.ToList().ToModel();
 
-            return Ok(currencies);
+                return Ok(currencies);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("{code}")]
+        public IActionResult GetCurrencyAsync(string code)
+        {
+            try
+            {
+                var currency = _applicationDbContext.Currencies.FirstOrDefault(e => e.Code.Equals(code));
+
+                if(currency == null)
+                {
+                    return BadRequest(new ErrorViewModel
+                    {
+                        Error = ErrorCode.NotFound,
+                        ErrorDescription = $"A currency with Code='{code}' could not be found."
+                    });
+                }
+
+                return Ok(currency.ToModel());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
+            }
         }
     }
 }

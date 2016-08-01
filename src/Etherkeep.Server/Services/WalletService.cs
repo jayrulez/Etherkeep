@@ -10,10 +10,8 @@ namespace Etherkeep.Server.Services
 {
     public class WalletService : IWalletService
     {
-        ApplicationDbContext dbContext;
-        public WalletService(ApplicationDbContext dbContext)
+        public WalletService()
         {
-            this.dbContext = dbContext;
         }
 
         public WalletModel CreateWallet()

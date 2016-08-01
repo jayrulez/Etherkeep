@@ -15,8 +15,8 @@ namespace Etherkeep.Data
         {
         }
 
-        public virtual DbSet<Entities.Action> Actions { get; set; }
-        public virtual DbSet<ActionParameter> ActionParameters { get; set; }
+        public virtual DbSet<Entities.UserAction> UserActions { get; set; }
+        public virtual DbSet<UserActionParameter> UserActionParameters { get; set; }
         public virtual DbSet<Activity> Activities { get; set; }
         public virtual DbSet<ActivityParameter> ActivityParameters { get; set; }
         public virtual DbSet<AddressBookEntry> AddressBookEntries { get; set; }
@@ -63,14 +63,14 @@ namespace Etherkeep.Data
 
             builder.HasPostgresExtension("uuid-ossp");
 
-            builder.Entity<Entities.Action>(entity =>
+            builder.Entity<Entities.UserAction>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.HasOne(e => e.User).WithMany(e => e.Actions).HasForeignKey(e => e.UserId);
                 entity.HasMany(e => e.Parameters).WithOne(e => e.Action).HasForeignKey(e => e.ActionId);
             });
 
-            builder.Entity<ActionParameter>(entity =>
+            builder.Entity<UserActionParameter>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.HasOne(e => e.Action).WithMany(e => e.Parameters).HasForeignKey(e => e.ActionId);

@@ -13,6 +13,8 @@ using Etherkeep.Data.Entities;
 using Etherkeep.Data.Enums;
 using Etherkeep.Server.Models.Account;
 using Etherkeep.Server.ViewModels.Shared;
+using Etherkeep.Server.Shared.Constants;
+using Etherkeep.Shared.Services.Email;
 
 namespace Etherkeep.Server.Controllers
 {
@@ -20,12 +22,14 @@ namespace Etherkeep.Server.Controllers
     [Route("api/[controller]")]
     public class UsersController : BaseController
     {
-        private IUserWalletManager UserWalletManager;
-        public UsersController(ApplicationDbContext applicationDbContext, OpenIddictUserManager<User> userManager, IUserWalletManager userWalletManager, ILoggerFactory loggerFactory) 
+        private IUserWalletManager _userWalletManager;
+        private IEmailSender _emailSender;
+        public UsersController(ApplicationDbContext applicationDbContext, OpenIddictUserManager<User> userManager, IUserWalletManager userWalletManager, IEmailSender emailSender, ILoggerFactory loggerFactory) 
             : base(applicationDbContext, userManager, loggerFactory)
         {
+            _userWalletManager = userWalletManager;
+            _emailSender = emailSender;
             _logger = loggerFactory.CreateLogger<UsersController>();
-            this.UserWalletManager = userWalletManager;
         }
 
         [HttpGet, Route("")]
@@ -35,17 +39,13 @@ namespace Etherkeep.Server.Controllers
             {
                 var user = await GetCurrentUserAsync();
 
-                return Ok(user.ToUserModel());
+                return Ok(user.ToModel());
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex.Message);
 
-                return BadRequest(new ErrorViewModel
-                {
-                    Error = "internal_error",
-                    ErrorDescription = ex.Message
-                });
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
             }
         }
 
@@ -117,11 +117,11 @@ namespace Etherkeep.Server.Controllers
 
                             if (result.Succeeded)
                             {
-                                await UserWalletManager.CreateWalletAsync(user);
+                                await _userWalletManager.CreateWalletAsync(user);
 
                                 dbTransaction.Commit();
 
-                                return Ok(user.ToUserModel());
+                                return Ok(user.ToModel());
                             }
                             else
                             {
@@ -143,7 +143,7 @@ namespace Etherkeep.Server.Controllers
                 {
                     _logger.LogCritical(ex.Message);
 
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
                 }
             }
 
@@ -165,21 +165,21 @@ namespace Etherkeep.Server.Controllers
                     }
                     else
                     {
+                        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                        // Send an email with this link
-                        //var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                        //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                        //await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                        //   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
-                        return Ok(new { result = true });
+                        var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+
+                        await _emailSender.SendEmailAsync(model.EmailAddress, "Reset Password",
+                           $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
+
+                        return Ok();
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogCritical(ex.Message);
 
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
                 }
             }
 
@@ -199,9 +199,7 @@ namespace Etherkeep.Server.Controllers
 
                     if (result.Succeeded)
                     {
-                        _logger.LogInformation(3, "User changed their password successfully.");
-
-                        return Ok(new { result = true });
+                        return Ok();
                     }
                     else
                     {
@@ -216,7 +214,7 @@ namespace Etherkeep.Server.Controllers
                 {
                     _logger.LogCritical(ex.Message);
 
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
                 }
             }
 
@@ -234,10 +232,8 @@ namespace Etherkeep.Server.Controllers
             {
                 _logger.LogCritical(ex.Message);
 
-                ModelState.AddModelError(string.Empty, ex.Message);
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
             }
-
-            return BadRequest(ModelState.GetErrorResponse());
         }
 
         [AllowAnonymous, HttpGet, Route("confirm_email")]
@@ -251,8 +247,8 @@ namespace Etherkeep.Server.Controllers
                 {
                     return BadRequest(new ErrorViewModel
                     {
-                        Error = "",
-                        ErrorDescription = ""
+                        Error = ErrorCode.NotFound,
+                        ErrorDescription = $"No user with Id='{userId.ToString()}' was found."
                     });
                 }
 
@@ -274,7 +270,7 @@ namespace Etherkeep.Server.Controllers
             {
                 _logger.LogCritical(ex.Message);
 
-                ModelState.AddModelError(string.Empty, ex.Message);
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
             }
 
             return BadRequest(ModelState.GetErrorResponse());
@@ -291,10 +287,8 @@ namespace Etherkeep.Server.Controllers
             {
                 _logger.LogCritical(ex.Message);
 
-                ModelState.AddModelError(string.Empty, ex.Message);
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
             }
-
-            return BadRequest(ModelState.GetErrorResponse());
         }
 
         [HttpPost, Route("confirm_phone_number")]
@@ -308,10 +302,8 @@ namespace Etherkeep.Server.Controllers
             {
                 _logger.LogCritical(ex.Message);
 
-                ModelState.AddModelError(string.Empty, ex.Message);
+                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
             }
-
-            return BadRequest(ModelState.GetErrorResponse());
         }
     }
 }

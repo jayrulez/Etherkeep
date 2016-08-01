@@ -13,5 +13,9 @@ src/Etherkeep.Data/bin
 src/Etherkeep.Data/obj
 src/Etherkeep.Accounts/bin
 src/Etherkeep.Accounts/obj
+src/Etherkeep.Accounts/appsettings.json
+src/Etherkeep.Admin/bin
+src/Etherkeep.Admin/obj
+src/Etherkeep.Admin/appsettings.json
 src/Etherkeep.Shared/bin
 src/Etherkeep.Shared/obj

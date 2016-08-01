@@ -76,6 +76,7 @@ namespace Etherkeep.Accounts
                 
                 .AllowAuthorizationCodeFlow()
                 .AllowRefreshTokenFlow()
+                .AllowClientCredentialsFlow()
                 
                 .AllowPasswordFlow()
 
@@ -160,7 +161,7 @@ namespace Etherkeep.Accounts
                 ClientSecret = Configuration["GoogleAuthentication:ClientSecret"]
             });
 
-            app.UseStatusCodePagesWithReExecute("/error");
+            //app.UseStatusCodePagesWithReExecute("/error");
 
             app.UseOpenIddict();
 

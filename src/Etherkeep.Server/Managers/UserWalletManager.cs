@@ -12,15 +12,15 @@ namespace Etherkeep.Server.Managers
 {
     public class UserWalletManager : IUserWalletManager
     {
-        private ApplicationDbContext DbContext;
-        private IWalletService WalletService;
-        private ILogger Logger;
+        private ApplicationDbContext _dbContext;
+        private IWalletService _walletService;
+        private ILogger _logger;
 
         public UserWalletManager(ApplicationDbContext dbContext, IWalletService walletService, ILoggerFactory loggerFactory)
         {
-            this.DbContext = dbContext;
-            this.WalletService = walletService;
-            this.Logger = loggerFactory.CreateLogger<UserWalletManager>();
+            this._dbContext     = dbContext;
+            this._walletService = walletService;
+            this._logger        = loggerFactory.CreateLogger<UserWalletManager>();
         }
 
         public async Task<UserWallet> CreateWalletAsync(User user, string label = null)
@@ -32,7 +32,7 @@ namespace Etherkeep.Server.Managers
 
             try
             {
-                var walletModel = WalletService.CreateWallet();
+                var walletModel = _walletService.CreateWallet();
 
                 var wallet = new UserWallet()
                 {
@@ -43,7 +43,7 @@ namespace Etherkeep.Server.Managers
 
                 user.Wallets.Add(wallet);
 
-                var primaryWallet = await DbContext.UserPrimaryWallets.FirstOrDefaultAsync(e => e.UserId == user.Id);
+                var primaryWallet = await _dbContext.UserPrimaryWallets.FirstOrDefaultAsync(e => e.UserId == user.Id);
 
                 if (primaryWallet == null)
                 {
@@ -53,15 +53,15 @@ namespace Etherkeep.Server.Managers
                     };
                 }
 
-                DbContext.Entry<User>(user).State = EntityState.Modified;
+                _dbContext.Entry<User>(user).State = EntityState.Modified;
 
-                await DbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
                 return wallet;
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex.Message);
+                _logger.LogError(ex.Message);
 
                 throw ex;
             }

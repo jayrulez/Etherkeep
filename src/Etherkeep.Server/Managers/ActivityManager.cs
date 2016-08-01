@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Etherkeep.Server.Models.Account
+namespace Etherkeep.Server.Managers
 {
-    public class ActivityModel
+    public class ActivityManager : IActivityManager
     {
-        public int Id { get; set; }
     }
 }

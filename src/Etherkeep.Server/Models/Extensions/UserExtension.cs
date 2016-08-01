@@ -5,7 +5,7 @@ namespace Etherkeep.Server.Models.Extensions
 {
     public static partial class Extensions
     {
-        public static UserModel ToUserModel(this Entities.User source)
+        public static UserModel ToModel(this Entities.User source)
         {
             var destination = new UserModel();
 

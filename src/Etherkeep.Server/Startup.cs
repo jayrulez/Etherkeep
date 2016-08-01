@@ -77,6 +77,7 @@ namespace Etherkeep.Server
             services.AddTransient<IExchangeRateService, ExchangeRateService>();
             services.AddTransient<IWalletService, WalletService>();
             services.AddTransient<IUserWalletManager, UserWalletManager>();
+            services.AddTransient<IUserActionService, UserActionService>();
             services.AddSingleton<ViewRenderer>();
         }
 
@@ -104,7 +105,6 @@ namespace Etherkeep.Server
                 options.Authority = "http://localhost:5000/";
                 options.AutomaticAuthenticate = true;
                 options.AutomaticChallenge = true;
-                options.Audiences.Add("http://localhost:5001/");
                 options.ClientId = "resource_server";
                 options.ClientSecret = "secret_secret_secret";
             });
@@ -133,7 +133,7 @@ namespace Etherkeep.Server
 
             app.UseIdentity();
 
-            app.UseStatusCodePagesWithReExecute("/error");
+            //app.UseStatusCodePagesWithReExecute("/error");
 
             app.UseMvc(routes =>
             {
