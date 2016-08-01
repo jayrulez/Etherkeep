@@ -24,17 +24,14 @@ namespace Etherkeep.Server.Managers
             this._logger = loggerFactory.CreateLogger<UserWalletManager>();
         }
 
-        public async Task<UserWallet> CreateWalletAsync(User user, string passphrase, string label)
+        public async Task<UserWallet> CreateWalletAsync(User user, string passphrase)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (string.IsNullOrEmpty(label))
-            {
-                label = $"{user.Id.ToString()}_{Guid.NewGuid().ToString()}";
-            }
+            var label = $"{user.Id.ToString()}_{Guid.NewGuid().ToString()}";
 
             try
             {

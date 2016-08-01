@@ -10,8 +10,9 @@ namespace Etherkeep.Server.Services
     {
         Task<WalletModel> CreateWalletAsync(string passphrase, string label);
 
-        WalletModel FindWalletById(string id);
+        Task<WalletModel> GetWalletAsync(string id);
+        Task<WalletAddressModel> GetWalletAddressAsync(string id, string address);
 
-        WalletAddressModel CreateWalletAddress(string id);
+        Task<WalletAddressModel> CreateWalletAddressAsync(string id, int chain);
     }
 }

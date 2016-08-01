@@ -48,6 +48,8 @@ namespace Etherkeep.Server
 
             services.Configure<WalletServiceOptions>(Configuration.GetSection("WalletServiceOptions"));
 
+            services.Configure<ExchangeRateServiceOptions>(Configuration.GetSection("ExchangeRateServiceOptions"));
+
             services.AddSwaggerGen();
             services.ConfigureSwaggerGen(options =>
             {

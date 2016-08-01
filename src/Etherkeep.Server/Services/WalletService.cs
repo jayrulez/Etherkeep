@@ -1,16 +1,14 @@
-﻿using Etherkeep.Server.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Etherkeep.Server.Services.Models;
-using Etherkeep.Data;
 using System.Net.Http;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Etherkeep.Server.Services
 {
@@ -18,8 +16,11 @@ namespace Etherkeep.Server.Services
     {
         private IOptions<WalletServiceOptions> _options;
         private HttpClient _httpClient;
-        public WalletService(IOptions<WalletServiceOptions> options)
+        private ILogger _logger;
+        public WalletService(IOptions<WalletServiceOptions> options, ILoggerFactory loggerFactory)
         {
+            _logger = loggerFactory.CreateLogger<WalletService>();
+
             _options = options;
 
             _httpClient = new HttpClient();
@@ -62,30 +63,67 @@ namespace Etherkeep.Server.Services
                 throw new Exception(content);
             }
 
+            _logger.LogInformation($"Created wallet: {content}");
+
             var walletData = JObject.Parse(content);
 
-            var model = new WalletModel();
-
-            model.Id    = walletData["wallet"]["id"].ToString();
-            model.Label = walletData["wallet"]["label"].ToString();
+            var model = JsonConvert.DeserializeObject<WalletModel>(walletData["wallet"].ToString());
+            
             model.Data  = content;
 
             return model;
         }
 
-        public WalletAddressModel CreateWalletAddress(string id)
+        public async Task<WalletAddressModel> CreateWalletAddressAsync(string id, int chain)
         {
-            return new WalletAddressModel()
+            var response = await _httpClient.PostAsync($"wallet/{id}/address/{chain}", null);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
             {
-            };
+                throw new Exception(content);
+            }
+
+            _logger.LogInformation($"Created wallet address: {content}");
+
+            var model = JsonConvert.DeserializeObject<WalletAddressModel>(content);
+
+            model.Data = content;
+
+            return model;
         }
 
-        public WalletModel FindWalletById(string id)
+        public async Task<WalletModel> GetWalletAsync(string id)
         {
-            return new WalletModel()
+            var response = await _httpClient.GetAsync($"wallet/{id}");
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
             {
-                Id = Guid.NewGuid().ToString()
-            };
+                throw new Exception(content);
+            }
+
+            var model = JsonConvert.DeserializeObject<WalletModel>(content);
+
+            return model;
+        }
+
+        public async Task<WalletAddressModel> GetWalletAddressAsync(string id, string address)
+        {
+            var response = await _httpClient.GetAsync($"wallet/{id}/addresses/{address}");
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception(content);
+            }
+
+            var model = JsonConvert.DeserializeObject<WalletAddressModel>(content);
+
+            return model;
         }
     }
 }

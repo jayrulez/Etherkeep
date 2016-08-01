@@ -8,7 +8,8 @@ namespace Etherkeep.Server.Services
 {
     public interface IExchangeRateService
     {
-        Task<ExchangeRateModel> GetExchangeRateAsync(string CurrencyCode);
+        Task<ExchangeRateModel> GetExchangeRateAsync(string currencyCode);
         Task<IList<ExchangeRateModel>> GetExchangeRatesAsync();
+        Task<IList<ExchangeRateModel>> GetExchangeRatesAsync(IList<string> currencyCodes);
     }
 }

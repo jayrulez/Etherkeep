@@ -10,6 +10,7 @@ namespace Etherkeep.Data.Entities
         public string Passphrase { get; set; }
         public string Label { get; set; }
         public double Balance { get; set; }
+        public double ConfirmedBalance { get; set; }
         public string Data { get; set; }
         public DateTime CreatedAt { get; set; }
 

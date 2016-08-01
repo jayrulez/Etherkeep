@@ -23,6 +23,10 @@
     "AccessToken": "",
     "BackupXpubProvider": ""
   },
+  "ExchangeRateServiceOptions": {
+    "BaseCurrency": "BTC",
+    "AppId": ""
+  },
   "Logging": {
     "IncludeScopes": false,
     "LogLevel": {
