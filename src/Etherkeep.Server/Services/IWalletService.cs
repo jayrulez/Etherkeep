@@ -8,10 +8,10 @@ namespace Etherkeep.Server.Services
 {
     public interface IWalletService
     {
-        WalletModel CreateWallet();
+        Task<WalletModel> CreateWalletAsync(string passphrase, string label);
 
         WalletModel FindWalletById(string id);
 
-        WalletAddressModel CreateWalletAddress(WalletModel wallet);
+        WalletAddressModel CreateWalletAddress(string id);
     }
 }

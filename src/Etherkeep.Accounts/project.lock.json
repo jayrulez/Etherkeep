@@ -4874,19 +4874,19 @@
       },
       "Etherkeep.Data/1.0.0": {
         "type": "project",
-        "framework": ".NETStandard,Version=v1.6",
+        "framework": ".NETCoreApp,Version=v1.0",
         "dependencies": {
           "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
-          "NETStandard.Library": "1.6.0",
+          "Microsoft.NETCore.App": "1.0.0",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.1",
           "OpenIddict": "1.0.0"
         },
         "compile": {
-          "netstandard1.6/Etherkeep.Data.dll": {}
+          "netcoreapp1.0/Etherkeep.Data.dll": {}
         },
         "runtime": {
-          "netstandard1.6/Etherkeep.Data.dll": {}
+          "netcoreapp1.0/Etherkeep.Data.dll": {}
         }
       },
       "Etherkeep.Shared/1.0.0": {

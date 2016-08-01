@@ -117,7 +117,11 @@ namespace Etherkeep.Server.Controllers
 
                             if (result.Succeeded)
                             {
-                                await _userWalletManager.CreateWalletAsync(user);
+                                //TODO: Do this securely later
+                                var passphrase = user.Id.ToString();
+                                var label      = $"{user.Id.ToString()}_{Guid.NewGuid().ToString()}";
+
+                                await _userWalletManager.CreateWalletAsync(user, passphrase, label);
 
                                 dbTransaction.Commit();
 

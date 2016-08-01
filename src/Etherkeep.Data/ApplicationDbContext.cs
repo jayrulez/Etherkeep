@@ -15,6 +15,16 @@ namespace Etherkeep.Data
         {
         }
 
+        public ApplicationDbContext()
+        {
+
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql(@"User ID=postgres;Password=postgres;Server=localhost;Port=5432;Database=etherkeep;Pooling=true;");
+        }
+        
         public virtual DbSet<Entities.UserAction> UserActions { get; set; }
         public virtual DbSet<UserActionParameter> UserActionParameters { get; set; }
         public virtual DbSet<Activity> Activities { get; set; }

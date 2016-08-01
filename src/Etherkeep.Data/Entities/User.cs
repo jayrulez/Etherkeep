@@ -9,7 +9,7 @@ namespace Etherkeep.Data.Entities
     {
         public User() : base()
         {
-            Actions = new HashSet<Action>();
+            Actions = new HashSet<UserAction>();
             Activities = new HashSet<Activity>();
             OwnedContacts = new HashSet<Contact>();
             SubjectContacts = new HashSet<Contact>();
@@ -40,7 +40,7 @@ namespace Etherkeep.Data.Entities
         public virtual ICollection<PaymentRequest> ReceivedPaymentRequests { get; set; }
         public virtual ICollection<ExternalPayment> SentExternalPayments { get; set; }
         public virtual ICollection<ExternalPaymentRequest> SentExternalPaymentRequests { get; set; }
-        public virtual ICollection<Action> Actions { get; set; }
+        public virtual ICollection<UserAction> Actions { get; set; }
         public virtual ICollection<UserSetting> UserSettings { get; set; }
         public virtual ICollection<MobileNumber> MobileNumbers { get; set; }
         public virtual ICollection<EmailAddress> EmailAddresses { get; set; }

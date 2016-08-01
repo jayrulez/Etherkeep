@@ -177,9 +177,9 @@ namespace Etherkeep.Accounts
             {
                 context.Database.EnsureCreated();
 
-                // Add resource server to the known applications.
                 if (!context.Applications.Any())
                 {
+                    // Add resource server to the known applications.
                     context.Applications.Add(new OpenIddictApplication<Guid>
                     {
                         Id = Guid.NewGuid(),
@@ -189,10 +189,20 @@ namespace Etherkeep.Accounts
                         Type = OpenIddictConstants.ClientTypes.Confidential
                     });
 
+                    context.Applications.Add(new OpenIddictApplication<Guid>
+                    {
+                        ClientId = "admin",
+                        ClientSecret = Crypto.HashPassword("admin"),
+                        DisplayName = "Admin application",
+                        LogoutRedirectUri = "http://localhost:5003/",
+                        RedirectUri = "http://localhost:5003/signin-oidc",
+                        Type = OpenIddictConstants.ClientTypes.Confidential
+                    });
+
                     // To test this sample with Postman, use the following settings:
                     // 
-                    // * Authorization URL: http://localhost:5001/connect/authorize
-                    // * Access token URL: http://localhost:5001/connect/token
+                    // * Authorization URL: http://localhost:5000/connect/authorize
+                    // * Access token URL: http://localhost:5000/connect/token
                     // * Client ID: postman
                     // * Client secret: [blank] (not used with public clients)
                     // * Scope: openid email profile roles

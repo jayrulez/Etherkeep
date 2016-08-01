@@ -11,6 +11,7 @@ src/Etherkeep.Web/app/**/*.js
 src/Etherkeep.Web/app/**/*.map
 src/Etherkeep.Data/bin
 src/Etherkeep.Data/obj
+src/Etherkeep.Data/appsettings.json
 src/Etherkeep.Accounts/bin
 src/Etherkeep.Accounts/obj
 src/Etherkeep.Accounts/appsettings.json

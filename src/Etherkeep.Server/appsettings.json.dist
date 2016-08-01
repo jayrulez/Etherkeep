@@ -16,6 +16,13 @@
     "ReplyToAddress": ""
   },
   "SmsSenderOptions": {},
+  "WalletServiceOptions": {
+    "BaseAddress": "http://localhost:3080/api/v1",
+    "Environment": "test",
+    "Enterprise": "",
+    "AccessToken": "",
+    "BackupXpubProvider": ""
+  },
   "Logging": {
     "IncludeScopes": false,
     "LogLevel": {

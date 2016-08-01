@@ -3,6 +3,7 @@ using Etherkeep.Data.Entities;
 using Etherkeep.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,27 +19,35 @@ namespace Etherkeep.Server.Managers
 
         public UserWalletManager(ApplicationDbContext dbContext, IWalletService walletService, ILoggerFactory loggerFactory)
         {
-            this._dbContext     = dbContext;
+            this._dbContext = dbContext;
             this._walletService = walletService;
-            this._logger        = loggerFactory.CreateLogger<UserWalletManager>();
+            this._logger = loggerFactory.CreateLogger<UserWalletManager>();
         }
 
-        public async Task<UserWallet> CreateWalletAsync(User user, string label = null)
+        public async Task<UserWallet> CreateWalletAsync(User user, string passphrase, string label)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
+            if (string.IsNullOrEmpty(label))
+            {
+                label = $"{user.Id.ToString()}_{Guid.NewGuid().ToString()}";
+            }
+
             try
             {
-                var walletModel = _walletService.CreateWallet();
+                var walletModel = await _walletService.CreateWalletAsync(passphrase, label);
 
                 var wallet = new UserWallet()
                 {
                     Id = walletModel.Id,
-                    Label = !string.IsNullOrEmpty(label) ? label : Guid.NewGuid().ToString(),
-                    Balance = 0
+                    Passphrase = passphrase,
+                    Label = label,
+                    Balance = 0,
+                    CreatedAt = DateTime.UtcNow,
+                    Data = walletModel.Data
                 };
 
                 user.Wallets.Add(wallet);

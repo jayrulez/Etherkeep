@@ -7,7 +7,7 @@
 
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>cf5f6c2f-7e62-449a-9d52-4c4acd52c87a</ProjectGuid>
+    <ProjectGuid>4f6c0cf7-3419-4f9b-95be-318f0ef0ad11</ProjectGuid>
     <RootNamespace>Etherkeep.Data</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>

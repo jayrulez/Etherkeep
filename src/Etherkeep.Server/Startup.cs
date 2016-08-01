@@ -46,6 +46,8 @@ namespace Etherkeep.Server
 
             services.Configure<SmsSenderOptions>(Configuration.GetSection("SmsSenderOptions"));
 
+            services.Configure<WalletServiceOptions>(Configuration.GetSection("WalletServiceOptions"));
+
             services.AddSwaggerGen();
             services.ConfigureSwaggerGen(options =>
             {

@@ -1,1 +1,7 @@
-#:C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Admin\Etherkeep.Admin.xproj
+#:C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Data\Etherkeep.Data.xproj
+#:C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Server\Etherkeep.Server.xproj
+C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Server\Etherkeep.Server.xproj|C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Data\Etherkeep.Data.xproj
+C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Server\Etherkeep.Server.xproj|C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Shared\Etherkeep.Shared.xproj
+#:C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Accounts\Etherkeep.Accounts.xproj
+C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Accounts\Etherkeep.Accounts.xproj|C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Data\Etherkeep.Data.xproj
+C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Accounts\Etherkeep.Accounts.xproj|C:\Users\Robert\Desktop\Etherkeep\src\Etherkeep.Shared\Etherkeep.Shared.xproj
