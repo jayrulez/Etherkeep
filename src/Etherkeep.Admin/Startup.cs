@@ -10,11 +10,31 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Configuration;
 
 namespace Etherkeep.Admin
 {
     public class Startup
     {
+
+        public IConfigurationRoot Configuration { get; }
+
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets();
+            }
+
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(options => {
@@ -43,9 +63,9 @@ namespace Etherkeep.Admin
             {
                 // Note: these settings must match the application details
                 // inserted in the database at the server level.
-                ClientId = "admin",
-                ClientSecret = "admin",
-                PostLogoutRedirectUri = "http://localhost:5003/",
+                ClientId = Configuration["OpenIdConnectOptions:ClientId"],
+                ClientSecret = Configuration["OpenIdConnectOptions:ClientSecret"],
+                PostLogoutRedirectUri = Configuration["OpenIdConnectOptions:PostLogoutRedirectUri"],
 
                 RequireHttpsMetadata = false,
                 GetClaimsFromUserInfoEndpoint = true,
@@ -58,7 +78,7 @@ namespace Etherkeep.Admin
                 // Note: setting the Authority allows the OIDC client middleware to automatically
                 // retrieve the identity provider's configuration and spare you from setting
                 // the different endpoints URIs or the token validation parameters explicitly.
-                Authority = "http://localhost:5001/",
+                Authority = Configuration["OpenIdConnectOptions:Authority"],
 
                 Scope = { "email", "roles", "offline_access" }
             });

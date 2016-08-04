@@ -8,7 +8,7 @@ namespace Etherkeep.Accounts.ViewModels.Authorization {
         public string ApplicationName { get; set; }
 
         [BindNever]
-        public IDictionary<string, string> Parameters { get; set; }
+        public string RequestId { get; set; }
 
         [Display(Name = "Scope")]
         public string Scope { get; set; }

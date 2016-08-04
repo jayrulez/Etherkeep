@@ -1012,6 +1012,18 @@
           "lib/netstandard1.3/Microsoft.Extensions.Configuration.Json.dll": {}
         }
       },
+      "Microsoft.Extensions.Configuration.UserSecrets/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Json": "1.0.0"
+        },
+        "compile": {
+          "lib/netstandard1.3/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
+        }
+      },
       "Microsoft.Extensions.DependencyInjection/1.0.0": {
         "type": "package",
         "dependencies": {
@@ -4359,6 +4371,19 @@
         "lib/net451/Microsoft.Extensions.Configuration.Json.xml",
         "lib/netstandard1.3/Microsoft.Extensions.Configuration.Json.dll",
         "lib/netstandard1.3/Microsoft.Extensions.Configuration.Json.xml"
+      ]
+    },
+    "Microsoft.Extensions.Configuration.UserSecrets/1.0.0": {
+      "sha512": "2d4ycB89yzoDR40kfoK7iSCrW67mExz4RLm84JFDcgOoMYr1K4vgWjfL2YUjXqjKVNBi6USwhIDkCKXRYWLQ2Q==",
+      "type": "package",
+      "path": "Microsoft.Extensions.Configuration.UserSecrets/1.0.0",
+      "files": [
+        "Microsoft.Extensions.Configuration.UserSecrets.1.0.0.nupkg.sha512",
+        "Microsoft.Extensions.Configuration.UserSecrets.nuspec",
+        "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll",
+        "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.xml",
+        "lib/netstandard1.3/Microsoft.Extensions.Configuration.UserSecrets.dll",
+        "lib/netstandard1.3/Microsoft.Extensions.Configuration.UserSecrets.xml"
       ]
     },
     "Microsoft.Extensions.DependencyInjection/1.0.0": {
@@ -9491,6 +9516,7 @@
       "Microsoft.Extensions.Configuration.CommandLine >= 1.0.0",
       "Microsoft.Extensions.Configuration.FileExtensions >= 1.0.0",
       "Microsoft.Extensions.Configuration.Json >= 1.0.0",
+      "Microsoft.Extensions.Configuration.UserSecrets >= 1.0.0",
       "Microsoft.Extensions.Logging.Console >= 1.0.0",
       "Microsoft.Extensions.Logging.Debug >= 1.0.0",
       "Microsoft.IdentityModel.Protocols.OpenIdConnect >= 2.0.0",

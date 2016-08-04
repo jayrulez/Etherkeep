@@ -17,21 +17,22 @@ namespace Etherkeep.Server.Controllers
         }
 
         [HttpGet, HttpPost, Route("~/error")]
-        public IActionResult Error()
+        public object Error()
         {
             // If the error was not caused by an invalid
             // OIDC request, display a generic error page.
             var response = HttpContext.GetOpenIdConnectResponse();
+
             if (response == null)
             {
-                return View(new ErrorViewModel());
+                return null;
             }
 
-            return View(new ErrorViewModel
+            return new ErrorViewModel()
             {
                 Error = response.Error,
                 ErrorDescription = response.ErrorDescription
-            });
+            };
         }
     }
 }

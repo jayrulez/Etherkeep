@@ -1,4 +1,4 @@
-﻿{
+{
   "userSecretsId": "Etherkeep.Accounts",
 
   "dependencies": {
@@ -51,8 +51,8 @@
       "version": "1.0.0-preview2-final",
       "type": "build"
     },
-    "Etherkeep.Data": "1.0.0-*",
-    "Etherkeep.Shared": "1.0.0-*"
+    "Etherkeep.Shared": "1.0.0-*",
+    "Etherkeep.Data": "1.0.0-*"
   },
 
   "tools": {

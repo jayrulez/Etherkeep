@@ -4,6 +4,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace Etherkeep.Accounts.ViewModels.Authorization {
     public class LogoutViewModel {
         [BindNever]
-        public IDictionary<string, string> Parameters { get; set; }
+        public string RequestId { get; set; }
     }
 }

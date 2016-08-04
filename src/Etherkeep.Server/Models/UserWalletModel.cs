@@ -11,7 +11,13 @@ namespace Etherkeep.Server.Models
         [JsonProperty("id")]
         public string Id { get; set; }
 
+        [JsonProperty("label")]
+        public string Label { get; set; }
+
         [JsonProperty("balance")]
         public double Balance { get; set; }
+
+        [JsonProperty("confirmedBalance")]
+        public double ConfirmedBalance { get; set; }
     }
 }

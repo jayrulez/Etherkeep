@@ -49,7 +49,7 @@ namespace Etherkeep.Accounts.Controllers {
 
             return View(new AuthorizeViewModel {
                 ApplicationName = application.DisplayName,
-                Parameters = request.Parameters,
+                RequestId = request.RequestId,
                 Scope = request.Scope
             });
         }
@@ -98,7 +98,7 @@ namespace Etherkeep.Accounts.Controllers {
             var request = HttpContext.GetOpenIdConnectRequest();
 
             return View(new LogoutViewModel {
-                Parameters = request.Parameters
+                RequestId = request.RequestId
             });
         }
 

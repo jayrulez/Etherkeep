@@ -19,6 +19,8 @@ namespace Etherkeep.Accounts
 {
     public class Startup
     {
+
+        public IConfigurationRoot Configuration { get; }
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -34,8 +36,6 @@ namespace Etherkeep.Accounts
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
-
-        public IConfigurationRoot Configuration { get; }
         
         public void ConfigureServices(IServiceCollection services)
         {

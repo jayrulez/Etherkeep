@@ -3,6 +3,11 @@
     "DefaultConnection": "User ID=postgres;Password=postgres;Server=localhost;Port=5432;Database=etherkeep;Pooling=true;",
     "HangfireConnection": "Server=.\\sqlexpress;Database=Hangfire.Sample;Trusted_Connection=True;"
   },
+  "OpenIdConnectOptions": {
+    "ClientId": "resource_server",
+    "ClientSecret": "secret_secret_secret",
+    "Authority": "http://localhost:5000/"
+  },
   "EmailSenderOptions": {
     "Server": "",
     "Port": 587,

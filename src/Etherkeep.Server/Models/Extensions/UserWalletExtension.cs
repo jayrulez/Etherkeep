@@ -18,7 +18,9 @@ namespace Etherkeep.Server.Models.Extensions
             var destination = new UserWalletModel();
 
             destination.Id = source.Id;
+            destination.Label = source.Label;
             destination.Balance = source.Balance;
+            destination.ConfirmedBalance = source.ConfirmedBalance;
 
             return destination;
         }

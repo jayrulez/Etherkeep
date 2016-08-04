@@ -104,13 +104,15 @@ namespace Etherkeep.Server
 
             app.UseStaticFiles();
 
+            var auth = Configuration["OpenIdConnectOptions:Authority"];
+
             app.UseOAuthIntrospection(options =>
             {
-                options.Authority = "http://localhost:5000/";
+                options.Authority = Configuration["OpenIdConnectOptions:Authority"];
                 options.AutomaticAuthenticate = true;
                 options.AutomaticChallenge = true;
-                options.ClientId = "resource_server";
-                options.ClientSecret = "secret_secret_secret";
+                options.ClientId = Configuration["OpenIdConnectOptions:ClientId"];
+                options.ClientSecret = Configuration["OpenIdConnectOptions:ClientSecret"];
             });
 
             app.UseCors(options =>
@@ -137,7 +139,7 @@ namespace Etherkeep.Server
 
             app.UseIdentity();
 
-            //app.UseStatusCodePagesWithReExecute("/error");
+            app.UseStatusCodePagesWithReExecute("/error");
 
             app.UseMvc(routes =>
             {

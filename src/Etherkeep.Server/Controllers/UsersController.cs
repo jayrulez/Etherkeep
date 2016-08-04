@@ -15,6 +15,8 @@ using Etherkeep.Server.Models.Account;
 using Etherkeep.Server.ViewModels.Shared;
 using Etherkeep.Server.Shared.Constants;
 using Etherkeep.Shared.Services.Email;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Etherkeep.Server.Controllers
 {
@@ -279,27 +281,41 @@ namespace Etherkeep.Server.Controllers
             return BadRequest(ModelState.GetErrorResponse());
         }
 
-        [HttpPost, Route("change_phone_number")]
-        public IActionResult ChangePhoneNumberAction()
+        [HttpGet, Route("primary_wallet")]
+        public async Task<IActionResult> PrimaryWalletAction()
         {
             try
             {
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex.Message);
+                var user = await GetCurrentUserAsync();
 
-                return BadRequest(new ErrorViewModel { Error = ErrorCode.ServerError, ErrorDescription = ex.Message });
-            }
-        }
+                var primaryWallet = await _applicationDbContext.UserPrimaryWallets
+                    .Include(e => e.Wallet)
+                    .FirstOrDefaultAsync(e => e.UserId == user.Id);
 
-        [HttpPost, Route("confirm_phone_number")]
-        public IActionResult ConfirmPhoneNumberAction()
-        {
-            try
-            {
-                return Ok();
+                if(primaryWallet == null)
+                {
+                    var wallet = await _applicationDbContext.UserWallets.OrderBy(e => e.CreatedAt).FirstOrDefaultAsync(e => e.UserId == user.Id);
+
+                    if(wallet == null)
+                    {
+                        return BadRequest(new ErrorViewModel { Error = ErrorCode.NotFound, ErrorDescription = "The user does not have a wallet." });
+                    }else
+                    {
+                        primaryWallet = new UserPrimaryWallet()
+                        {
+                            User = user,
+                            Wallet = wallet
+                        };
+
+                        _applicationDbContext.UserPrimaryWallets.Add(primaryWallet);
+
+                        await _applicationDbContext.SaveChangesAsync();
+
+                        _logger.LogInformation($"Set primary wallet of user with id='{user.Id}' to '{wallet.Id}'");
+                    }
+                }
+
+                return Ok(primaryWallet.Wallet.ToModel());
             }
             catch (Exception ex)
             {
